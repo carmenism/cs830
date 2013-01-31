@@ -1,26 +1,42 @@
+import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.List;
 
 
 public class State {
-	private int robotRow;
-	private int robotCol;
+	public enum Action {
+		NORTH,
+		SOUTH,
+		EAST,
+		WEST,
+		VACUUM
+	}
+	
+	private Cell cell;
 	
 	public BitSet bitsToClean;
 	
-	// actions done so far?
+	public List<Action> actionsTaken = null;
 	
-	public State(int r, int c, BitSet b) {
-		robotRow = r;
-		robotCol = c;
-		bitsToClean = b;
+	public State(Cell cell, BitSet bitsToClean) {
+		this.cell = cell;
+		this.bitsToClean = bitsToClean;
+		
+		actionsTaken = new ArrayList<Action>();
+	}
+	
+	public State(Cell cell, BitSet bitsToClean, List<Action> actionsTaken, Action lastAction) {
+		this(cell, bitsToClean);
+		
+		for (Action action : actionsTaken) {
+			this.actionsTaken.add(action);
+		}
+		
+		this.actionsTaken.add(lastAction);
 	}
 
-	public int getRobotRow() {
-		return robotRow;
-	}
-
-	public int getRobotCol() {
-		return robotCol;
+	public Cell getCell() {
+		return cell;
 	}
 
 	public BitSet getBitsToClean() {
@@ -32,6 +48,14 @@ public class State {
 	}
 	
 	public String toString() {
-		return "r:" + robotRow + ", c:" + robotCol + ", " + bitsToClean.toString();
+		return cell.toString() + ", " + bitsToClean.toString();
+	}
+	
+	public Action getLastAction() {
+		if (actionsTaken.size() == 0) {
+			return null;
+		}
+		
+		return actionsTaken.get(actionsTaken.size() - 1);
 	}
 }

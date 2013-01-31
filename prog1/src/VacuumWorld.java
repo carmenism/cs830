@@ -1,16 +1,13 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.BitSet;
 
 
 public class VacuumWorld {
 	public Cell [][] cells;
-	public ArrayList<Cell> dirtyCells = new ArrayList<Cell>();
 	
-	private int robotInitialRow;
-	private int robotInitialCol;
+	private Cell robotCell;
 	private BitSet bitsToClean;
 	
 	private State initialState;
@@ -28,51 +25,10 @@ public class VacuumWorld {
 			cells = new Cell[numRows][numCols];
 			
 			for (int r = 0; r < numRows; r++) {
-				String line = br.readLine().trim();
-				
-				for (int c = 0; c < numCols; c++) {
-					char t = line.charAt(c);
-					
-					cells[r][c] = new Cell(r, c, t);
-					
-					if (!cells[r][c].isClean()) {
-						dirtyCells.add(cells[r][c]);
-					}
-					
-					if (cells[r][c].isOccupied()) {
-						robotInitialRow = r;
-						robotInitialCol = c;
-					}
-				}
+				stringToCells(br.readLine().trim(), r);
 			}
 			
-			for (int r = 0; r < numRows; r++) {				
-				for (int c = 0; c < numCols; c++) {
-					if (r == 0) {
-						cells[r][c].north = null;
-					} else {
-						cells[r][c].north = cells[r - 1][c];
-					}
-					
-					if (r == numRows - 1) {
-						cells[r][c].south = null;
-					} else {
-						cells[r][c].south = cells[r + 1][c];
-					}
-					
-					if (c == 0) {
-						cells[r][c].west = null;
-					} else {
-						cells[r][c].west = cells[r][c - 1];
-					}
-					
-					if (c == numCols - 1) {
-						cells[r][c].east = null;
-					} else {
-						cells[r][c].east = cells[r][c + 1];
-					}
-				}
-			}
+			determineNeighbors();
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -82,14 +38,55 @@ public class VacuumWorld {
 		}
 		
 		// all bits of this bitset are set to false by default
-		bitsToClean = new BitSet(dirtyCells.size());
-		bitsToClean.flip(0, dirtyCells.size());
+		bitsToClean = new BitSet(Cell.numberDirtyCells);
+		bitsToClean.flip(0, Cell.numberDirtyCells);
 		
-		initialState = new State(robotInitialRow, robotInitialCol, bitsToClean);
+		initialState = new State(robotCell, bitsToClean);
 
-		System.out.println(dirtyCells.size());
+		System.out.println(Cell.numberDirtyCells);
 		System.out.println(initialState);
+		System.out.println(cells[0][0].getNeighbors().size());
 	}
 	
+	private void stringToCells(String line, int row) {
+		for (int col = 0; col < numCols; col++) {
+			char t = line.charAt(col);
+			
+			cells[row][col] = new Cell(row, col, t);
+			
+			if (cells[row][col].isOccupied()) {
+				robotCell = cells[row][col];
+			}					
+		}
+	}
 	
+	private void determineNeighbors() {
+		for (int r = 0; r < numRows; r++) {				
+			for (int c = 0; c < numCols; c++) {
+				if (r == 0) {
+					cells[r][c].north = null;
+				} else {
+					cells[r][c].north = cells[r - 1][c];
+				}
+				
+				if (r == numRows - 1) {
+					cells[r][c].south = null;
+				} else {
+					cells[r][c].south = cells[r + 1][c];
+				}
+				
+				if (c == 0) {
+					cells[r][c].west = null;
+				} else {
+					cells[r][c].west = cells[r][c - 1];
+				}
+				
+				if (c == numCols - 1) {
+					cells[r][c].east = null;
+				} else {
+					cells[r][c].east = cells[r][c + 1];
+				}
+			}
+		}
+	}
 }

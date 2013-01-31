@@ -1,5 +1,10 @@
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class Cell {
+	public static int numberDirtyCells = 0;
+	
 	public enum type {
 		FREE,
 		BLOCKED,
@@ -18,6 +23,10 @@ public class Cell {
 	public Cell east;
 	public Cell west;
 	
+	private List<Cell> neighbors;
+	
+	public int dirtyCellIndex = -1;
+	
 	public Cell(int r, int c, char t) {
 		row = r;
 		col = c;
@@ -27,6 +36,8 @@ public class Cell {
 		} else if (t == '*') {
 			cellType = type.FREE;
 			clean = false;
+			dirtyCellIndex = numberDirtyCells;
+			numberDirtyCells++;
 		} else if (t == '#') {
 			cellType = type.BLOCKED;
 		} else if (t == ':') {
@@ -35,6 +46,27 @@ public class Cell {
 			cellType = type.FREE;
 			occupied = true;
 		}
+	}
+	
+	public List<Cell> getNeighbors() {
+		if (neighbors == null) {
+			neighbors = new ArrayList<Cell>();
+			
+			if (north != null && !north.isBlocked()) {
+				neighbors.add(north);
+			}
+			if (south != null && !south.isBlocked()) {
+				neighbors.add(south);
+			}
+			if (east != null && !east.isBlocked()) {
+				neighbors.add(east);
+			}
+			if (west != null && !west.isBlocked()) {
+				neighbors.add(west);
+			}
+		}
+		
+		return neighbors;
 	}
 	
 	public boolean isBlocked() {
@@ -67,5 +99,9 @@ public class Cell {
 	
 	public int getCol() {
 		return col;
+	}
+	
+	public String toString() {
+		return "r: " + row + ", c: " + col; 
 	}
 }
