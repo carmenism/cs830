@@ -102,6 +102,6 @@ public class Cell {
 	}
 	
 	public String toString() {
-		return "r: " + row + ", c: " + col; 
+		return "Cell[ r:" + row + ", c:" + col + " ]"; 
 	}
 }

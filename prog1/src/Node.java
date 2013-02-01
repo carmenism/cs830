@@ -1,101 +1,63 @@
 import java.util.ArrayList;
-import java.util.BitSet;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class Node {
 	private State state;
-	private int g;
+	private final int g;
 	private int h;
 	
 	private Node parent;
+	//private List<Node> children;
 	
-	public Node n = null;
-	public Node s = null;
-	public Node e = null;
-	public Node w = null;
-	public Node v = null;
-	
-	public Node(State state, Node parent) {
+	public Node(State state, Node parent, int g) {
 		this.state = state;
 		this.parent = parent;
+		this.g = g;
+		this.h = state.manhattanDistToNearestDirtyCell() + state.remainingDirtyCells();
+		
+		System.out.println("New state generated ("+this.toString()+")");
 	}
-
-	public Node(State state, Node parent, int g) {
-		this(state, parent);
-		this.setG(g);
-	}
-	
-	public Node(State state, Node parent, int g, int h) {
-		this(state, parent);
-		this.setH(h);
-	}
-	
-	public List<Node> expand() {
+		
+	public Collection<Node> expand() {
+		System.out.println("Entering node expand: " + this.toString());
+		
 		List<Node> children = new ArrayList<Node>();
-		
-		Cell cell = state.getCell();
-		
-		if (!cell.isClean()) {
-			// Add a node to vacuum.
-			BitSet newStateBits = (BitSet) state.bitsToClean.clone();
-			newStateBits.flip(cell.dirtyCellIndex);
-			
-			State stateV = new State(cell, newStateBits);
-			v = new Node(stateV, this, getG() + 1);
-			
-			children.add(v);
-		} else {
-			if (state.getLastAction() != State.Action.WEST && cell.east != null) {
-				// Add a node to move east.
-				State stateE = new State(cell.east, state.bitsToClean, state.actionsTaken, State.Action.EAST);
-				e = new Node(stateE, this, getG() + 1);
-				
-				children.add(e);
-			}
-			
-			if (state.getLastAction() != State.Action.EAST && cell.west != null) {
-				// Add a node to move west.
-				State stateW = new State(cell.west, state.bitsToClean, state.actionsTaken, State.Action.WEST);
-				w = new Node(stateW, this, getG() + 1);
-				
-				children.add(w);
-			}
-			
-			if (state.getLastAction() != State.Action.NORTH && cell.north != null) {
-				// Add a node to move north.
-				State stateN = new State(cell.north, state.bitsToClean, state.actionsTaken, State.Action.NORTH);
-				n = new Node(stateN, this, getG() + 1);
-				
+
+		for (State possibleFuture : state.expand()) {
+			if (parent == null || !possibleFuture.equals(parent.state)) {
+				Node n = new Node(possibleFuture, this, getG() + 1);
 				children.add(n);
-			}
-			
-			if (state.getLastAction() != State.Action.SOUTH && cell.south != null) {
-				// Add a node to move south.
-				State stateS = new State(cell.south, state.bitsToClean, state.actionsTaken, State.Action.SOUTH);
-				s = new Node(stateS, this, getG() + 1);
-				
-				children.add(s);
 			}
 		}
 		
+		Collections.sort(children, new Comparator<Node>() {
+	        @Override public int compare(Node n1, Node n2) {
+	            return - n1.h + n2.h;
+	        }
+	    });
+		
+
+		System.out.println("Exiting node expand: " + this.toString());
+		
 		return children;
-	}	
+	}
 		
 	public int getG() {
 		return g;
-	}
-
-	public void setG(int g) {
-		this.g = g;
 	}
 
 	public int getH() {
 		return h;
 	}
 
-	public void setH(int h) {
+	/*public void setH(int h) {
 		this.h = h;
-	}
+	}*/
 
 	public State getState() {
 		return state;
@@ -110,6 +72,14 @@ public class Node {
 	}
 	
 	public String toString() {
-		return state.toString();// + ", g:" + g + ", h:" + h;
+		return "Node[ " + state.toString() + ", g:" + g + ", h:" + h + " ]";
+	}
+	
+	public boolean isGoal() {
+		return state.isGoal();
+	}
+	
+	public void printPath() {
+		state.printPath();
 	}
 }
