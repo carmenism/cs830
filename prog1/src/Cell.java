@@ -104,4 +104,12 @@ public class Cell {
 	public String toString() {
 		return "Cell[ r:" + row + ", c:" + col + " ]"; 
 	}
+	
+	public void printNeighbors() {
+		System.out.println("Neighbors of " + this.toString() + ":");
+		System.out.println("\tN " + north);
+		System.out.println("\tS " + south);
+		System.out.println("\tE " + east);
+		System.out.println("\tW " + west);
+	}
 }

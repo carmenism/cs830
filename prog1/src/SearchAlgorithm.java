@@ -1,7 +1,6 @@
 import java.util.HashMap;
 
-public class SearchAlgorithm {
-	private State initialState;
+public abstract class SearchAlgorithm {
 	protected Node initialNode;
 	
 	//protected List<Node> openList;
@@ -9,8 +8,12 @@ public class SearchAlgorithm {
 	
 	protected HashMap<String, Node> seenList = new HashMap<String, Node>();
 
+	protected int nodesGenerated = 0;
+	protected int nodesExpanded = 0;
+	
 	public SearchAlgorithm(State initialState) {
-		this.initialState = initialState;
 		this.initialNode = new Node(initialState, null, 0);
 	}
+	
+	public abstract void search();
 }

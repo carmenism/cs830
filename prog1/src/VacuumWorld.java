@@ -1,5 +1,4 @@
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -8,21 +7,39 @@ import java.util.BitSet;
 
 
 public class VacuumWorld {
-	public Cell [][] cells;
-	
+	public Cell [][] cells;	
 	private Cell robotCell;
-	private BitSet bitsToClean;
-	
 	private State initialState;
 	
-	public int numRows;
-	public int numCols;
+	private int numRows;
+	private int numCols;
 	
 	public VacuumWorld() throws FileNotFoundException {
-
-		//BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("/home/csg/crr8/spring2013/cs830/prog1/worlds/hard-1.vw")));
+		buildWorldFromInput();
+		determineNeighbors();
 				
+		initialState = new State(robotCell, buildInitialBitSet());
+	}
+
+	public State getInitialState() {
+		return initialState;
+	}
+	
+	private BitSet buildInitialBitSet() {
+		// All bits of this bitset are set to false by default.
+		BitSet bitsToClean = new BitSet(Cell.numberDirtyCells);
+		
+		// Set them all to true.
+		bitsToClean.flip(0, Cell.numberDirtyCells);
+		
+		return bitsToClean;
+	}
+	
+	private void buildWorldFromInput() throws FileNotFoundException {
+		//BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		//BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("/home/csg/crr8/spring2013/cs830/prog1/worlds/hard-1.vw")));
+		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("C:/spring2013/cs830/prog1/worlds/hard-1.vw")));
+		
 		try {
 			numCols = Integer.parseInt(br.readLine());
 			numRows = Integer.parseInt(br.readLine());
@@ -32,8 +49,6 @@ public class VacuumWorld {
 			for (int r = 0; r < numRows; r++) {
 				stringToCells(br.readLine().trim(), r);
 			}
-			
-			determineNeighbors();
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -41,18 +56,6 @@ public class VacuumWorld {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		
-		// all bits of this bitset are set to false by default
-		bitsToClean = new BitSet(Cell.numberDirtyCells);
-		bitsToClean.flip(0, Cell.numberDirtyCells); // set them all to true
-		
-		initialState = new State(robotCell, bitsToClean);
-
-		System.out.println(Cell.numberDirtyCells);
-		System.out.println(initialState);
-		System.out.println(cells[0][0].getNeighbors().size());
-		
-		new DepthFirstSearch(initialState);
 	}
 	
 	private void stringToCells(String line, int row) {
@@ -99,19 +102,5 @@ public class VacuumWorld {
 				}
 			}
 		}
-		
-		
-		/*for (int r = 0; r < numRows; r++) {				
-			for (int c = 0; c < numCols; c++) {
-				System.err.println(cells[r][c]);
-
-				System.err.println("\tN "+cells[r][c].north);
-				System.err.println("\tS "+cells[r][c].south);
-				System.err.println("\tE "+cells[r][c].east);
-				System.err.println("\tW "+cells[r][c].west);
-			}
-
-			System.err.println();
-		}*/
 	}
 }

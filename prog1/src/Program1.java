@@ -15,7 +15,8 @@ public class Program1 {
 	
 	public Program1(String [] args) throws FileNotFoundException {
 		VacuumWorld vw = new VacuumWorld();
-		
+		SearchAlgorithm algorithm = null;
+				
 		if (args.length == 0) {
 			System.err.println("Must specify at least one argument.");
 			System.exit(1);
@@ -24,20 +25,20 @@ public class Program1 {
 			System.exit(1);
 		}
 		
-		String algorithm = args[0];
+		String cmdAlgorithm = args[0];
 		
 		if (args.length == 1) {
-			if (algorithm.equals(CMD_DEPTH_FIRST)) {
+			if (cmdAlgorithm.equals(CMD_DEPTH_FIRST)) {
+				algorithm = new DepthFirstSearch(vw.getInitialState());
+			} else if (cmdAlgorithm.equals(CMD_DEPTH_FIRST_ID)) {
 			
-			} else if (algorithm.equals(CMD_DEPTH_FIRST_ID)) {
-			
-			} else if (algorithm.equals(CMD_UNIFORM_COST)) {
+			} else if (cmdAlgorithm.equals(CMD_UNIFORM_COST)) {
 					
-			} else if (algorithm.equals(CMD_A_STAR)) {
+			} else if (cmdAlgorithm.equals(CMD_A_STAR)) {
 				System.err.println("Must also specify a heuristic for a-star.");
 				System.exit(1);
 			}
-		} else if (algorithm.equals(CMD_A_STAR)) {
+		} else if (cmdAlgorithm.equals(CMD_A_STAR)) {
 			String heuristic = args[1];
 			
 			if (heuristic.equals(CMD_H0)) {
@@ -49,18 +50,15 @@ public class Program1 {
 			}
 		}
 		
-		
+		algorithm.search();
 	}
-	
+		
 	public static void main(String [] args) {
-		System.err.println("Printing 1");
 		try {
 			new Program1(args);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		System.err.println("Printing 2");
 	}
 }

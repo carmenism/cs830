@@ -1,16 +1,15 @@
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Stack;
 
-
 public class DepthFirstSearch extends SearchAlgorithm {
-	
-	
 	public DepthFirstSearch(State initialState) {
 		super(initialState);
-		
+	}
+	
+	public void search() {
 		Stack<Node> openList = new Stack<Node>();
 		
+		// Place the node with the starting state on the open list.
 		openList.push(initialNode);
 		seenList.put(initialNode.toString(), initialNode);
 		
@@ -18,7 +17,7 @@ public class DepthFirstSearch extends SearchAlgorithm {
 				
 		while (true) {
 			if (openList.isEmpty()) {
-				// failure
+				// Failure - abort.
 				System.err.println("Failure - open list is empty.");
 				System.exit(1);
 			}
@@ -26,24 +25,26 @@ public class DepthFirstSearch extends SearchAlgorithm {
 			Node node = openList.pop();
 			
 			if (node.isGoal()) {
+				// The goal was found, so print the path and return.
 				node.printPath();
+				
+				System.out.println(nodesGenerated + " nodes generated");
+				System.out.println(nodesExpanded + " nodes expanded");
+				
 				return;
 			} else {
+				// Expand the node.
 				cycleChecker.put(node.getState().toString(), node.getState());
-				
-				System.out.println("Expanding node: " + node.toString());
+				nodesExpanded++;
 				
 				for (Node child : node.expand()) {					
+					// Make sure the generated node is not a duplicate.
 					if (!cycleChecker.containsKey(child.getState().toString())) {
 						openList.push(child);
-						System.out.println(" Adding child to open list: " + child.toString());
-					} else {
-						System.out.println(" Found duplicate child: " + child.toString());
+						nodesGenerated++;
 					}
 				}
 			}
-			
-			System.out.println(" *** ");
 		}
 	}
 }
