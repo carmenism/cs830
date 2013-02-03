@@ -1,6 +1,4 @@
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.BitSet;
@@ -14,7 +12,7 @@ public class VacuumWorld {
 	private int numRows;
 	private int numCols;
 	
-	public VacuumWorld() throws FileNotFoundException {
+	public VacuumWorld() {
 		buildWorldFromInput();
 		determineNeighbors();
 				
@@ -35,10 +33,10 @@ public class VacuumWorld {
 		return bitsToClean;
 	}
 	
-	private void buildWorldFromInput() throws FileNotFoundException {
-		//BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	private void buildWorldFromInput() {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		//BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("/home/csg/crr8/spring2013/cs830/prog1/worlds/hard-1.vw")));
-		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("C:/spring2013/cs830/prog1/worlds/hard-1.vw")));
+		//BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("C:/spring2013/cs830/prog1/worlds/hard-1.vw")));
 		
 		try {
 			numCols = Integer.parseInt(br.readLine());

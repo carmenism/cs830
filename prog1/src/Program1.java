@@ -1,6 +1,3 @@
-import java.io.FileNotFoundException;
-
-
 public class Program1 {
 	public static final String CMD_DEPTH_FIRST = "depth-first";
 	public static final String CMD_DEPTH_FIRST_ID = "depth-first-id";
@@ -13,7 +10,7 @@ public class Program1 {
 	public static final String CMD_H1 = "h1";
 	public static final String CMD_H2 = "h2";
 	
-	public Program1(String [] args) throws FileNotFoundException {
+	public Program1(String [] args) {
 		VacuumWorld vw = new VacuumWorld();
 		SearchAlgorithm algorithm = null;
 				
@@ -54,11 +51,6 @@ public class Program1 {
 	}
 		
 	public static void main(String [] args) {
-		try {
-			new Program1(args);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		new Program1(args);
 	}
 }
