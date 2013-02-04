@@ -1,6 +1,12 @@
 import java.util.HashMap;
 import java.util.Stack;
 
+/**
+ * Defines behavior for a depth first search.
+ * 
+ * @author Carmen St. Jean 
+ *
+ */
 public class DepthFirstSearch extends SearchAlgorithm {
 	public DepthFirstSearch(State initialState) {
 		super(initialState);

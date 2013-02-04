@@ -1,3 +1,10 @@
+/**
+ * CS 830 - Artificial Intelligence
+ * Program 1 - Vacuum World
+ * 
+ * @author Carmen St. Jean
+ *
+ */
 public class Program1 {
 	public static final String CMD_DEPTH_FIRST = "depth-first";
 	public static final String CMD_DEPTH_FIRST_ID = "depth-first-id";
@@ -11,7 +18,6 @@ public class Program1 {
 	public static final String CMD_H2 = "h2";
 	
 	public Program1(String [] args) {
-		VacuumWorld vw = new VacuumWorld();
 		SearchAlgorithm algorithm = null;
 				
 		if (args.length == 0) {
@@ -22,6 +28,7 @@ public class Program1 {
 			System.exit(1);
 		}
 		
+		VacuumWorld vw = new VacuumWorld();
 		String cmdAlgorithm = args[0];
 		
 		if (args.length == 1) {

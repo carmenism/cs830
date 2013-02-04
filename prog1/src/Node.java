@@ -4,6 +4,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Defines a node for a search tree.
+ * 
+ * @author Carmen St. Jean
+ *
+ */
 public class Node {
 	private State state;
 	private final int g;
@@ -15,14 +21,15 @@ public class Node {
 		this.state = state;
 		this.parent = parent;
 		this.g = g;
-		this.h = state.manhattanDistToNearestDirtyCell() + state.remainingDirtyCells();
-		
-		//System.out.println("New state generated ("+this.toString()+")");
+		this.h = state.getManhattanDistToNearestDirtyCell() + state.getNumRemainingDirtyCells();
 	}
-		
+
+	/**
+	 * Expands this node for searching, with parent pruning.
+	 * 
+	 * @return A list of Nodes representing all possible future states.
+	 */
 	public Collection<Node> expand() {
-		//System.out.println("Entering node expand: " + this.toString());
-		
 		List<Node> children = new ArrayList<Node>();
 
 		for (State possibleFuture : state.expand()) {
@@ -40,12 +47,25 @@ public class Node {
 	        }
 	    });
 		
-
-		//System.out.println("Exiting node expand: " + this.toString());
-		
 		return children;
 	}
-		
+
+	/**
+	 * Determines whether or not this state is the goal state.
+	 * 
+	 * @return True if this state is a goal state.
+	 */
+	public boolean isGoal() {
+		return state.isGoal();
+	}
+	
+	/**
+	 * Prints the path.
+	 */
+	public void printPath() {
+		state.printPath();
+	}
+	
 	public int getG() {
 		return g;
 	}
@@ -68,13 +88,5 @@ public class Node {
 	
 	public String toString() {
 		return "Node[ " + state.toString() + ", g:" + g + ", h:" + h + " ]";
-	}
-	
-	public boolean isGoal() {
-		return state.isGoal();
-	}
-	
-	public void printPath() {
-		state.printPath();
 	}
 }

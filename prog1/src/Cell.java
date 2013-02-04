@@ -1,7 +1,12 @@
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Defines a grid cell of the vacuum world.
+ * 
+ * @author Carmen St. Jean
+ *
+ */
 public class Cell {
 	public static int numberDirtyCells = 0;
 	
@@ -23,7 +28,7 @@ public class Cell {
 	public Cell east;
 	public Cell west;
 	
-	private List<Cell> neighbors;
+	private List<Integer> distanceToDirts;
 	
 	public int dirtyCellIndex = -1;
 	
@@ -47,36 +52,69 @@ public class Cell {
 			occupied = true;
 		}
 	}
-	
-	public List<Cell> getNeighbors() {
-		if (neighbors == null) {
-			neighbors = new ArrayList<Cell>();
-			
-			if (north != null && !north.isBlocked()) {
-				neighbors.add(north);
-			}
-			if (south != null && !south.isBlocked()) {
-				neighbors.add(south);
-			}
-			if (east != null && !east.isBlocked()) {
-				neighbors.add(east);
-			}
-			if (west != null && !west.isBlocked()) {
-				neighbors.add(west);
-			}
-		}
+
+	/**
+	 * Gets the Manhattan distance from this cell to another cell.
+	 * 
+	 * @param otherCell
+	 *            The other cell to calculate the Manhattan distance to.
+	 * @return The Manhattan distance between the cells.
+	 */
+	public int getManhattanDistance(Cell otherCell) {
+		int rowDiff = Math.abs(otherCell.getRow() - getRow());
+		int colDiff = Math.abs(otherCell.getCol() - getCol());
 		
-		return neighbors;
+		return rowDiff + colDiff;
 	}
 	
+	/**
+	 * Calculates the Manhattan distance from this cell to all dirty cells.
+	 */
+	public void calculateDistanceToDirts() {
+		distanceToDirts = new ArrayList<Integer>();
+		
+		for (Cell dirtyCell : State.dirtyCells) {
+			distanceToDirts.add(getManhattanDistance(dirtyCell));
+		}
+	}
+
+	/**
+	 * Gets the (previously calculated) Manhattan distance from this cell to the
+	 * dirty cell of the specified index.
+	 * 
+	 * @param index
+	 *            The index of the dirty cell whose distance will be measured
+	 *            from this cell.
+	 * @return The Manhattan distance between this cell and the specified dirty
+	 *         cell.
+	 */
+	public int getDistanceToDirt(int index) {
+		return distanceToDirts.get(index);
+	}
+
+	/**
+	 * Specifies whether or not this cell is a blocked cell.
+	 * 
+	 * @return True if this cell is blocked.
+	 */
 	public boolean isBlocked() {
 		return cellType == type.BLOCKED;
 	}
-	
+
+	/**
+	 * Specifies whether or not this cell was originally clean.
+	 * 
+	 * @return True if this cell was originally clean.
+	 */
 	public boolean isClean() {
 		return clean;
 	}
-	
+
+	/**
+	 * Specifies whether or not this cell was originally occupied by the robot.
+	 * 
+	 * @return True if this cell was originally occupied by the robot.
+	 */
 	public boolean isOccupied() {
 		return occupied;
 	}
@@ -105,6 +143,9 @@ public class Cell {
 		return "Cell[ r:" + row + ", c:" + col + " ]"; 
 	}
 	
+	/**
+	 * Prints the neighbors of this cell.
+	 */
 	public void printNeighbors() {
 		System.out.println("Neighbors of " + this.toString() + ":");
 		System.out.println("\tN " + north);
