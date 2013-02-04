@@ -112,22 +112,22 @@ public class State {
 		} else {
 			if (cell.east != null) { 
 				// Add a state to move east.
-				possibleFutures.add(new State(cell.east, (BitSet) bitsToClean.clone(), actionsTaken, EAST));	
+				possibleFutures.add(new State(cell.east, bitsToClean, actionsTaken, EAST));	
 			}
 			
 			if (cell.west != null) { 
 				// Add a state to move west.
-				possibleFutures.add(new State(cell.west, (BitSet) bitsToClean.clone(), actionsTaken, WEST));
+				possibleFutures.add(new State(cell.west, bitsToClean, actionsTaken, WEST));
 			}
 			
 			if (cell.north != null) { 
 				// Add a state to move north.
-				possibleFutures.add(new State(cell.north, (BitSet) bitsToClean.clone(), actionsTaken, NORTH));
+				possibleFutures.add(new State(cell.north, bitsToClean, actionsTaken, NORTH));
 			}
 			
 			if (cell.south != null) {
 				// Add a state to move south.				
-				possibleFutures.add(new State(cell.south, (BitSet) bitsToClean.clone(), actionsTaken, SOUTH));
+				possibleFutures.add(new State(cell.south, bitsToClean, actionsTaken, SOUTH));
 			}
 		}
 		
