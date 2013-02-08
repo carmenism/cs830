@@ -9,12 +9,12 @@ import java.util.List;
  */
 public class Node implements Comparable<Node> {
     private State state;
-    private final int g;
-    private int h;
+    private final double g;
+    private double h;
     
     private Node parent;
     
-    public Node(State state, Node parent, int g) {
+    public Node(State state, Node parent, double g) {
         this.state = state;
         this.parent = parent;
         this.g = g;
@@ -54,13 +54,19 @@ public class Node implements Comparable<Node> {
      */
     public void printPath() {
         state.printPath();
+        
+        System.err.println("length: " + getPathLength());
     }
     
-    public int getG() {
+    public int getPathLength() {
+    	return state.getPathLength();
+    }
+    
+    public double getG() {
         return g;
     }
 
-    public int getH() {
+    public double getH() {
         return h;
     }
 
@@ -68,7 +74,7 @@ public class Node implements Comparable<Node> {
         return state;
     }
 
-    public int getF() {
+    public double getF() {
         return getG() + getH();
     }
 

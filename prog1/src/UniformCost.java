@@ -41,12 +41,14 @@ public class UniformCost extends SearchAlgorithm {
                 closedList.put(node.toString(), node);
                 nodesExpanded++;
                 
-                for (Node child : expand(node)) {                    
+                List<Node> children = expand(node);
+                nodesGenerated += children.size();
+                
+                for (Node child : children) {                    
                     // Make sure the generated node is not a duplicate.
                     if (!closedList.containsKey(child.getState().toString())) {
                         openList.add(child);
-                        closedList.put(child.getState().toString(), child);
-                        nodesGenerated++;
+                        closedList.put(child.getState().toString(), child);        
                     }
                 }
             }

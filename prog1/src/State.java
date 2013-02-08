@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -10,22 +11,28 @@ import java.util.List;
  */
 public class State {
     public static List<Cell> dirtyCells = new ArrayList<Cell>();
-        
+    public static HashMap<String, MinimumSpanningTree> minimumSpanningTrees = new HashMap<String, MinimumSpanningTree>(); 
+    
     public static final char NORTH = 'N';
     public static final char SOUTH = 'S';
     public static final char EAST = 'E';
     public static final char WEST = 'W';
     public static final char VACUUM = 'V';
     
-    private Cell cell;
-    
-    public BitSet bitsToClean;
-    
-    public String actionsTaken = "";
+    private Cell cell;    
+    private BitSet bitsToClean;    
+    private String actionsTaken = "";
+    private MinimumSpanningTree mst = null;
     
     public State(Cell cell, BitSet bitsToClean) {
         this.cell = cell;
         this.bitsToClean = bitsToClean;
+        
+        mst = minimumSpanningTrees.get(bitsToClean.toString());
+        
+        if (mst == null) {
+        	mst = new MinimumSpanningTree(dirtyCells, bitsToClean);
+        }
     }
     
     public State(Cell cell, BitSet bitsToClean, String actionsTaken, char lastAction) {
@@ -33,7 +40,7 @@ public class State {
         
         this.actionsTaken = actionsTaken + lastAction;
     }
-
+    
     public Cell getCell() {
         return cell;
     }
@@ -45,8 +52,16 @@ public class State {
     public void setBitsToClean(BitSet bitsToClean) {
         this.bitsToClean = bitsToClean;
     }
-    
-    public String toString() {
+    /*
+    public MinimumSpanningTree getMst() {
+		return mst;
+	}
+
+	public void setMst(MinimumSpanningTree mst) {
+		this.mst = mst;
+	}*/
+
+	public String toString() {
         return "State[ " + cell.toString() + ", " + bitsToClean.toString() + " ]";
     }
     
@@ -65,12 +80,20 @@ public class State {
         }
     }
     
+    public int getPathLength() {
+    	return actionsTaken.length();
+    }
+    
+    public double getMinimumSpanningTreeCost() {
+    	return mst.getCost();
+    }
+    
     /**
      * Finds the distance to the nearest dirty cell.
      * 
      * @return
      */
-    public int getManhattanDistToNearestDirtyCell() {    
+    public double getManhattanDistToNearestDirtyCell() {    
         int minManhattan = Integer.MAX_VALUE;
         
         for (int i = 0; i < bitsToClean.size(); i++) {
@@ -86,6 +109,27 @@ public class State {
         return minManhattan;
     }
 
+    /**
+     * Finds the distance to the farthest dirty cell.
+     * 
+     * @return
+     */
+    public double getManhattanDistToFarthestDirtyCell() {
+    	int maxManhattan = Integer.MIN_VALUE;
+        
+        for (int i = 0; i < bitsToClean.size(); i++) {
+            if (bitsToClean.get(i)) {                
+                int manhattanDist = cell.getDistanceToDirt(i);
+                
+                if (maxManhattan < manhattanDist) {
+                	maxManhattan = manhattanDist;
+                }
+            }
+        }
+        
+        return maxManhattan;
+    }
+    
     /**
      * Gets the number of remaining dirty cells left in the world.
      * 
@@ -133,4 +177,10 @@ public class State {
         
         return possibleFutures;
     }
+    
+    /*public double awesomeHeuristic(){
+    	double mst = calculateMST();
+    	double dirts = this.bitsToClean.cardinality();
+    	double nearestDirt = 
+    }*/
 }

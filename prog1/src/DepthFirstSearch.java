@@ -52,11 +52,13 @@ public class DepthFirstSearch extends SearchAlgorithm {
                 cycleChecker.put(node.getState().toString(), node.getState());
                 nodesExpanded++;
                 
-                for (Node child : expand(node)) {                    
+                List<Node> children = expand(node);
+                nodesGenerated += children.size();
+                
+                for (Node child : children) {                    
                     // Make sure the generated node is not a duplicate.
                     if (!cycleChecker.containsKey(child.getState().toString())) {
                         openList.push(child);
-                        nodesGenerated++;
                     }
                 }
             }
