@@ -18,7 +18,8 @@ public class Node implements Comparable<Node> {
         this.state = state;
         this.parent = parent;
         this.g = g;
-        this.h = state.getManhattanDistToNearestDirtyCell() + state.getNumRemainingDirtyCells();
+                
+        this.h = state.distanceToNearestDirtyCell() + state.numberDirtyCells() + state.getMinimumSpanningTreeLength();
     }
 
     /**

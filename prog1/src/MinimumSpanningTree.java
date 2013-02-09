@@ -1,6 +1,6 @@
 import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -30,12 +30,12 @@ public class MinimumSpanningTree {
 	
 	private void buildMst(List<Cell> cells) {
 		PriorityQueue<Edge> allEdges = new PriorityQueue<Edge>();
-		List<HashMap<String, Cell>> forest = new ArrayList<HashMap<String, Cell>>();
+		List<HashSet<Cell>> forest = new ArrayList<HashSet<Cell>>();
 		
-		for (int i = 0; i < cells.size() - 1; i++) {
+		for (int i = 0; i < cells.size(); i++) {
 			Cell cell = cells.get(i);
-			HashMap<String, Cell> tree = new HashMap<String, Cell>();
-			tree.put(cell.toString(), cell);
+			HashSet<Cell> tree = new HashSet<Cell>();
+			tree.add(cell);
 			forest.add(tree);
 			
 			for (int j = i + 1; j < cells.size(); j++) {
@@ -50,7 +50,7 @@ public class MinimumSpanningTree {
 		return cost;
 	}
 	
-	private List<Edge> buildMst(PriorityQueue<Edge> allEdges, List<HashMap<String, Cell>> forest) {
+	private List<Edge> buildMst(PriorityQueue<Edge> allEdges, List<HashSet<Cell>> forest) {
 		List<Edge> mstEdges = new ArrayList<Edge>();
 		
 		while (!allEdges.isEmpty() && forest.size() > 1) {
@@ -61,13 +61,13 @@ public class MinimumSpanningTree {
 			int indexTreeB = -1;
 			
 			for (int i = 0; i < forest.size(); i++) {
-				HashMap<String, Cell> tree = forest.get(i);
+				HashSet<Cell> tree = forest.get(i);
 				
-				if (tree.containsKey(cellA.toString())) {
+				if (tree.contains(cellA)) {
 					indexTreeA = i;
 				}
 				
-				if (tree.containsKey(cellB.toString())) {
+				if (tree.contains(cellB)) {
 					indexTreeB = i;
 				}
 			}
@@ -82,11 +82,11 @@ public class MinimumSpanningTree {
 		return mstEdges;
 	}
 	
-	private void mergeTrees(List<HashMap<String, Cell>> forest, int indexTreeA, int indexTreeB) {
-		HashMap<String, Cell> treeA = forest.get(indexTreeA);
+	private void mergeTrees(List<HashSet<Cell>> forest, int indexTreeA, int indexTreeB) {
+		HashSet<Cell> treeA = forest.get(indexTreeA);
 		
-		for (Cell cell : forest.get(indexTreeB).values()) {
-			treeA.put(cell.toString(), cell);
+		for (Cell cell : forest.get(indexTreeB)) {
+			treeA.add(cell);
 		}
 		
 		forest.remove(indexTreeB);

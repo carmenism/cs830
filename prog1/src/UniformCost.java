@@ -12,13 +12,12 @@ public class UniformCost extends SearchAlgorithm {
     @Override
     public void search() {
         PriorityQueue<Node> openList = new PriorityQueue<Node>();
-        HashMap<String, Node> closedList = new HashMap<String, Node>();
+        HashMap<State, Node> closedList = new HashMap<State, Node>();
         
         // Place the node with the starting state on the open list.
         openList.add(initialNode);
         nodesGenerated++;
-        
-                
+                        
         while (true) {
             if (openList.isEmpty()) {
                 // Failure - abort.
@@ -38,7 +37,7 @@ public class UniformCost extends SearchAlgorithm {
                 return;
             } else {
                 // Expand the node.
-                closedList.put(node.toString(), node);
+                closedList.put(node.getState(), node);
                 nodesExpanded++;
                 
                 List<Node> children = expand(node);
@@ -46,9 +45,9 @@ public class UniformCost extends SearchAlgorithm {
                 
                 for (Node child : children) {                    
                     // Make sure the generated node is not a duplicate.
-                    if (!closedList.containsKey(child.getState().toString())) {
+                    if (!closedList.containsKey(child.getState())) {
                         openList.add(child);
-                        closedList.put(child.getState().toString(), child);        
+                        closedList.put(child.getState(), child);        
                     }
                 }
             }

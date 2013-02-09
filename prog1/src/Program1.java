@@ -39,10 +39,13 @@ public class Program1 {
             } else if (cmdAlgorithm.equals(CMD_UNIFORM_COST)) {
                 algorithm = new UniformCost(vw.getInitialState());
             } else if (cmdAlgorithm.equals(CMD_A_STAR)) {
-                System.err.println("Must also specify a heuristic for a-star.");
-                System.exit(1);
+            	algorithm = new AStar(vw.getInitialState());
+            	//System.err.println("Must also specify a heuristic for a-star.");
+                //System.exit(1);
             }
         } else if (cmdAlgorithm.equals(CMD_A_STAR)) {
+        	algorithm = new AStar(vw.getInitialState());
+        	
             String heuristic = args[1];
             
             if (heuristic.equals(CMD_H0)) {

@@ -1,4 +1,3 @@
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -15,8 +14,6 @@ public abstract class SearchAlgorithm {
     protected final int AFTER = 1;
     
     protected Node initialNode;
-    protected HashMap<String, Node> closedList;
-    protected HashMap<String, Node> seenList = new HashMap<String, Node>();
 
     protected int nodesGenerated = 0;
     protected int nodesExpanded = 0;

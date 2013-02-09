@@ -1,5 +1,5 @@
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Stack;
 
@@ -28,7 +28,7 @@ public class DepthFirstSearch extends SearchAlgorithm {
         openList.push(initialNode);
         nodesGenerated++;
         
-        HashMap<String, State> cycleChecker = new HashMap<String, State>();
+        HashSet<State> cycleChecker = new HashSet<State>();
                 
         while (true) {
             if (openList.isEmpty()) {
@@ -49,7 +49,7 @@ public class DepthFirstSearch extends SearchAlgorithm {
                 return;
             } else {
                 // Expand the node.
-                cycleChecker.put(node.getState().toString(), node.getState());
+                cycleChecker.add(node.getState());
                 nodesExpanded++;
                 
                 List<Node> children = expand(node);
@@ -57,7 +57,7 @@ public class DepthFirstSearch extends SearchAlgorithm {
                 
                 for (Node child : children) {                    
                     // Make sure the generated node is not a duplicate.
-                    if (!cycleChecker.containsKey(child.getState().toString())) {
+                    if (!cycleChecker.contains(child.getState())) {
                         openList.push(child);
                     }
                 }

@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class State {
     public static List<Cell> dirtyCells = new ArrayList<Cell>();
-    public static HashMap<String, MinimumSpanningTree> minimumSpanningTrees = new HashMap<String, MinimumSpanningTree>(); 
+    public static HashMap<BitSet, MinimumSpanningTree> minimumSpanningTrees = new HashMap<BitSet, MinimumSpanningTree>(); 
     
     public static final char NORTH = 'N';
     public static final char SOUTH = 'S';
@@ -28,10 +28,11 @@ public class State {
         this.cell = cell;
         this.bitsToClean = bitsToClean;
         
-        mst = minimumSpanningTrees.get(bitsToClean.toString());
+        mst = minimumSpanningTrees.get(bitsToClean);
         
         if (mst == null) {
         	mst = new MinimumSpanningTree(dirtyCells, bitsToClean);
+        	minimumSpanningTrees.put(bitsToClean, mst);
         }
     }
     
@@ -65,7 +66,39 @@ public class State {
         return "State[ " + cell.toString() + ", " + bitsToClean.toString() + " ]";
     }
     
-    /**
+    @Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((bitsToClean == null) ? 0 : bitsToClean.hashCode());
+		result = prime * result + ((cell == null) ? 0 : cell.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		State other = (State) obj;
+		if (bitsToClean == null) {
+			if (other.bitsToClean != null)
+				return false;
+		} else if (!bitsToClean.equals(other.bitsToClean))
+			return false;
+		if (cell == null) {
+			if (other.cell != null)
+				return false;
+		} else if (!cell.equals(other.cell))
+			return false;
+		return true;
+	}
+
+	/**
      * Determines whether or not this state is the goal state.
      * 
      * @return True if this state is the goal state.
@@ -84,7 +117,7 @@ public class State {
     	return actionsTaken.length();
     }
     
-    public double getMinimumSpanningTreeCost() {
+    public double getMinimumSpanningTreeLength() {
     	return mst.getCost();
     }
     
@@ -93,7 +126,11 @@ public class State {
      * 
      * @return
      */
-    public double getManhattanDistToNearestDirtyCell() {    
+    public double distanceToNearestDirtyCell() {
+    	if (bitsToClean.isEmpty()) {
+    		return 0;
+    	}
+    	
         int minManhattan = Integer.MAX_VALUE;
         
         for (int i = 0; i < bitsToClean.size(); i++) {
@@ -114,7 +151,7 @@ public class State {
      * 
      * @return
      */
-    public double getManhattanDistToFarthestDirtyCell() {
+    public double distanceToFarthestDirtyCell() {
     	int maxManhattan = Integer.MIN_VALUE;
         
         for (int i = 0; i < bitsToClean.size(); i++) {
@@ -135,7 +172,7 @@ public class State {
      * 
      * @return The number of remaning dirty cells for this state.
      */
-    public int getNumRemainingDirtyCells() {
+    public int numberDirtyCells() {
         return bitsToClean.cardinality();
     }
 
