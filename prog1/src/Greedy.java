@@ -1,23 +1,6 @@
-import java.util.List;
-
-
-public class Greedy extends SearchAlgorithm {
+public class Greedy extends BestFirstSearch {
     public Greedy(State initialState) {
         super(initialState);
-        
-        algorithm = this;
-    }
-
-    @Override
-    public void search() {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    protected List<Node> expand(Node node) {
-        // TODO Auto-generated method stub
-        return null;
     }
     
     @Override

@@ -12,8 +12,6 @@ import java.util.Stack;
 public class DepthFirstSearch extends SearchAlgorithm {
     public DepthFirstSearch(State initialState) {
         super(initialState);
-        
-        algorithm = this;
     }
     
     @Override

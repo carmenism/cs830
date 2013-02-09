@@ -20,6 +20,8 @@ public abstract class SearchAlgorithm {
     
     public SearchAlgorithm(State initialState) {
         this.initialNode = new Node(initialState, null, 0);
+        
+        algorithm = this;
     }
     
     public abstract void search();
