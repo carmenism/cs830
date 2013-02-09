@@ -41,15 +41,15 @@ public class VacuumWorld {
     }
     
     private void buildWorldFromInput() {
-        //BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         //BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("/home/csg/crr8/spring2013/cs830/prog1/worlds/hard-1.vw")));
-        BufferedReader br = null;
+        /*BufferedReader br = null;
         try {
             br = new BufferedReader(new InputStreamReader(new FileInputStream("C:/spring2013/cs830/prog1/worlds/small-1.vw")));
         } catch (FileNotFoundException e1) {
             e1.printStackTrace();
             System.exit(1);
-        }
+        }*/
         
         try {
             numCols = Integer.parseInt(br.readLine());

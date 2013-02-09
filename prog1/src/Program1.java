@@ -31,20 +31,14 @@ public class Program1 {
         VacuumWorld vw = new VacuumWorld();
         String cmdAlgorithm = args[0];
         
-        if (args.length == 1) {
-            if (cmdAlgorithm.equals(CMD_DEPTH_FIRST)) {
-                algorithm = new DepthFirstSearch(vw.getInitialState());
-            } else if (cmdAlgorithm.equals(CMD_DEPTH_FIRST_ID)) {
-            
-            } else if (cmdAlgorithm.equals(CMD_UNIFORM_COST)) {
-                algorithm = new UniformCost(vw.getInitialState());
-            } else if (cmdAlgorithm.equals(CMD_A_STAR)) {
-            	algorithm = new AStar(vw.getInitialState());
-            	//System.err.println("Must also specify a heuristic for a-star.");
-                //System.exit(1);
-            }
+        if (cmdAlgorithm.equals(CMD_DEPTH_FIRST)) {
+            algorithm = new DepthFirstSearch(vw.getInitialState());
+        } else if (cmdAlgorithm.equals(CMD_DEPTH_FIRST_ID)) {
+        
+        } else if (cmdAlgorithm.equals(CMD_UNIFORM_COST)) {
+            algorithm = new UniformCost(vw.getInitialState());
         } else if (cmdAlgorithm.equals(CMD_A_STAR)) {
-        	algorithm = new AStar(vw.getInitialState());
+           	algorithm = new AStar(vw.getInitialState());
         	
             String heuristic = args[1];
             
@@ -55,6 +49,8 @@ public class Program1 {
             } else if (heuristic.equals(CMD_H2)) {
                 
             }
+        } else if (cmdAlgorithm.equals(CMD_GREEDY)) {
+        	algorithm = new Greedy(vw.getInitialState());
         }
         
         algorithm.search();
