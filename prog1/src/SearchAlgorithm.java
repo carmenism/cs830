@@ -7,7 +7,15 @@ import java.util.List;
  *
  */
 public abstract class SearchAlgorithm {
+	public enum Heuristic {
+		H0,
+		H1,
+		H2,
+		H3
+	}
+		
     public static SearchAlgorithm algorithm;
+    public static Heuristic heuristic = Heuristic.H1;
     
     protected final int BEFORE = -1;
     protected final int EQUAL = 0;
@@ -24,7 +32,7 @@ public abstract class SearchAlgorithm {
         algorithm = this;
     }
     
-    public abstract boolean search();
+    public abstract Solution search();
     protected abstract List<Node> expand(Node node);    
     protected abstract int compareTo(Node n1, Node n2);
 }

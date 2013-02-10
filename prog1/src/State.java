@@ -18,15 +18,18 @@ public class State {
     public static final char EAST = 'E';
     public static final char WEST = 'W';
     public static final char VACUUM = 'V';
+    public static final char RECHARGE = 'R';
     
-    private Cell cell;    
-    private BitSet bitsToClean;    
+    private final Cell cell;    
+    private final BitSet bitsToClean;    
     private String actionsTaken = "";
     private MinimumSpanningTree mst = null;
+    private final int batteryLevel;
     
-    public State(Cell cell, BitSet bitsToClean) {
+    public State(Cell cell, BitSet bitsToClean, int batteryLevel) {
         this.cell = cell;
         this.bitsToClean = bitsToClean;
+        this.batteryLevel = batteryLevel;
         
         mst = minimumSpanningTrees.get(bitsToClean);
         
@@ -36,13 +39,17 @@ public class State {
         }
     }
     
-    public State(Cell cell, BitSet bitsToClean, String actionsTaken, char lastAction) {
-        this(cell, bitsToClean);
+    public State(Cell cell, BitSet bitsToClean, String actionsTaken, char lastAction, int batteryLevel) {
+        this(cell, bitsToClean, batteryLevel);
         
         this.actionsTaken = actionsTaken + lastAction;
     }
-    
-    public Cell getCell() {
+            
+    public int getBatteryLevel() {
+		return batteryLevel;
+	}
+
+	public Cell getCell() {
         return cell;
     }
 
@@ -50,26 +57,17 @@ public class State {
         return bitsToClean;
     }
 
-    public void setBitsToClean(BitSet bitsToClean) {
-        this.bitsToClean = bitsToClean;
-    }
-    /*
-    public MinimumSpanningTree getMst() {
-		return mst;
-	}
-
-	public void setMst(MinimumSpanningTree mst) {
-		this.mst = mst;
-	}*/
-
 	public String toString() {
         return "State[ " + cell.toString() + ", " + bitsToClean.toString() + " ]";
     }
     
-    @Override
+
+	
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + batteryLevel;
 		result = prime * result
 				+ ((bitsToClean == null) ? 0 : bitsToClean.hashCode());
 		result = prime * result + ((cell == null) ? 0 : cell.hashCode());
@@ -85,6 +83,8 @@ public class State {
 		if (getClass() != obj.getClass())
 			return false;
 		State other = (State) obj;
+		if (batteryLevel != other.batteryLevel)
+			return false;
 		if (bitsToClean == null) {
 			if (other.bitsToClean != null)
 				return false;
@@ -107,14 +107,8 @@ public class State {
         return bitsToClean.isEmpty();
     }
     
-    public void printPath() {
-        for (int i = 0; i < actionsTaken.length(); i++) {
-            System.out.println(actionsTaken.charAt(i));
-        }
-    }
-    
-    public int getPathLength() {
-    	return actionsTaken.length();
+    public String getActionsTaken() {
+    	return actionsTaken;
     }
     
     public double getMinimumSpanningTreeLength() {
@@ -170,9 +164,9 @@ public class State {
     /**
      * Gets the number of remaining dirty cells left in the world.
      * 
-     * @return The number of remaning dirty cells for this state.
+     * @return The number of remaining dirty cells for this state.
      */
-    public int numberDirtyCells() {
+    public int getNumberDirtyCells() {
         return bitsToClean.cardinality();
     }
 
@@ -184,40 +178,50 @@ public class State {
      */
     public List<State> expand() {
         List<State> possibleFutures = new ArrayList<State>(4);
-                
+        
+        int nextBatteryLevel;
+        
+        if (batteryLevel == Integer.MAX_VALUE) {
+        	nextBatteryLevel = Integer.MAX_VALUE;
+        } else {
+        	nextBatteryLevel = batteryLevel - 1;
+        }
+        
+        if (nextBatteryLevel < 0) {
+        	return possibleFutures;
+        }
+        
         if (!cell.isClean() && bitsToClean.get(cell.dirtyCellIndex)) {
             // Add a state to vacuum.
             BitSet newStateBits = (BitSet) bitsToClean.clone();
             newStateBits.flip(cell.dirtyCellIndex);                    
-            possibleFutures.add(new State(cell, newStateBits, actionsTaken, VACUUM));
+            possibleFutures.add(new State(cell, newStateBits, actionsTaken, VACUUM, nextBatteryLevel));
         } else {
             if (cell.east != null) { 
                 // Add a state to move east.
-                possibleFutures.add(new State(cell.east, bitsToClean, actionsTaken, EAST));    
+                possibleFutures.add(new State(cell.east, bitsToClean, actionsTaken, EAST, nextBatteryLevel));    
             }
             
             if (cell.west != null) { 
                 // Add a state to move west.
-                possibleFutures.add(new State(cell.west, bitsToClean, actionsTaken, WEST));
+                possibleFutures.add(new State(cell.west, bitsToClean, actionsTaken, WEST, nextBatteryLevel));
             }
             
             if (cell.north != null) { 
                 // Add a state to move north.
-                possibleFutures.add(new State(cell.north, bitsToClean, actionsTaken, NORTH));
+                possibleFutures.add(new State(cell.north, bitsToClean, actionsTaken, NORTH, nextBatteryLevel));
             }
             
             if (cell.south != null) {
                 // Add a state to move south.                
-                possibleFutures.add(new State(cell.south, bitsToClean, actionsTaken, SOUTH));
+                possibleFutures.add(new State(cell.south, bitsToClean, actionsTaken, SOUTH, nextBatteryLevel));
+            }
+
+            if (cell.isChargeStation()) {
+            	possibleFutures.add(new State(cell, bitsToClean, actionsTaken, RECHARGE, VacuumWorld.maxBattery));
             }
         }
         
         return possibleFutures;
     }
-    
-    /*public double awesomeHeuristic(){
-    	double mst = calculateMST();
-    	double dirts = this.bitsToClean.cardinality();
-    	double nearestDirt = 
-    }*/
 }

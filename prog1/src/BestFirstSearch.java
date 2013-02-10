@@ -2,14 +2,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
 
-
 public abstract class BestFirstSearch extends SearchAlgorithm {
 	public BestFirstSearch(State initialState) {
 		super(initialState);
 	}
 
 	@Override
-	public boolean search() {
+	public Solution search() {
     	PriorityQueue<Node> openList = new PriorityQueue<Node>();
         HashMap<State, Node> closedList = new HashMap<State, Node>();
         
@@ -20,19 +19,15 @@ public abstract class BestFirstSearch extends SearchAlgorithm {
         while (true) {
             if (openList.isEmpty()) {
                 // Failure.
-                return false;
+                return null;
             }
             
             Node node = openList.poll();
             
             if (node.isGoal()) {
                 // The goal was found, so print the path and return.
-                node.printPath();
-                
-                System.out.println(nodesGenerated + " nodes generated");
-                System.out.println(nodesExpanded + " nodes expanded");
-                                
-                return true;
+            	// The goal was found.
+                return new Solution(node.getState().getActionsTaken(), nodesGenerated, nodesExpanded);
             } else {
                 // Expand the node.
                 closedList.put(node.getState(), node);

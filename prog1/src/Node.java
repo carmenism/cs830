@@ -7,7 +7,7 @@ import java.util.List;
  * @author Carmen St. Jean
  *
  */
-public class Node implements Comparable<Node> {
+public class Node implements Comparable<Node> {	
     private final State state;
     private final double g;
     private final int depth;
@@ -20,8 +20,24 @@ public class Node implements Comparable<Node> {
         this.parent = parent;
         this.g = g;
         this.depth = depth;
-                
-        this.h = state.distanceToNearestDirtyCell() + state.numberDirtyCells() + state.getMinimumSpanningTreeLength();
+        
+        switch (SearchAlgorithm.heuristic) {
+		case H0:
+			this.h = 0;
+			break;
+		case H1:
+			this.h = state.distanceToNearestDirtyCell() + state.getNumberDirtyCells();
+			break;
+		case H2:
+			this.h = state.distanceToNearestDirtyCell() + state.getNumberDirtyCells() + state.getMinimumSpanningTreeLength();
+			break;
+		case H3:
+			this.h = state.distanceToNearestDirtyCell() + state.getNumberDirtyCells() + state.getMinimumSpanningTreeLength();
+			this.h = this.h + (int) (this.h / VacuumWorld.maxBattery);			
+			break;        
+        }
+        	
+        
     }
 
     /**
@@ -51,20 +67,7 @@ public class Node implements Comparable<Node> {
     public boolean isGoal() {
         return state.isGoal();
     }
-    
-    /**
-     * Prints the path.
-     */
-    public void printPath() {
-        state.printPath();
-        
-        System.err.println("length: " + getPathLength());
-    }
-    
-    public int getPathLength() {
-    	return state.getPathLength();
-    }
-    
+           
     public int getDepth() {
         return depth;
     }

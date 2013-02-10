@@ -12,6 +12,8 @@ import java.util.BitSet;
  *
  */
 public class VacuumWorld {
+	public static int maxBattery;
+	
     public Cell [][] cells;    
     private Cell robotCell;
     private State initialState;
@@ -19,11 +21,17 @@ public class VacuumWorld {
     private int numRows;
     private int numCols;
     
-    public VacuumWorld() {
+    public VacuumWorld(boolean useBattery) {
         buildWorldFromInput();
         determineNeighbors();
-                
-        initialState = new State(robotCell, buildInitialBitSet());
+
+        if (useBattery) {
+        	maxBattery = 2 * (numRows + numCols - 2) + 1;       	
+        } else {
+        	maxBattery = Integer.MAX_VALUE;
+        }
+        
+        initialState = new State(robotCell, buildInitialBitSet(), maxBattery);
     }
 
     public State getInitialState() {
@@ -41,15 +49,15 @@ public class VacuumWorld {
     }
     
     private void buildWorldFromInput() {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        //BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         //BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream("/home/csg/crr8/spring2013/cs830/prog1/worlds/hard-1.vw")));
-        /*BufferedReader br = null;
+        BufferedReader br = null;
         try {
-            br = new BufferedReader(new InputStreamReader(new FileInputStream("C:/spring2013/cs830/prog1/worlds/small-1.vw")));
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("C:/spring2013/cs830/prog1/worlds/battery-hard.vw")));
         } catch (FileNotFoundException e1) {
             e1.printStackTrace();
             System.exit(1);
-        }*/
+        }
         
         try {
             numCols = Integer.parseInt(br.readLine());

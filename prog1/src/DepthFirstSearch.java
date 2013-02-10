@@ -1,5 +1,4 @@
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Stack;
 
@@ -10,62 +9,73 @@ import java.util.Stack;
  *
  */
 public class DepthFirstSearch extends SearchAlgorithm {
-	private int depthBounds = Integer.MAX_VALUE;
+	private int bound;
+	private IterativeDeepeningSearch callingAlgorithm = null;
 	
     public DepthFirstSearch(State initialState) {
         super(initialState);
+        this.bound = Integer.MAX_VALUE;
     }
     
-    public DepthFirstSearch(State initialState, int depthBounds) {
+    public DepthFirstSearch(State initialState, int bound, IterativeDeepeningSearch callingAlgorithm) {
         super(initialState);
         
-        this.depthBounds = depthBounds;
+        this.bound = bound;
+        this.callingAlgorithm = callingAlgorithm;
     }
         
     @Override
-    public boolean search() {
+    public Solution search() {
         Stack<Node> openList = new Stack<Node>();
+        
         
         // Place the node with the starting state on the open list.
         openList.push(initialNode);
+        
         nodesGenerated++;
         
-        HashSet<State> cycleChecker = new HashSet<State>();
                         
         while (true) {
             if (openList.isEmpty()) {
                 // Failure.
-                return false;
+                return null;
             }
             
             Node node = openList.pop();
             
             if (node.isGoal()) {
-                // The goal was found, so print the path and return.
-                node.printPath();
-                
-                System.out.println(nodesGenerated + " nodes generated");
-                System.out.println(nodesExpanded + " nodes expanded");
-                
-                return true;
-            } else {
-                // Expand the node.
-                cycleChecker.add(node.getState());
+                // The goal was found.
+                return new Solution(node.getState().getActionsTaken(), nodesGenerated, nodesExpanded);
+            } else if (callingAlgorithm == null || callingAlgorithm.boundsCheck(node, bound)) {
+                // Expand the node.                
+            	List<Node> children = expand(node);
                 nodesExpanded++;
-                                
-                List<Node> children = expand(node);
                 nodesGenerated += children.size();
                 
-                for (Node child : children) {                    
+                for (Node child : children) {
                     // Make sure the generated node is not a duplicate.
-                    if (child.getDepth() <= depthBounds && !cycleChecker.contains(child.getState())) {
+                    if (!nodeMakesACycle(child)) {
                         openList.push(child);
                     }
                 }
             }
         }
     }
-    
+        
+    private boolean nodeMakesACycle(Node node) {
+    	Node parent = node.getParent();
+    	
+    	while (parent != null) {
+    		if (parent.getState().equals(node.getState())) {
+    			return true;
+    		}
+    		
+    		parent = parent.getParent();
+    	}
+    	
+    	return false;
+    }
+        
     @Override
     protected List<Node> expand(Node node) {
         List<Node> children = node.expand();

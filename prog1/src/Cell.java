@@ -119,6 +119,10 @@ public class Cell {
         return occupied;
     }
     
+    public boolean isChargeStation() {
+    	return cellType == type.CHARGE_STATION;
+    }
+    
     public type returnCellType() {
         return cellType;
     }
