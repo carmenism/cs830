@@ -8,16 +8,18 @@ import java.util.List;
  *
  */
 public class Node implements Comparable<Node> {
-    private State state;
+    private final State state;
     private final double g;
+    private final int depth;
     private double h;
     
     private Node parent;
     
-    public Node(State state, Node parent, double g) {
+    public Node(State state, Node parent, double g, int depth) {
         this.state = state;
         this.parent = parent;
         this.g = g;
+        this.depth = depth;
                 
         this.h = state.distanceToNearestDirtyCell() + state.numberDirtyCells() + state.getMinimumSpanningTreeLength();
     }
@@ -33,7 +35,7 @@ public class Node implements Comparable<Node> {
         for (State possibleFuture : state.expand()) {
             // Prune away the parent state.
             if (parent == null || !possibleFuture.equals(parent.state)) {
-                Node n = new Node(possibleFuture, this, getG() + 1);
+                Node n = new Node(possibleFuture, this, getG() + 1, getDepth() + 1);
                 children.add(n);
             }
         }
@@ -61,6 +63,10 @@ public class Node implements Comparable<Node> {
     
     public int getPathLength() {
     	return state.getPathLength();
+    }
+    
+    public int getDepth() {
+        return depth;
     }
     
     public double getG() {

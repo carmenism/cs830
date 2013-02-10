@@ -19,12 +19,12 @@ public abstract class SearchAlgorithm {
     protected int nodesExpanded = 0;
     
     public SearchAlgorithm(State initialState) {
-        this.initialNode = new Node(initialState, null, 0);
+        this.initialNode = new Node(initialState, null, 0, 1);
         
         algorithm = this;
     }
     
-    public abstract void search();
+    public abstract boolean search();
     protected abstract List<Node> expand(Node node);    
     protected abstract int compareTo(Node n1, Node n2);
 }

@@ -10,16 +10,20 @@ import java.util.Stack;
  *
  */
 public class DepthFirstSearch extends SearchAlgorithm {
+	private int depthBounds = Integer.MAX_VALUE;
+	
     public DepthFirstSearch(State initialState) {
         super(initialState);
     }
     
-    @Override
-    public void search() {
-/*        search(null);
+    public DepthFirstSearch(State initialState, int depthBounds) {
+        super(initialState);
+        
+        this.depthBounds = depthBounds;
     }
         
-    public void search(Integer maxDepth) {*/
+    @Override
+    public boolean search() {
         Stack<Node> openList = new Stack<Node>();
         
         // Place the node with the starting state on the open list.
@@ -27,12 +31,11 @@ public class DepthFirstSearch extends SearchAlgorithm {
         nodesGenerated++;
         
         HashSet<State> cycleChecker = new HashSet<State>();
-                
+                        
         while (true) {
             if (openList.isEmpty()) {
-                // Failure - abort.
-                System.err.println("Failure - open list is empty.");
-                System.exit(1);
+                // Failure.
+                return false;
             }
             
             Node node = openList.pop();
@@ -44,18 +47,18 @@ public class DepthFirstSearch extends SearchAlgorithm {
                 System.out.println(nodesGenerated + " nodes generated");
                 System.out.println(nodesExpanded + " nodes expanded");
                 
-                return;
+                return true;
             } else {
                 // Expand the node.
                 cycleChecker.add(node.getState());
                 nodesExpanded++;
-                
+                                
                 List<Node> children = expand(node);
                 nodesGenerated += children.size();
                 
                 for (Node child : children) {                    
                     // Make sure the generated node is not a duplicate.
-                    if (!cycleChecker.contains(child.getState())) {
+                    if (child.getDepth() <= depthBounds && !cycleChecker.contains(child.getState())) {
                         openList.push(child);
                     }
                 }

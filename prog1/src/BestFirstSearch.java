@@ -9,7 +9,7 @@ public abstract class BestFirstSearch extends SearchAlgorithm {
 	}
 
 	@Override
-	public void search() {
+	public boolean search() {
     	PriorityQueue<Node> openList = new PriorityQueue<Node>();
         HashMap<State, Node> closedList = new HashMap<State, Node>();
         
@@ -19,9 +19,8 @@ public abstract class BestFirstSearch extends SearchAlgorithm {
     	
         while (true) {
             if (openList.isEmpty()) {
-                // Failure - abort.
-                System.err.println("Failure - open list is empty.");
-                System.exit(1);
+                // Failure.
+                return false;
             }
             
             Node node = openList.poll();
@@ -33,7 +32,7 @@ public abstract class BestFirstSearch extends SearchAlgorithm {
                 System.out.println(nodesGenerated + " nodes generated");
                 System.out.println(nodesExpanded + " nodes expanded");
                                 
-                return;
+                return true;
             } else {
                 // Expand the node.
                 closedList.put(node.getState(), node);

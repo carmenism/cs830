@@ -34,7 +34,7 @@ public class Program1 {
         if (cmdAlgorithm.equals(CMD_DEPTH_FIRST)) {
             algorithm = new DepthFirstSearch(vw.getInitialState());
         } else if (cmdAlgorithm.equals(CMD_DEPTH_FIRST_ID)) {
-        
+        	//algorithm = new IDDepthFirstSearch(vw.getInitialState());
         } else if (cmdAlgorithm.equals(CMD_UNIFORM_COST)) {
             algorithm = new UniformCost(vw.getInitialState());
         } else if (cmdAlgorithm.equals(CMD_A_STAR)) {
