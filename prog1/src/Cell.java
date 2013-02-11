@@ -143,7 +143,7 @@ public class Cell {
     }
     
 	/**
-	 * Gets the column index of this cell in teh vaccum world.
+	 * Gets the column index of this cell in the vaccum world.
 	 * 
 	 * @return The column index.
 	 */

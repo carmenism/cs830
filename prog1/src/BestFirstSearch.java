@@ -63,6 +63,7 @@ public abstract class BestFirstSearch extends SearchAlgorithm {
 						openList.add(child);
 						closedList.put(child.getState(), child);
 					} else if (child.getG() < incumbent.getG()) {
+						closedList.remove(incumbent.getState());
 						openList.add(child);				
 						closedList.put(child.getState(), child);
 					}

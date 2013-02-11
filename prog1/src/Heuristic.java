@@ -84,11 +84,8 @@ public class Heuristic {
 	 *            The state whose heuristic value will be calculated.
 	 * @return The heuristic value of the state.
 	 */
-	private static double calculateH1(State state) {
-		double dist = state.distanceToNearestDirtyCell();
-		double num = state.getNumberDirtyCells();
-		
-		return dist + num;
+	private static double calculateH1(State state) {		
+		return state.distanceToNearestDirtyCell() + state.getNumberDirtyCells();
 	}
 
 	/**
@@ -101,11 +98,8 @@ public class Heuristic {
 	 *            The state whose heuristic value will be calculated.
 	 * @return The heuristic value of the state.
 	 */
-	private static double calculateH2(State state) {
-		double mst = state.getMinimumSpanningTreeLength();
-		double total = calculateH1(state) + mst;
-		
-		return total;
+	private static double calculateH2(State state) {		
+		return calculateH1(state) + state.getMinimumSpanningTreeLength();
 	}
 
 	/**

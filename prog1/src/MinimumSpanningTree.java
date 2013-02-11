@@ -149,7 +149,7 @@ public class MinimumSpanningTree {
 			}
 
 			// If the two cells are in two different trees, those trees should
-			// be joined.
+			// be joined; otherwise ignore this edge completely.
 			if (indexTreeA != indexTreeB) {
 				mergeTrees(forest, indexTreeA, indexTreeB);
 				mstEdges.add(minimumEdge);
