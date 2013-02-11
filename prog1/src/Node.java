@@ -7,37 +7,31 @@ import java.util.List;
  * @author Carmen St. Jean
  *
  */
-public class Node implements Comparable<Node> {	
+public class Node {	
     private final State state;
+    private final Node parent;
     private final double g;
     private final int depth;
-    private double h;
-    
-    private Node parent;
-    
+    private final double h;
+
+	/**
+	 * Creates a node from a state, a parent node, a cost, and a depth.
+	 * 
+	 * @param state
+	 *            The state corresponding to this node.
+	 * @param parent
+	 *            The parent for this node in the search tree.
+	 * @param g
+	 *            The cost of this node.
+	 * @param depth
+	 *            The depth of this node.
+	 */
     public Node(State state, Node parent, double g, int depth) {
         this.state = state;
         this.parent = parent;
         this.g = g;
         this.depth = depth;
-        
-        switch (SearchAlgorithm.heuristic) {
-		case H0:
-			this.h = 0;
-			break;
-		case H1:
-			this.h = state.distanceToNearestDirtyCell() + state.getNumberDirtyCells();
-			break;
-		case H2:
-			this.h = state.distanceToNearestDirtyCell() + state.getNumberDirtyCells() + state.getMinimumSpanningTreeLength();
-			break;
-		case H3:
-			this.h = state.distanceToNearestDirtyCell() + state.getNumberDirtyCells() + state.getMinimumSpanningTreeLength();
-			this.h = this.h + (int) (this.h / VacuumWorld.maxBattery);			
-			break;        
-        }
-        	
-        
+        this.h = Heuristic.calculate(state);        
     }
 
     /**
@@ -67,37 +61,63 @@ public class Node implements Comparable<Node> {
     public boolean isGoal() {
         return state.isGoal();
     }
-           
+
+	/**
+	 * The depth of this node in the search tree.
+	 * 
+	 * @return The node's depth.
+	 */
     public int getDepth() {
         return depth;
     }
-    
+
+	/**
+	 * The cost for this node.
+	 * 
+	 * @return The node's cost.
+	 */
     public double getG() {
         return g;
     }
 
+	/**
+	 * The heuristic function value for this node.
+	 * 
+	 * @return The node's heuristic value.
+	 */
     public double getH() {
         return h;
     }
 
+	/**
+	 * The state of the vacuum world for this node.
+	 * 
+	 * @return The state corresponding to this node.
+	 */
     public State getState() {
         return state;
     }
 
+	/**
+	 * The f value (where f = g + h) for this node.
+	 * 
+	 * @return The f value.
+	 */
     public double getF() {
         return getG() + getH();
     }
 
+	/**
+	 * The parent node for this node.
+	 * 
+	 * @return The parent.
+	 */
     public Node getParent() {
         return parent;
     }
     
+    @Override
     public String toString() {
         return "Node[ " + state.toString() + ", g:" + g + ", h:" + h + " ]";
-    }
-
-    @Override
-    public int compareTo(Node node) {
-        return SearchAlgorithm.algorithm.compareTo(this, node);
     }
 }

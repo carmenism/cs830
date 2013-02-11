@@ -32,6 +32,16 @@ public class Cell {
     
     public int dirtyCellIndex = -1;
     
+	/**
+	 * Creates a cell from indices and a character representing the cell type.
+	 * 
+	 * @param r
+	 *            The row index for this cell.
+	 * @param c
+	 *            The column index for this cell.
+	 * @param t
+	 *            The character representing the type of this cell.
+	 */
     public Cell(int r, int c, char t) {
         row = r;
         col = c;
@@ -73,7 +83,7 @@ public class Cell {
     public void calculateDistanceToDirts() {
         distanceToDirts = new ArrayList<Integer>();
         
-        for (Cell dirtyCell : State.dirtyCells) {
+        for (Cell dirtyCell : VacuumWorld.dirtyCells) {
             distanceToDirts.add(getManhattanDistance(dirtyCell));
         }
     }
@@ -122,25 +132,34 @@ public class Cell {
     public boolean isChargeStation() {
     	return cellType == type.CHARGE_STATION;
     }
-    
-    public type returnCellType() {
-        return cellType;
-    }
-    
-    public void setClean(boolean c) {
-        clean = c;
-    }
-    
-    public void setOccupied(boolean o) {
-        occupied = o;
-    }
-    
+
+	/**
+	 * Gets the row index of this cell in the vaccum world.
+	 * 
+	 * @return The row index.
+	 */
     public int getRow() {
         return row;
     }
     
+	/**
+	 * Gets the column index of this cell in teh vaccum world.
+	 * 
+	 * @return The column index.
+	 */
     public int getCol() {
         return col;
+    }
+        
+    /**
+     * Prints the neighbors of this cell.
+     */
+    public void printNeighbors() {
+        System.out.println("Neighbors of " + this.toString() + ":");
+        System.out.println("\tN " + north);
+        System.out.println("\tS " + south);
+        System.out.println("\tE " + east);
+        System.out.println("\tW " + west);
     }
     
     @Override
@@ -168,18 +187,8 @@ public class Cell {
 		return true;
 	}
 
+	@Override
 	public String toString() {
         return "Cell[ r:" + row + ", c:" + col + " ]"; 
-    }
-    
-    /**
-     * Prints the neighbors of this cell.
-     */
-    public void printNeighbors() {
-        System.out.println("Neighbors of " + this.toString() + ":");
-        System.out.println("\tN " + north);
-        System.out.println("\tS " + south);
-        System.out.println("\tE " + east);
-        System.out.println("\tW " + west);
     }
 }

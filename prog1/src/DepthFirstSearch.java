@@ -3,21 +3,40 @@ import java.util.List;
 import java.util.Stack;
 
 /**
- * Defines behavior for a depth first search.
+ * Defines a class representing depth first search. Depth first search means the
+ * open list is a stack.
  * 
- * @author Carmen St. Jean 
- *
+ * @author Carmen St. Jean
+ * 
  */
 public class DepthFirstSearch extends SearchAlgorithm {
 	private int bound;
-	private IterativeDeepeningSearch callingAlgorithm = null;
+	private IDSearch callingAlgorithm = null;
 	
+	/**
+	 * Creates the depth-first search algorithm and the initial node from the
+	 * specified initial state.
+	 * 
+	 * @param initialState
+	 *            The initial state of the world.
+	 */
     public DepthFirstSearch(State initialState) {
         super(initialState);
         this.bound = Integer.MAX_VALUE;
     }
     
-    public DepthFirstSearch(State initialState, int bound, IterativeDeepeningSearch callingAlgorithm) {
+	/**
+	 * Creates a depth first search with a bound and calling algorithm. This
+	 * constructor is only intended to be used by an IDSearch class.
+	 * 
+	 * @param initialState
+	 *            The initial state of the vacuum world.
+	 * @param bound
+	 *            A bound used to prune the children of an expanded node.
+	 * @param callingAlgorithm
+	 *            An iterative deepening search class.
+	 */
+    protected DepthFirstSearch(State initialState, int bound, IDSearch callingAlgorithm) {
         super(initialState);
         
         this.bound = bound;
@@ -27,14 +46,11 @@ public class DepthFirstSearch extends SearchAlgorithm {
     @Override
     public Solution search() {
         Stack<Node> openList = new Stack<Node>();
-        
-        
+                
         // Place the node with the starting state on the open list.
-        openList.push(initialNode);
-        
+        openList.push(initialNode);        
         nodesGenerated++;
-        
-                        
+                                
         while (true) {
             if (openList.isEmpty()) {
                 // Failure.
@@ -80,13 +96,13 @@ public class DepthFirstSearch extends SearchAlgorithm {
     protected List<Node> expand(Node node) {
         List<Node> children = node.expand();
         
-        Collections.sort(children);
+        Collections.sort(children, this);
         
         return children;
     }
 
     @Override
-    protected int compareTo(Node n1, Node n2) {
+    public int compare(Node n1, Node n2) {
         // Sort by largest to smallest heuristic.
         if (n1.getH() > n2.getH()) {
             return BEFORE;
