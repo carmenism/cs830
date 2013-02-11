@@ -1,4 +1,6 @@
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -60,10 +62,10 @@ public class VacuumWorld {
 	 */
     private BitSet buildInitialBitSet() {
         // All bits of this bitset are set to false by default.
-        BitSet bitsToClean = new BitSet(Cell.numberDirtyCells);
+        BitSet bitsToClean = new BitSet(dirtyCells.size());
         
         // Set them all to true.
-        bitsToClean.flip(0, Cell.numberDirtyCells);
+        bitsToClean.flip(0, dirtyCells.size());
         
         return bitsToClean;
     }
@@ -72,16 +74,16 @@ public class VacuumWorld {
      * Builds the vacuum world from standard input.
      */
     private void buildWorldFromInput() {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        //BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         
         // For testing purposes on my PC.
-        /*BufferedReader br = null;
+        BufferedReader br = null;
         try {
-            br = new BufferedReader(new InputStreamReader(new FileInputStream("C:/spring2013/cs830/prog1/worlds/hard-1.vw")));
+            br = new BufferedReader(new InputStreamReader(new FileInputStream("C:/spring2013/cs830/prog1/worlds/giant3.vw")));
         } catch (FileNotFoundException e1) {
             e1.printStackTrace();
             System.exit(1);
-        }*/
+        }
         
         try {
             numCols = Integer.parseInt(br.readLine());

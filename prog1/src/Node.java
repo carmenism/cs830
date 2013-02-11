@@ -46,6 +46,7 @@ public class Node {
             // Prune away the parent state.
             if (parent == null || !possibleFuture.equals(parent.state)) {
                 Node n = new Node(possibleFuture, this, getG() + 1, getDepth() + 1);
+                assert(this.getF() <= n.getF());
                 children.add(n);
             }
         }
@@ -59,7 +60,7 @@ public class Node {
      * @return True if this state is a goal state.
      */
     public boolean isGoal() {
-        return state.isGoal();
+    	return state.isGoal();
     }
 
 	/**

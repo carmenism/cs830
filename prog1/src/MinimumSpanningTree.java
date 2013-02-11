@@ -21,7 +21,7 @@ import java.util.PriorityQueue;
 public class MinimumSpanningTree {
 	public static HashMap<Pair, MinimumSpanningTree> msts = new HashMap<Pair, MinimumSpanningTree>();
 
-	private double cost;
+	private double cost = 0;
 
 	private MinimumSpanningTree(BitSet cellsLeftover, Cell chargingCell) {
 		List<Cell> newList = new ArrayList<Cell>();

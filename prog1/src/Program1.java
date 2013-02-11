@@ -49,8 +49,11 @@ public class Program1 {
         
         boolean useBattery = determineBatteryUsage(args);
         
+        if (args.length > 1) {
+        	Heuristic.setHeuristic(args[1]);
+        }
+        
         String cmdAlgorithm = args[0];
-        String cmdHeuristic = null;
         VacuumWorld vw = new VacuumWorld(useBattery);
         
         if (cmdAlgorithm.equals(CMD_DEPTH_FIRST)) {
@@ -61,19 +64,12 @@ public class Program1 {
             algorithm = new UniformCost(vw.getInitialState());
         } else if (cmdAlgorithm.equals(CMD_A_STAR)) {
            	algorithm = new AStar(vw.getInitialState());
-           	cmdHeuristic = args[1];
         } else if (cmdAlgorithm.equals(CMD_GREEDY)) {
         	algorithm = new Greedy(vw.getInitialState());
-        	cmdHeuristic = args[1];
         } else if (cmdAlgorithm.equals(CMD_IDA_STAR)) {
         	algorithm = new IDAStar(vw.getInitialState());
-        	cmdHeuristic = args[1];
         }
-        
-        if (cmdHeuristic != null) {
-        	Heuristic.setHeuristic(cmdHeuristic);
-        }
-        
+               
         return algorithm;
     }
 

@@ -71,8 +71,8 @@ public class Cell {
      * @return The Manhattan distance between the cells.
      */
     public int getManhattanDistance(Cell otherCell) {
-        int rowDiff = Math.abs(otherCell.getRow() - getRow());
-        int colDiff = Math.abs(otherCell.getCol() - getCol());
+        int rowDiff = Math.abs(otherCell.getRow() - row);
+        int colDiff = Math.abs(otherCell.getCol() - col);
         
         return rowDiff + colDiff;
     }

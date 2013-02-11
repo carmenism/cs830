@@ -18,7 +18,7 @@ public class Heuristic {
     public static final String CMD_H2 = "h2";
     public static final String CMD_H3 = "h3";
 	
-	public static Type type = Type.H1;
+	public static Type type = null;
 	
 	/**
 	 * Sets the heuristic to be used according the command specified by the
@@ -36,6 +36,8 @@ public class Heuristic {
     		type = Type.H2;
     	} else if (cmdHeuristic.equals(CMD_H3)) {
     		type = Type.H3;
+    	} else {
+    		type = Type.H1;
     	}
 	}
 
@@ -83,7 +85,10 @@ public class Heuristic {
 	 * @return The heuristic value of the state.
 	 */
 	private static double calculateH1(State state) {
-		return state.distanceToNearestDirtyCell() + state.getNumberDirtyCells();
+		double dist = state.distanceToNearestDirtyCell();
+		double num = state.getNumberDirtyCells();
+		
+		return dist + num;
 	}
 
 	/**
@@ -97,7 +102,10 @@ public class Heuristic {
 	 * @return The heuristic value of the state.
 	 */
 	private static double calculateH2(State state) {
-		return calculateH1(state) + state.getMinimumSpanningTreeLength();
+		double mst = state.getMinimumSpanningTreeLength();
+		double total = calculateH1(state) + mst;
+		
+		return total;
 	}
 
 	/**

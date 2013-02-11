@@ -27,7 +27,7 @@ public abstract class BestFirstSearch extends SearchAlgorithm {
 
 	@Override
 	public Solution search() {
-		PriorityQueue<Node> openList = new PriorityQueue<Node>(INITITAL_SIZE,
+ 		PriorityQueue<Node> openList = new PriorityQueue<Node>(INITITAL_SIZE,
 				this);
 		HashMap<State, Node> closedList = new HashMap<State, Node>();
 
@@ -57,8 +57,18 @@ public abstract class BestFirstSearch extends SearchAlgorithm {
 
 				for (Node child : children) {
 					// Make sure the generated node is not a duplicate.
-					if (!closedList.containsKey(child.getState())) {
+					Node incumbent = closedList.get(child.getState());
+					
+					if (incumbent == null) {
 						openList.add(child);
+						closedList.put(child.getState(), child);
+					} else if (child.getG() < incumbent.getG()) {
+						openList.add(child);
+						
+						Node removed = closedList.remove(incumbent.getState());
+						assert(removed != null);
+						assert(removed == incumbent);
+						
 						closedList.put(child.getState(), child);
 					}
 				}

@@ -47,11 +47,11 @@ public class Edge implements Comparable<Edge> {
 	 * @return True if these edges connect the same two cells.
 	 */
 	public boolean equivalentCells(Edge edge) {
-		if (this.getCellA().equals(edge.getCellA()) && this.getCellB().equals(edge.getCellB())) {
+		if (cellA.equals(edge.getCellA()) && cellB.equals(edge.getCellB())) {
 			return true;
 		}
 		
-		if (this.getCellA().equals(edge.getCellB()) && this.getCellB().equals(edge.getCellA())) {
+		if (cellA.equals(edge.getCellB()) && cellB.equals(edge.getCellA())) {
 			return true;
 		}
 		
@@ -97,5 +97,11 @@ public class Edge implements Comparable<Edge> {
         }
         
         return EQUAL;
+	}
+
+	@Override
+	public String toString() {
+		return "Edge [cellA=" + cellA + ", cellB=" + cellB + ", cost=" + cost
+				+ "]\n";
 	}
 }

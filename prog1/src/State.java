@@ -102,27 +102,6 @@ public class State {
 	}
 
 	/**
-	 * Finds the distance to the farthest dirty cell.
-	 * 
-	 * @return The Manhattan distance to the farthest dirty cell.
-	 */
-	public double distanceToFarthestDirtyCell() {
-		int maxManhattan = Integer.MIN_VALUE;
-
-		for (int i = 0; i < bitsToClean.size(); i++) {
-			if (bitsToClean.get(i)) {
-				int manhattanDist = cell.getDistanceToDirt(i);
-
-				if (maxManhattan < manhattanDist) {
-					maxManhattan = manhattanDist;
-				}
-			}
-		}
-
-		return maxManhattan;
-	}
-
-	/**
 	 * Gets the number of remaining dirty cells left in the world.
 	 * 
 	 * @return The number of remaining dirty cells for this state.
@@ -138,7 +117,7 @@ public class State {
 	 * @return A list of possible future states.
 	 */
 	public List<State> expand() {
-		List<State> possibleFutures = new ArrayList<State>(4);
+		List<State> possibleFutures = new ArrayList<State>(5);
 
 		int nextBatteryLevel;
 
@@ -161,7 +140,7 @@ public class State {
 		if (!cell.isClean() && bitsToClean.get(cell.dirtyCellIndex)) {
 			// Add a state to vacuum.
 			BitSet newStateBits = (BitSet) bitsToClean.clone();
-			newStateBits.flip(cell.dirtyCellIndex);
+			newStateBits.clear(cell.dirtyCellIndex);
 			possibleFutures.add(new State(cell, newStateBits, actionsTaken,
 					VACUUM, nextBatteryLevel));
 		} else {
