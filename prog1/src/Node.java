@@ -46,7 +46,6 @@ public class Node {
             // Prune away the parent state.
             if (parent == null || !possibleFuture.equals(parent.state)) {
                 Node n = new Node(possibleFuture, this, getG() + 1, getDepth() + 1);
-                assert(this.getF() <= n.getF());
                 children.add(n);
             }
         }

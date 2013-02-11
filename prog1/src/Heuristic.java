@@ -18,7 +18,7 @@ public class Heuristic {
     public static final String CMD_H2 = "h2";
     public static final String CMD_H3 = "h3";
 	
-	public static Type type = null;
+	public static Type type = Type.H1;
 	
 	/**
 	 * Sets the heuristic to be used according the command specified by the
