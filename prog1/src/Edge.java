@@ -98,10 +98,4 @@ public class Edge implements Comparable<Edge> {
         
         return EQUAL;
 	}
-
-	@Override
-	public String toString() {
-		return "Edge [cellA=" + cellA + ", cellB=" + cellB + ", cost=" + cost
-				+ "]\n";
-	}
 }
