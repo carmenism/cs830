@@ -15,11 +15,11 @@ public class IDDepthFirstSearch extends IDSearch {
 	 *            The initial state of the world.
 	 */
 	public IDDepthFirstSearch(State initialState) {
-        super(initialState);
-    }
-    
+		super(initialState);
+	}
+
 	@Override
 	protected boolean boundsCheck(Node node, int bound) {
-    	return node.getDepth() < bound;
-    }
+		return node.getDepth() < bound;
+	}
 }

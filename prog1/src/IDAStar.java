@@ -19,7 +19,7 @@ public class IDAStar extends IDSearch {
 	}
 
 	@Override
-    protected boolean boundsCheck(Node node, int bound) {	
+	protected boolean boundsCheck(Node node, int bound) {
 		return node.getF() < bound;
-    }
+	}
 }

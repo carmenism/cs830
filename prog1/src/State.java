@@ -183,9 +183,9 @@ public class State {
 	 * 
 	 * @return The actions taken by the robot so far, as a string.
 	 */
-    public String getActionsTaken() {
-    	return actionsTaken;
-    }
+	public String getActionsTaken() {
+		return actionsTaken;
+	}
 
 	/**
 	 * Get the length of the minimum spanning tree for the dirty cells of this
@@ -193,16 +193,16 @@ public class State {
 	 * 
 	 * @return The length of the minimum spanning tree.
 	 */
-    public double getMinimumSpanningTreeLength() {
-    	return mst.getCost();
-    }
+	public double getMinimumSpanningTreeLength() {
+		return mst.getCost();
+	}
 
 	/**
 	 * Get the amount of charge remaining for the battery.
 	 * 
 	 * @return The current battery level.
 	 */
-    public int getBatteryLevel() {
+	public int getBatteryLevel() {
 		return batteryLevel;
 	}
 
@@ -212,8 +212,8 @@ public class State {
 	 * @return The cell where the robot is positioned.
 	 */
 	public Cell getCell() {
-        return cell;
-    }
+		return cell;
+	}
 
 	/**
 	 * Gets the BitSet representing the state of the dirty cells. (0 means the
@@ -221,10 +221,10 @@ public class State {
 	 * 
 	 * @return The BitSet representing the state of the dirty cells.
 	 */
-    public BitSet getBitsToClean() {
-        return bitsToClean;
-    }
-	
+	public BitSet getBitsToClean() {
+		return bitsToClean;
+	}
+
 	@Override
 	public String toString() {
 		return "State[ " + cell.toString() + ", " + bitsToClean.toString()

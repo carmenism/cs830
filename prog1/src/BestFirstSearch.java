@@ -13,7 +13,7 @@ import java.util.PriorityQueue;
  */
 public abstract class BestFirstSearch extends SearchAlgorithm {
 	private static final int INITITAL_SIZE = 100;
-	
+
 	/**
 	 * Creates the best-first search algorithm and the initial node from the
 	 * specified initial state.
@@ -27,7 +27,7 @@ public abstract class BestFirstSearch extends SearchAlgorithm {
 
 	@Override
 	public Solution search() {
- 		PriorityQueue<Node> openList = new PriorityQueue<Node>(INITITAL_SIZE,
+		PriorityQueue<Node> openList = new PriorityQueue<Node>(INITITAL_SIZE,
 				this);
 		HashMap<State, Node> closedList = new HashMap<State, Node>();
 
@@ -58,13 +58,13 @@ public abstract class BestFirstSearch extends SearchAlgorithm {
 				for (Node child : children) {
 					// Make sure the generated node is not a duplicate.
 					Node incumbent = closedList.get(child.getState());
-					
+
 					if (incumbent == null) {
 						openList.add(child);
 						closedList.put(child.getState(), child);
 					} else if (child.getG() < incumbent.getG()) {
 						closedList.remove(incumbent.getState());
-						openList.add(child);				
+						openList.add(child);
 						closedList.put(child.getState(), child);
 					}
 				}

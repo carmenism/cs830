@@ -7,19 +7,16 @@
  */
 public class Heuristic {
 	public enum Type {
-		H0,
-		H1,
-		H2,
-		H3
+		H0, H1, H2, H3
 	}
-	
-    public static final String CMD_H0 = "h0";
-    public static final String CMD_H1 = "h1";
-    public static final String CMD_H2 = "h2";
-    public static final String CMD_H3 = "h3";
-	
+
+	public static final String CMD_H0 = "h0";
+	public static final String CMD_H1 = "h1";
+	public static final String CMD_H2 = "h2";
+	public static final String CMD_H3 = "h3";
+
 	public static Type type = Type.H1;
-	
+
 	/**
 	 * Sets the heuristic to be used according the command specified by the
 	 * user.
@@ -28,17 +25,17 @@ public class Heuristic {
 	 *            The heuristic command.
 	 */
 	public static void setHeuristic(String cmdHeuristic) {
-    	if (cmdHeuristic.equals(CMD_H0)) {
-    		type = Type.H0;
-    	} else if (cmdHeuristic.equals(CMD_H1)) {
-    		type = Type.H1;
-    	} else if (cmdHeuristic.equals(CMD_H2)) {
-    		type = Type.H2;
-    	} else if (cmdHeuristic.equals(CMD_H3)) {
-    		type = Type.H3;
-    	} else {
-    		type = Type.H1;
-    	}
+		if (cmdHeuristic.equals(CMD_H0)) {
+			type = Type.H0;
+		} else if (cmdHeuristic.equals(CMD_H1)) {
+			type = Type.H1;
+		} else if (cmdHeuristic.equals(CMD_H2)) {
+			type = Type.H2;
+		} else if (cmdHeuristic.equals(CMD_H3)) {
+			type = Type.H3;
+		} else {
+			type = Type.H1;
+		}
 	}
 
 	/**
@@ -58,12 +55,13 @@ public class Heuristic {
 		case H2:
 			return calculateH2(state);
 		case H3:
-			return calculateH3(state);	
+			return calculateH3(state);
 		}
-		
-		throw new RuntimeException("Unexpectedly reached end of heuristic function calculation.");
+
+		throw new RuntimeException(
+				"Unexpectedly reached end of heuristic function calculation.");
 	}
-	
+
 	/**
 	 * Calculates the heuristic according to h0 (h(n) = 0).
 	 * 
@@ -84,7 +82,7 @@ public class Heuristic {
 	 *            The state whose heuristic value will be calculated.
 	 * @return The heuristic value of the state.
 	 */
-	private static double calculateH1(State state) {		
+	private static double calculateH1(State state) {
 		return state.distanceToNearestDirtyCell() + state.getNumberDirtyCells();
 	}
 
@@ -98,7 +96,7 @@ public class Heuristic {
 	 *            The state whose heuristic value will be calculated.
 	 * @return The heuristic value of the state.
 	 */
-	private static double calculateH2(State state) {		
+	private static double calculateH2(State state) {
 		return calculateH1(state) + state.getMinimumSpanningTreeLength();
 	}
 
@@ -116,16 +114,16 @@ public class Heuristic {
 	 */
 	private static double calculateH3(State state) {
 		double h = calculateH2(state);
-		
+
 		// Find out how many charges are needed by the robot.
 		int numberChargesNeeded = (int) (h / VacuumWorld.maxBattery);
-		
+
 		// If it's more than one charge needed, we need to recalculate the
 		// minimum spanning tree.
 		if (numberChargesNeeded >= 1) {
 			MinimumSpanningTree minMst = null;
 			Cell minChargingCell = null;
-			
+
 			if (VacuumWorld.chargingCells.size() == 1) {
 				// Since there is only one charger, recalculate the minimum
 				// spanning tree with this one charging cell.

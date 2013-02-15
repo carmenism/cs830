@@ -172,12 +172,11 @@ public class MinimumSpanningTree {
 	 *            The index of the second tree to be combined with the first
 	 *            tree.
 	 */
-	private void mergeTrees(List<Tree> forest, int indexTreeA,
-			int indexTreeB) {
+	private void mergeTrees(List<Tree> forest, int indexTreeA, int indexTreeB) {
 		forest.get(indexTreeA).mergeIntoTree(forest.get(indexTreeB));
 		forest.remove(indexTreeB);
 	}
-	
+
 	/**
 	 * Defines an edge connecting two cells.
 	 * 
@@ -188,7 +187,7 @@ public class MinimumSpanningTree {
 		private final int BEFORE = -1;
 		private final int EQUAL = 0;
 		private final int AFTER = 1;
-		
+
 		private final Cell cellA;
 		private final Cell cellB;
 		private final double cost;
@@ -206,7 +205,7 @@ public class MinimumSpanningTree {
 			this.cellB = cellB;
 			this.cost = cellA.getManhattanDistance(cellB);
 		}
-		
+
 		/**
 		 * Gets the primary cell stored for this edge.
 		 * 
@@ -233,31 +232,31 @@ public class MinimumSpanningTree {
 		public double getCost() {
 			return cost;
 		}
-		
+
 		@Override
 		public int compareTo(Edge cellPair) {
-	        // Sort lowest to highest distance.
-	        if (this.getCost() < cellPair.getCost()) {
-	            return BEFORE;
-	        }
+			// Sort lowest to highest distance.
+			if (this.getCost() < cellPair.getCost()) {
+				return BEFORE;
+			}
 
-	        if (this.getCost() > cellPair.getCost()) {
-	            return AFTER;
-	        }
-	        
-	        return EQUAL;
+			if (this.getCost() > cellPair.getCost()) {
+				return AFTER;
+			}
+
+			return EQUAL;
 		}
 	}
-	
+
 	/**
 	 * Defines a tree where the nodes are unique cells.
 	 * 
 	 * @author Carmen St. Jean
-	 *
+	 * 
 	 */
 	private class Tree extends HashSet<Cell> {
 		private static final long serialVersionUID = 7194448419581626719L;
-		
+
 		/**
 		 * Add all cells of another tree into this tree.
 		 * 
@@ -270,7 +269,7 @@ public class MinimumSpanningTree {
 			}
 		}
 	}
-	
+
 	/**
 	 * Defines a pairing of BitSet and Cell for use with the MinimumSpanningTree
 	 * hashing. Minimum spanning trees take a lot of time to generate, so they

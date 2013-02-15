@@ -70,7 +70,7 @@ public class Solution {
 	public int getNodesGenerated() {
 		return nodesGenerated;
 	}
-	
+
 	/**
 	 * Gets the number of nodes expanded to reach this solution.
 	 * 
