@@ -7,19 +7,19 @@
  * 
  */
 public class IDAStar extends IDSearch {
-	/**
-	 * Creates the iterative deepening A* search algorithm and the initial node
-	 * from the specified initial state.
-	 * 
-	 * @param initialState
-	 *            The initial state of the world.
-	 */
-	public IDAStar(State initialState) {
-		super(initialState);
-	}
+    /**
+     * Creates the iterative deepening A* search algorithm and the initial node
+     * from the specified initial state.
+     * 
+     * @param initialState
+     *            The initial state of the world.
+     */
+    public IDAStar(State initialState) {
+        super(initialState);
+    }
 
-	@Override
-	protected boolean boundsCheck(Node node, int bound) {
-		return node.getF() < bound;
-	}
+    @Override
+    protected boolean boundsCheck(Node node, int bound) {
+        return node.getF() < bound;
+    }
 }

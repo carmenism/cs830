@@ -7,19 +7,19 @@
  * 
  */
 public class IDDepthFirstSearch extends IDSearch {
-	/**
-	 * Creates the iterative deepening depth-first search algorithm and the
-	 * initial node from the specified initial state.
-	 * 
-	 * @param initialState
-	 *            The initial state of the world.
-	 */
-	public IDDepthFirstSearch(State initialState) {
-		super(initialState);
-	}
+    /**
+     * Creates the iterative deepening depth-first search algorithm and the
+     * initial node from the specified initial state.
+     * 
+     * @param initialState
+     *            The initial state of the world.
+     */
+    public IDDepthFirstSearch(State initialState) {
+        super(initialState);
+    }
 
-	@Override
-	protected boolean boundsCheck(Node node, int bound) {
-		return node.getDepth() < bound;
-	}
+    @Override
+    protected boolean boundsCheck(Node node, int bound) {
+        return node.getDepth() < bound;
+    }
 }

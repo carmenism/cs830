@@ -19,320 +19,320 @@ import java.util.PriorityQueue;
  * 
  */
 public class MinimumSpanningTree {
-	public static HashMap<Pair, MinimumSpanningTree> msts = new HashMap<Pair, MinimumSpanningTree>();
+    public static HashMap<Pair, MinimumSpanningTree> msts = new HashMap<Pair, MinimumSpanningTree>();
 
-	private double cost = 0;
+    private double cost = 0;
 
-	private MinimumSpanningTree(BitSet cellsLeftover, Cell chargingCell) {
-		List<Cell> newList = new ArrayList<Cell>();
+    private MinimumSpanningTree(BitSet cellsLeftover, Cell chargingCell) {
+        List<Cell> newList = new ArrayList<Cell>();
 
-		// Only include the dirty cells that remain.
-		for (int i = 0; i < cellsLeftover.size(); i++) {
-			if (cellsLeftover.get(i)) {
-				newList.add(VacuumWorld.dirtyCells.get(i));
-			}
-		}
+        // Only include the dirty cells that remain.
+        for (int i = 0; i < cellsLeftover.size(); i++) {
+            if (cellsLeftover.get(i)) {
+                newList.add(VacuumWorld.dirtyCells.get(i));
+            }
+        }
 
-		// Only include the charging cell if was actually specified.
-		if (chargingCell != null) {
-			newList.add(chargingCell);
-		}
+        // Only include the charging cell if was actually specified.
+        if (chargingCell != null) {
+            newList.add(chargingCell);
+        }
 
-		buildMst(newList);
-	}
+        buildMst(newList);
+    }
 
-	/**
-	 * Gets the cost of the minimum spanning tree.
-	 * 
-	 * @return The cost of the tree as a double.
-	 */
-	public double getCost() {
-		return cost;
-	}
+    /**
+     * Gets the cost of the minimum spanning tree.
+     * 
+     * @return The cost of the tree as a double.
+     */
+    public double getCost() {
+        return cost;
+    }
 
-	/**
-	 * Retrieves the minimum spanning tree for the specified state.
-	 * 
-	 * @param state
-	 *            The state for which a minimum spanning tree is required.
-	 * @return The minimum spanning tree connecting those dirty cells (and the
-	 *         single charging cell, if specified).
-	 */
-	public static MinimumSpanningTree getMst(State state) {
-		return getMst(state, null);
-	}
+    /**
+     * Retrieves the minimum spanning tree for the specified state.
+     * 
+     * @param state
+     *            The state for which a minimum spanning tree is required.
+     * @return The minimum spanning tree connecting those dirty cells (and the
+     *         single charging cell, if specified).
+     */
+    public static MinimumSpanningTree getMst(State state) {
+        return getMst(state, null);
+    }
 
-	/**
-	 * Retrieves the minimum spanning tree for the specified state and charging
-	 * cell.
-	 * 
-	 * @param state
-	 *            The state for which a minimum spanning tree is required.
-	 * @param chargingCell
-	 *            A charging station to be included in the minimum spanning tree
-	 *            (null if no charging station is desired).
-	 * @return The minimum spanning tree connecting those dirty cells (and the
-	 *         single charging cell, if specified).
-	 */
-	public static MinimumSpanningTree getMst(State state, Cell chargingCell) {
-		BitSet bitsToClean = state.getBitsToClean();
+    /**
+     * Retrieves the minimum spanning tree for the specified state and charging
+     * cell.
+     * 
+     * @param state
+     *            The state for which a minimum spanning tree is required.
+     * @param chargingCell
+     *            A charging station to be included in the minimum spanning tree
+     *            (null if no charging station is desired).
+     * @return The minimum spanning tree connecting those dirty cells (and the
+     *         single charging cell, if specified).
+     */
+    public static MinimumSpanningTree getMst(State state, Cell chargingCell) {
+        BitSet bitsToClean = state.getBitsToClean();
 
-		MinimumSpanningTree mst = msts.get(new Pair(bitsToClean, chargingCell));
+        MinimumSpanningTree mst = msts.get(new Pair(bitsToClean, chargingCell));
 
-		if (mst == null) {
-			mst = new MinimumSpanningTree(bitsToClean, chargingCell);
-			msts.put(new Pair(bitsToClean, null), mst);
-		}
+        if (mst == null) {
+            mst = new MinimumSpanningTree(bitsToClean, chargingCell);
+            msts.put(new Pair(bitsToClean, null), mst);
+        }
 
-		return mst;
-	}
+        return mst;
+    }
 
-	/**
-	 * Builds a minimum spanning tree to connect the specified cells.
-	 * 
-	 * @param cells
-	 *            The cells for which a minimum spanning tree is required.
-	 */
-	private void buildMst(List<Cell> cells) {
-		PriorityQueue<Edge> allEdges = new PriorityQueue<Edge>();
-		List<Tree> forest = new ArrayList<Tree>();
+    /**
+     * Builds a minimum spanning tree to connect the specified cells.
+     * 
+     * @param cells
+     *            The cells for which a minimum spanning tree is required.
+     */
+    private void buildMst(List<Cell> cells) {
+        PriorityQueue<Edge> allEdges = new PriorityQueue<Edge>();
+        List<Tree> forest = new ArrayList<Tree>();
 
-		for (int i = 0; i < cells.size(); i++) {
-			Cell cell = cells.get(i);
-			Tree tree = new Tree();
-			tree.add(cell);
-			forest.add(tree);
+        for (int i = 0; i < cells.size(); i++) {
+            Cell cell = cells.get(i);
+            Tree tree = new Tree();
+            tree.add(cell);
+            forest.add(tree);
 
-			for (int j = i + 1; j < cells.size(); j++) {
-				allEdges.add(new Edge(cell, cells.get(j)));
-			}
-		}
+            for (int j = i + 1; j < cells.size(); j++) {
+                allEdges.add(new Edge(cell, cells.get(j)));
+            }
+        }
 
-		buildMstFromForest(allEdges, forest);
-	}
+        buildMstFromForest(allEdges, forest);
+    }
 
-	/**
-	 * Builds the minimum spanning tree from the forest of disjoint trees and
-	 * determines the cost of that minimum spanning tree.
-	 * 
-	 * @param allEdges
-	 *            All of the possible edges in the graph.
-	 * @param forest
-	 *            The forest of disjoint trees where each tree contains a single
-	 *            cell.
-	 * @return The list of edges that form the minimum spanning tree.
-	 */
-	private List<Edge> buildMstFromForest(PriorityQueue<Edge> allEdges,
-			List<Tree> forest) {
-		List<Edge> mstEdges = new ArrayList<Edge>();
+    /**
+     * Builds the minimum spanning tree from the forest of disjoint trees and
+     * determines the cost of that minimum spanning tree.
+     * 
+     * @param allEdges
+     *            All of the possible edges in the graph.
+     * @param forest
+     *            The forest of disjoint trees where each tree contains a single
+     *            cell.
+     * @return The list of edges that form the minimum spanning tree.
+     */
+    private List<Edge> buildMstFromForest(PriorityQueue<Edge> allEdges,
+            List<Tree> forest) {
+        List<Edge> mstEdges = new ArrayList<Edge>();
 
-		while (!allEdges.isEmpty() && forest.size() > 1) {
-			// Find the minimum edge.
-			Edge minimumEdge = allEdges.poll();
+        while (!allEdges.isEmpty() && forest.size() > 1) {
+            // Find the minimum edge.
+            Edge minimumEdge = allEdges.poll();
 
-			Cell cellA = minimumEdge.getCellA();
-			Cell cellB = minimumEdge.getCellB();
-			int indexTreeA = -1;
-			int indexTreeB = -1;
+            Cell cellA = minimumEdge.getCellA();
+            Cell cellB = minimumEdge.getCellB();
+            int indexTreeA = -1;
+            int indexTreeB = -1;
 
-			// Look through the forest for the trees that contain the two cells.
-			for (int i = 0; i < forest.size(); i++) {
-				Tree tree = forest.get(i);
+            // Look through the forest for the trees that contain the two cells.
+            for (int i = 0; i < forest.size(); i++) {
+                Tree tree = forest.get(i);
 
-				if (tree.contains(cellA)) {
-					indexTreeA = i;
-				}
+                if (tree.contains(cellA)) {
+                    indexTreeA = i;
+                }
 
-				if (tree.contains(cellB)) {
-					indexTreeB = i;
-				}
-			}
+                if (tree.contains(cellB)) {
+                    indexTreeB = i;
+                }
+            }
 
-			// If the two cells are in two different trees, those trees should
-			// be joined; otherwise ignore this edge completely.
-			if (indexTreeA != indexTreeB) {
-				mergeTrees(forest, indexTreeA, indexTreeB);
-				mstEdges.add(minimumEdge);
-				cost = cost + minimumEdge.getCost();
-			}
-		}
+            // If the two cells are in two different trees, those trees should
+            // be joined; otherwise ignore this edge completely.
+            if (indexTreeA != indexTreeB) {
+                mergeTrees(forest, indexTreeA, indexTreeB);
+                mstEdges.add(minimumEdge);
+                cost = cost + minimumEdge.getCost();
+            }
+        }
 
-		return mstEdges;
-	}
+        return mstEdges;
+    }
 
-	/**
-	 * Combines two trees of the forest together.
-	 * 
-	 * @param forest
-	 *            The collection of disjoint trees.
-	 * @param indexTreeA
-	 *            The index of the first tree to be combined with the second
-	 *            tree.
-	 * @param indexTreeB
-	 *            The index of the second tree to be combined with the first
-	 *            tree.
-	 */
-	private void mergeTrees(List<Tree> forest, int indexTreeA, int indexTreeB) {
-		forest.get(indexTreeA).mergeIntoTree(forest.get(indexTreeB));
-		forest.remove(indexTreeB);
-	}
+    /**
+     * Combines two trees of the forest together.
+     * 
+     * @param forest
+     *            The collection of disjoint trees.
+     * @param indexTreeA
+     *            The index of the first tree to be combined with the second
+     *            tree.
+     * @param indexTreeB
+     *            The index of the second tree to be combined with the first
+     *            tree.
+     */
+    private void mergeTrees(List<Tree> forest, int indexTreeA, int indexTreeB) {
+        forest.get(indexTreeA).mergeIntoTree(forest.get(indexTreeB));
+        forest.remove(indexTreeB);
+    }
 
-	/**
-	 * Defines an edge connecting two cells.
-	 * 
-	 * @author Carmen St. Jean
-	 * 
-	 */
-	private class Edge implements Comparable<Edge> {
-		private final int BEFORE = -1;
-		private final int EQUAL = 0;
-		private final int AFTER = 1;
+    /**
+     * Defines an edge connecting two cells.
+     * 
+     * @author Carmen St. Jean
+     * 
+     */
+    private class Edge implements Comparable<Edge> {
+        private final int BEFORE = -1;
+        private final int EQUAL = 0;
+        private final int AFTER = 1;
 
-		private final Cell cellA;
-		private final Cell cellB;
-		private final double cost;
+        private final Cell cellA;
+        private final Cell cellB;
+        private final double cost;
 
-		/**
-		 * Creates an edge from two cells and calculates the cost of the edge.
-		 * 
-		 * @param cellA
-		 *            The first cell.
-		 * @param cellB
-		 *            The second cell.
-		 */
-		public Edge(Cell cellA, Cell cellB) {
-			this.cellA = cellA;
-			this.cellB = cellB;
-			this.cost = cellA.getManhattanDistance(cellB);
-		}
+        /**
+         * Creates an edge from two cells and calculates the cost of the edge.
+         * 
+         * @param cellA
+         *            The first cell.
+         * @param cellB
+         *            The second cell.
+         */
+        public Edge(Cell cellA, Cell cellB) {
+            this.cellA = cellA;
+            this.cellB = cellB;
+            this.cost = cellA.getManhattanDistance(cellB);
+        }
 
-		/**
-		 * Gets the primary cell stored for this edge.
-		 * 
-		 * @return The A cell.
-		 */
-		public Cell getCellA() {
-			return cellA;
-		}
+        /**
+         * Gets the primary cell stored for this edge.
+         * 
+         * @return The A cell.
+         */
+        public Cell getCellA() {
+            return cellA;
+        }
 
-		/**
-		 * Gets the secondary cell stored for this edge.
-		 * 
-		 * @return The B cell.
-		 */
-		public Cell getCellB() {
-			return cellB;
-		}
+        /**
+         * Gets the secondary cell stored for this edge.
+         * 
+         * @return The B cell.
+         */
+        public Cell getCellB() {
+            return cellB;
+        }
 
-		/**
-		 * Gets the cost for this edge.
-		 * 
-		 * @return The edge's cost.
-		 */
-		public double getCost() {
-			return cost;
-		}
+        /**
+         * Gets the cost for this edge.
+         * 
+         * @return The edge's cost.
+         */
+        public double getCost() {
+            return cost;
+        }
 
-		@Override
-		public int compareTo(Edge cellPair) {
-			// Sort lowest to highest distance.
-			if (this.getCost() < cellPair.getCost()) {
-				return BEFORE;
-			}
+        @Override
+        public int compareTo(Edge cellPair) {
+            // Sort lowest to highest distance.
+            if (this.getCost() < cellPair.getCost()) {
+                return BEFORE;
+            }
 
-			if (this.getCost() > cellPair.getCost()) {
-				return AFTER;
-			}
+            if (this.getCost() > cellPair.getCost()) {
+                return AFTER;
+            }
 
-			return EQUAL;
-		}
-	}
+            return EQUAL;
+        }
+    }
 
-	/**
-	 * Defines a tree where the nodes are unique cells.
-	 * 
-	 * @author Carmen St. Jean
-	 * 
-	 */
-	private class Tree extends HashSet<Cell> {
-		private static final long serialVersionUID = 7194448419581626719L;
+    /**
+     * Defines a tree where the nodes are unique cells.
+     * 
+     * @author Carmen St. Jean
+     * 
+     */
+    private class Tree extends HashSet<Cell> {
+        private static final long serialVersionUID = 7194448419581626719L;
 
-		/**
-		 * Add all cells of another tree into this tree.
-		 * 
-		 * @param otherTree
-		 *            The other tree to be added to this tree.
-		 */
-		public void mergeIntoTree(Tree otherTree) {
-			for (Cell cell : otherTree) {
-				this.add(cell);
-			}
-		}
-	}
+        /**
+         * Add all cells of another tree into this tree.
+         * 
+         * @param otherTree
+         *            The other tree to be added to this tree.
+         */
+        public void mergeIntoTree(Tree otherTree) {
+            for (Cell cell : otherTree) {
+                this.add(cell);
+            }
+        }
+    }
 
-	/**
-	 * Defines a pairing of BitSet and Cell for use with the MinimumSpanningTree
-	 * hashing. Minimum spanning trees take a lot of time to generate, so they
-	 * are created only once and stored based on the dirty cells and charging
-	 * cell (if applicable) that they connect.
-	 * 
-	 * @author Carmen St. Jean
-	 * 
-	 */
-	private static class Pair {
-		private final BitSet bitsToClean;
-		private final Cell chargingStation;
+    /**
+     * Defines a pairing of BitSet and Cell for use with the MinimumSpanningTree
+     * hashing. Minimum spanning trees take a lot of time to generate, so they
+     * are created only once and stored based on the dirty cells and charging
+     * cell (if applicable) that they connect.
+     * 
+     * @author Carmen St. Jean
+     * 
+     */
+    private static class Pair {
+        private final BitSet bitsToClean;
+        private final Cell chargingStation;
 
-		/**
-		 * Creates a pair for hashing a minimum spanning tree. Charging station
-		 * is optional; specify null if no charging station is to be associated
-		 * with this pair.
-		 * 
-		 * @param bitsToClean
-		 *            A BitSet indicating which of the dirty cells are left to
-		 *            be cleaned.
-		 * @param chargingStation
-		 *            A charging station cell to be included in the minimum
-		 *            spanning tree or null.
-		 */
-		public Pair(BitSet bitsToClean, Cell chargingStation) {
-			this.bitsToClean = bitsToClean;
-			this.chargingStation = chargingStation;
-		}
+        /**
+         * Creates a pair for hashing a minimum spanning tree. Charging station
+         * is optional; specify null if no charging station is to be associated
+         * with this pair.
+         * 
+         * @param bitsToClean
+         *            A BitSet indicating which of the dirty cells are left to
+         *            be cleaned.
+         * @param chargingStation
+         *            A charging station cell to be included in the minimum
+         *            spanning tree or null.
+         */
+        public Pair(BitSet bitsToClean, Cell chargingStation) {
+            this.bitsToClean = bitsToClean;
+            this.chargingStation = chargingStation;
+        }
 
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result
-					+ ((bitsToClean == null) ? 0 : bitsToClean.hashCode());
-			result = prime
-					* result
-					+ ((chargingStation == null) ? 0 : chargingStation
-							.hashCode());
-			return result;
-		}
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result
+                    + ((bitsToClean == null) ? 0 : bitsToClean.hashCode());
+            result = prime
+                    * result
+                    + ((chargingStation == null) ? 0 : chargingStation
+                            .hashCode());
+            return result;
+        }
 
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			Pair other = (Pair) obj;
-			if (bitsToClean == null) {
-				if (other.bitsToClean != null)
-					return false;
-			} else if (!bitsToClean.equals(other.bitsToClean))
-				return false;
-			if (chargingStation == null) {
-				if (other.chargingStation != null)
-					return false;
-			} else if (!chargingStation.equals(other.chargingStation))
-				return false;
-			return true;
-		}
-	}
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            Pair other = (Pair) obj;
+            if (bitsToClean == null) {
+                if (other.bitsToClean != null)
+                    return false;
+            } else if (!bitsToClean.equals(other.bitsToClean))
+                return false;
+            if (chargingStation == null) {
+                if (other.chargingStation != null)
+                    return false;
+            } else if (!chargingStation.equals(other.chargingStation))
+                return false;
+            return true;
+        }
+    }
 }

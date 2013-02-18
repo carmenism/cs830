@@ -6,27 +6,27 @@
  * 
  */
 public class Greedy extends BestFirstSearch {
-	/**
-	 * Creates the greedy search algorithm and the initial node from the
-	 * specified initial state.
-	 * 
-	 * @param initialState
-	 *            The initial state of the world.
-	 */
-	public Greedy(State initialState) {
-		super(initialState);
-	}
+    /**
+     * Creates the greedy search algorithm and the initial node from the
+     * specified initial state.
+     * 
+     * @param initialState
+     *            The initial state of the world.
+     */
+    public Greedy(State initialState) {
+        super(initialState);
+    }
 
-	@Override
-	public int compare(Node n1, Node n2) {
-		if (n1.getH() < n2.getH()) {
-			return BEFORE;
-		}
+    @Override
+    public int compare(Node n1, Node n2) {
+        if (n1.getH() < n2.getH()) {
+            return BEFORE;
+        }
 
-		if (n1.getH() > n2.getH()) {
-			return AFTER;
-		}
+        if (n1.getH() > n2.getH()) {
+            return AFTER;
+        }
 
-		return EQUAL;
-	}
+        return EQUAL;
+    }
 }
