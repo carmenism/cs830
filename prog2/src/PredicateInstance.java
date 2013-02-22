@@ -1,17 +1,13 @@
 import java.util.List;
 
 
-public class PredicateInstance extends Node {
+public class PredicateInstance {
     private final Predicate predicate;
     private final List<Term> termList;
     
-    public PredicateInstance(Predicate predicate, List<Term> termList) {
+    public PredicateInstance(Predicate predicate, List<Term> termList) {        
         this.predicate = predicate;
         this.termList = termList;
-        
-        for (Term term : termList) {
-            addChild(term);
-        }
     }
     
     public Predicate getPredicate() {

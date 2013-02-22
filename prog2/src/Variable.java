@@ -1,7 +1,9 @@
 import java.util.HashMap;
+import java.util.List;
 
 public class Variable extends Term {
     private static HashMap<String, Variable> variables;
+    private static int counter = 0;
     
     private Variable(String name) {
         super(name);
@@ -20,11 +22,30 @@ public class Variable extends Term {
         Variable variable = variables.get(name);
         
         if (variable == null) {
-            variable = new Variable(name);
-            
+            variable = new Variable("x" + counter);
             variables.put(name, variable);
+            counter++;
         }
         
         return variable;
+    }
+    
+    
+    
+    public boolean matches(Term other, HashMap<String, Substitution> subs) {
+        if (subs.containsKey(this.getName())) {
+            Term sub = subs.get(this.getName()).getSubstitute();
+            
+            return sub.matches(other, subs);
+        }
+        
+        if (subs.containsKey(other.getName())) {
+            other = subs.get(other.getName()).getSubstitute();
+        }
+        
+        Substitution newSub = new Substitution(other, this);
+        subs.put(this.getName(), newSub);
+        
+        return true;
     }
 }

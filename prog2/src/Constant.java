@@ -23,4 +23,26 @@ public class Constant extends Term {
     public String toString() {
         return name;
     }
+
+    
+    
+    @Override
+    public boolean matches(Term other, HashMap<String, Substitution> subs) {        
+        if (subs.containsKey(other.getName())) {
+            other = subs.get(other.getName()).getSubstitute();
+        }
+        
+        if (other instanceof Constant) {
+            Constant otherConstant = (Constant) other;
+            
+            return otherConstant.equals(this);
+        } else if (other instanceof FunctionInstance) {
+            return false;
+        }
+        
+        // then other is a variable        
+        subs.put(other.getName(), new Substitution(this, (Variable) other));
+        
+        return true;
+    }   
 }

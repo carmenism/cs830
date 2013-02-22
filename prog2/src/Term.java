@@ -1,9 +1,15 @@
+import java.util.HashMap;
 
-public abstract class Term extends Node {
+
+public abstract class Term {
     protected String name;
     
     public Term(String name) {
         this.name = name;
+    }
+    
+    public String getName() {
+        return name;
     }
     
     @Override
@@ -34,5 +40,7 @@ public abstract class Term extends Node {
         } else if (!name.equals(other.name))
             return false;
         return true;
-    } 
+    }
+    
+    public abstract boolean matches(Term other, HashMap<String, Substitution> subs);
 }

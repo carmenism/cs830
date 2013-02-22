@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Clause extends Node {
+public class Clause {
     private Literal literal;
     private Clause clause;
     
@@ -11,27 +11,27 @@ public class Clause extends Node {
     public Clause(Literal literal, Clause clause) {
         this(literal);
         this.clause = clause;
-
-        addChild(clause);
         
-        addAllLiterals(this);        
+        addAllLiterals(clause);        
     }
     
     public Clause(Literal literal) {
         this.literal = literal;
         
-        addChild(literal);
+        allLiterals.add(literal);
     }
     
-    public Clause resolve(Clause other) {
+    public boolean canResolve(Clause other) {
         List<Literal> sharedLiterals = new ArrayList<Literal>();
         
         for (Literal lit : allLiterals) {
             boolean canceledOut = false;
             
-            for (Literal otherLit : other.allLiterals) {                
+            for (Literal otherLit : other.allLiterals) {
+                System.out.println("Comparing \n\t" + lit + "\n\t" + otherLit);
                 if (lit.cancelsOut(otherLit)) {
                     canceledOut = true;
+                    System.out.println("VICTORY!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     break;
                 }
             }
@@ -39,6 +39,10 @@ public class Clause extends Node {
             if (!canceledOut) {
                 sharedLiterals.add(lit);
             }
+        }
+        
+        if (sharedLiterals.size() == allLiterals.size()) {
+            return false;
         }
         
         for (Literal otherLit : other.allLiterals) {
@@ -56,7 +60,7 @@ public class Clause extends Node {
             }
         }
         
-        return null;
+        return true;
     }
     
     private void addAllLiterals(Clause c) {

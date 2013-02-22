@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Parser {    
     public static void main(String [] args) {
-        String [] clauses = {
+        /*String [] clauses = {
             "-CoffeeMaker(x5) | -Makes(x5, x6) | Coffee(x6)",
             "Makes(GreenMountain, OurBlend)",
             "-Loves(x2, F2(x2)) | Loves(F1(x2), x2)",
@@ -16,14 +16,29 @@ public class Parser {
             "-CoffeeMaker(x5)|-Makes(x5, x6)|Coffee(x6)"
         };
         
-        parse(clauses, "");
+        parse(clauses, "");*/
+        
+        test();
     }
     
     public static void parse(String []  clauses, String negatedClause) {
         for (String s : clauses) {
             Clause c = parseClauseHelper(s);
             System.out.println(c);
+            c.printAllLiterals();
         }
+    }
+        
+    public static void test() {
+        String clauseA = "-CoffeeMaker(x5) | -Makes(x5, F(a, b, c)) | Coffee(x6)";
+        String clauseB = "Makes(GreenMountain, F(a))";
+        
+        Clause a = parseClauseHelper(clauseA);
+        a.printAllLiterals();
+        Clause b = parseClauseHelper(clauseB);
+        b.printAllLiterals();
+        
+        System.out.println(a.canResolve(b));
     }
     
     private static Clause parseClauseHelper(String clause) {
