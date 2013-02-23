@@ -1,0 +1,3 @@
+Man(F(Joe))
+--- negated query ---
+-Man(F(Joe))

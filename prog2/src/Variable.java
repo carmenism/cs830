@@ -1,5 +1,4 @@
 import java.util.HashMap;
-import java.util.List;
 
 public class Variable extends Term {
     private static HashMap<String, Variable> variables;

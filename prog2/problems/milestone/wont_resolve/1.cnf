@@ -1,0 +1,3 @@
+P1(Socrates) | P1(John)
+--- negated query ---
+-P1(Socrates)

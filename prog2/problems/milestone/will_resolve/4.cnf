@@ -1,0 +1,3 @@
+Nesting(F(F(F(F(Jimmy, Sussie),Mark), John), Bob), Tim)
+--- negated query ---
+-Nesting(F(F(F(F(Jimmy, Sussie),Mark), John), Bob), Tim)
