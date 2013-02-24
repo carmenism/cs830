@@ -5,7 +5,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Parser {        
+public class Parser {
+	public static void main(String [] args) {
+		KnowledgeBase kb = getKBFromStandardIn();
+		
+		if (kb != null) {
+			kb.print();
+		}
+	}
+	
     public static void milestone() {
     	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     	
@@ -46,14 +54,16 @@ public class Parser {
     }
     
     public static KnowledgeBase getKBFromStandardIn() {
-    	BufferedReader br = null;
+    	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    	
+    	/*BufferedReader br = null;
     	
         try { 
         	br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog2/problems/lotr_1.cnf")));
         } catch (java.io.FileNotFoundException e1) {
         	e1.printStackTrace();
         	System.exit(1);
-        }
+        }*/
         
         List<Clause> clauses = new ArrayList<Clause>();
         Clause query = null;

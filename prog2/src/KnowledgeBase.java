@@ -4,10 +4,12 @@ import java.util.List;
 public class KnowledgeBase {
 	private final List<Clause> initialClauses;
 	private List<Clause> setOfSupport;
+	private Clause negatedQuery;
 	//private int num;
 	
 	public KnowledgeBase(List<Clause> clauses, Clause negatedQuery) {
 		this.initialClauses = clauses;
+		this.negatedQuery = negatedQuery;
 		
 		for (int i = 0; i < clauses.size(); i++) {
 			clauses.get(i).setNumber(i + 1);
@@ -19,6 +21,15 @@ public class KnowledgeBase {
 		
 		setOfSupport = new ArrayList<Clause>();
 		setOfSupport.add(negatedQuery);
+	}
+	
+	public void print() {
+		for (Clause clause : initialClauses) {
+			System.out.println(clause);
+		}
+		
+		System.out.println("--- negated query ---");
+		System.out.println(negatedQuery);
 	}
 	
 	public void resolve() {
