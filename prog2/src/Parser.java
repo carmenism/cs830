@@ -1,33 +1,98 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class Parser {    
-    public static void main(String [] args) {
-        /*String [] clauses = {
-            "-CoffeeMaker(x5) | -Makes(x5, x6) | Coffee(x6)",
-            "Makes(GreenMountain, OurBlend)",
-            "-Loves(x2, F2(x2)) | Loves(F1(x2), x2)",
-            "God(x) | CanDie(x)",
-            "Nesting(F(F(F(F(Jimmy, Sussie),Mark), John), Bob), Tim)",
-            "Something(x1)|Nesting(F(F(F(F(Jimmy,Sussie),Mark),John),Bob),Tim)",
-            "Something( x1 ) | Nesting( F ( F ( F ( F ( Jimmy, Sussie ), Mark ) , John ) , Bob ) , Tim ) ",
-            "-Loves(x2, F2(x2)) | Loves(F1(x2), x2)",
-            "-CoffeeMaker(x5)|-Makes(x5, x6)|Coffee(x6)"
-        };
+public class Parser {        
+    public static void milestone() {
+    	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    	
+    	/*
+    	BufferedReader br = null;
+    	
+        try { 
+        	br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog2/problems/milestone4.cnf")));
+        } catch (java.io.FileNotFoundException e1) {
+        	e1.printStackTrace();
+        	System.exit(1);
+        }*/
         
-        parse(clauses, "");*/
+        Clause clauseA = null;
+        Clause clauseB = null;
         
-        test();
+        try {
+			clauseA = parseClauseHelper(br.readLine());
+	        clauseB = parseClauseHelper(br.readLine());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        
+        if (clauseA != null && clauseB != null)  {
+        	System.out.println("1: " + clauseA);
+        	System.out.println("2: " + clauseB);
+        	
+        	Clause resolve = clauseA.resolve(clauseB);
+        	
+        	if (resolve != null) {
+            	System.out.println("1 + 2 give 3: " + resolve);
+        		System.out.println("1 total resolutions");
+        	} else {
+        		System.out.println("No proof exists.");
+        		System.out.println("0 total resolutions");
+        	}
+        }
     }
     
-    public static void parse(String []  clauses, String negatedClause) {
+    public static KnowledgeBase getKBFromStandardIn() {
+    	BufferedReader br = null;
+    	
+        try { 
+        	br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog2/problems/lotr_1.cnf")));
+        } catch (java.io.FileNotFoundException e1) {
+        	e1.printStackTrace();
+        	System.exit(1);
+        }
+        
+        List<Clause> clauses = new ArrayList<Clause>();
+        Clause query = null;
+        
+        while (true) {
+	        try {
+				String line = br.readLine();
+				
+				if (line.equals("--- negated query ---")) {
+					line = br.readLine();
+					query = parseClauseHelper(line);
+					
+					break;
+				} else {
+					clauses.add(parseClauseHelper(line));
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+        }
+        
+        if (query != null) {
+        	return new KnowledgeBase(clauses, query);
+        }
+        
+        try {
+			br.close();
+		} catch (IOException e) {}
+        
+        return null;
+    }
+    
+    /*public static void parse(String []  clauses, String negatedClause) {
         for (String s : clauses) {
             Clause c = parseClauseHelper(s);
             System.out.println(c);
             c.printAllLiterals();
         }
-    }
+    }*/
         
     public static void test() {
         String clauseA = "-CoffeeMaker(x5) | -Makes(x5, F(b)) | Coffee(x6)";

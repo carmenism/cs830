@@ -76,12 +76,13 @@ public class VacuumWorld {
 
         // For testing purposes on my PC.
         /*
-         * BufferedReader br = null; try { br = new BufferedReader(new
-         * InputStreamReader(new
-         * java.io.FileInputStream("C:/spring2013/cs830/prog1/worlds/giant3.vw"
-         * ))); } catch (java.io.FileNotFoundException e1) {
-         * e1.printStackTrace(); System.exit(1); }
-         */
+        BufferedReader br = null;
+        try { br = new BufferedReader(new
+        		InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog1/worlds/giant3.vw")));
+        } catch (java.io.FileNotFoundException e1) {
+        	e1.printStackTrace(); System.exit(1);
+        }
+        */
 
         try {
             numCols = Integer.parseInt(br.readLine());

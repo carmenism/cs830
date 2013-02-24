@@ -28,8 +28,32 @@ public class FunctionInstance extends Term {
             return ret + termList.get(termList.size() - 1) + ")";
         }
     }
+    
+    public List<Term> getTermList() {
+		return termList;
+	}
+    
+    public boolean containsVariable(Variable var) {
+    	for (Term term : termList) {
+    		if (term instanceof Variable) {
+    			Variable v = (Variable) term;
+    			
+    			if (v.equals(var)) {
+    				return true;
+    			}
+    		} else if (term instanceof FunctionInstance) {
+    			FunctionInstance fi = (FunctionInstance) term;
+    			
+    			if (fi.containsVariable(var)) {
+    				return true;
+    			}
+    		}
+    	}
+    	
+    	return false;
+    }
 
-    @Override
+	@Override
     public boolean matches(Term other, HashMap<String, Substitution> subs) {
         if (subs.containsKey(other.getName())) {
             other = subs.get(other.getName()).getSubstitute();
@@ -63,14 +87,8 @@ public class FunctionInstance extends Term {
         // then other is a variable
         Variable otherVariable = (Variable) other;
         
-        for (Term term : termList) {
-            if (term instanceof Variable) {
-                Variable termVariable = (Variable) term;
-                
-                if (otherVariable.equals(termVariable)) {
-                    return false;
-                }
-            }
+        if (containsVariable(otherVariable)) {
+        	return false;
         }
         
         Substitution newSub = new Substitution(this, otherVariable);

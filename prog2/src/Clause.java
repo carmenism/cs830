@@ -84,11 +84,11 @@ public class Clause {
 
 			for (int j = 0; j < other.allLiterals.size() && otherIndex == -1; j++) {
 				Literal otherLit = other.allLiterals.get(j);
-				System.out.println("Comparing \n\t" + lit + "\n\t" + otherLit);
+				//System.out.println("Comparing \n\t" + lit + "\n\t" + otherLit);
 				subs = lit.resolve(otherLit);
 
 				if (subs != null) {
-					System.out.println("VICTORY!!!!!!!!!!!!!!!!!!!!!!!!!!");
+					//System.out.println("VICTORY!!!!!!!!!!!!!!!!!!!!!!!!!!");
 					thisIndex = i;
 					otherIndex = j;
 				}
@@ -96,6 +96,7 @@ public class Clause {
         }
         
         if (thisIndex == -1 && otherIndex == -1) {
+        	//System.out.println("no literals matched");
         	return null;
         }
         

@@ -15,7 +15,6 @@ public class Variable extends Term {
     
     public static void resetVariables() {
         variables = new HashMap<String, Variable>();
-        System.out.println("RESET");
     }
     
     public static Variable getVariable(String name) {
@@ -25,9 +24,6 @@ public class Variable extends Term {
             variable = new Variable("x" + counter);
             variables.put(name, variable);
             counter++;
-            System.out.println("NEW VARIABLE");
-        } else {
-        	System.out.println("reuse variable");
         }
         
         return variable;
@@ -44,6 +40,14 @@ public class Variable extends Term {
         
         if (subs.containsKey(other.getName())) {
             other = subs.get(other.getName()).getSubstitute();
+        }
+        
+        if (other instanceof FunctionInstance) {
+        	FunctionInstance fi = (FunctionInstance) other;
+        	
+        	if (fi.containsVariable(this)) {
+            	return false;
+            }
         }
         
         Substitution newSub = new Substitution(other, this);
