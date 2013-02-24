@@ -7,11 +7,19 @@ public class Clause {
     private final Literal literal;
     private final Clause clause;
     
-    private int number;
+    private int number = -1;
     private Clause parentA;
     private Clause parentB;
     
     private List<Literal> allLiterals = new ArrayList<Literal>();
+    
+    private Clause(Clause parentA, Clause parentB) {
+    	this.literal = null;
+    	this.clause = null;
+    	
+    	this.parentA = parentA;
+    	this.parentB = parentB;
+    }
     
     public Clause(Literal literal, Clause clause) {
         this.literal = literal;
@@ -43,6 +51,10 @@ public class Clause {
     	} else {
     		this.clause = null;
     	}
+    }
+    
+    public boolean isEmpty() {
+    	return literal == null && clause == null;
     }
     
     public Clause getParentA() {
@@ -88,7 +100,7 @@ public class Clause {
         }
         
         List<Literal> sharedLiterals = new ArrayList<Literal>();
-
+        
         Variable.resetVariables();
         
         for (int i = 0; i < allLiterals.size(); i++) {
@@ -103,14 +115,16 @@ public class Clause {
         	}
         }
         
-        Clause parentA, parentB;
+        Clause parentA = this;
+        Clause parentB = other;
         
-        if (this.getNumber() < other.getNumber()) {
-        	parentA = this;
-        	parentB = other;
-        } else {
-        	parentA = other;
-        	parentB = other;
+        //if (this.getNumber() > other.getNumber()) {
+        //	parentA = other;
+        //	parentB = this;
+        //}
+        
+        if (sharedLiterals.isEmpty()) {
+        	return new Clause(parentA, parentB);
         }
         
         return new Clause(sharedLiterals, parentA, parentB);
@@ -134,14 +148,17 @@ public class Clause {
     
     @Override
     public String toString() {        
-        if (clause == null) {
+    	if (isEmpty()) {
+    		return "<empty>";
+    	}
+    	else if (clause == null) {
             return literal.toString();
         } else {
             return literal + " | " + clause;
         }
     }
     
-    public Clause clone(HashMap<String, Substitution> subs) {
+    public Clause clone(HashMap<String, Substitution> subs) {    	
     	if (clause == null) {
     		return new Clause(literal.clone(subs));
     	}
