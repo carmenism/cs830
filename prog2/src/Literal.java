@@ -23,15 +23,15 @@ public class Literal {
         return positive;
     }
     
-    public boolean cancelsOut(Literal other) {
+    public HashMap<String, Substitution> resolve(Literal other) {
         if (!getPredicate().equals(other.getPredicate())) {
             System.out.println("predicates are different: \n\t" + this.getPredicate() + "\n\t" + other.getPredicate());
-            return false;
+            return null;
         }
     
         if (isPositive() == other.isPositive()) {
             System.out.println("same signage");
-            return false;
+            return null;
         }
         
         List<Term> termList = predicateInstance.getTermList();
@@ -39,7 +39,7 @@ public class Literal {
         
         if (termList.size() != otherTermList.size()) {
             System.out.println("different number of terms");
-            return false;
+            return null;
         }
         
         HashMap<String, Substitution> subs = new HashMap<String, Substitution>();
@@ -50,11 +50,11 @@ public class Literal {
             
             if (!term.matches(otherTerm, subs)) {
                 System.out.println("terms didn't match: \n\t" + term +"\n\t" + otherTerm);
-                return false;
+                return null;
             }
         }
         
-        return true;
+        return subs;
     }
 
     @Override
@@ -64,5 +64,9 @@ public class Literal {
         } else {
             return "-" + predicateInstance.toString();
         }
+    }
+    
+    public Literal clone(HashMap<String, Substitution> subs) {
+    	return new Literal(predicateInstance.clone(subs), positive);
     }
 }

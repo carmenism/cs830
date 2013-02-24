@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -76,5 +77,15 @@ public class FunctionInstance extends Term {
         subs.put(otherVariable.getName(), newSub);
         
         return true;
+    }
+    
+    public FunctionInstance clone(HashMap<String, Substitution> subs) {
+    	List<Term> newTermList = new ArrayList<Term>();
+    	
+    	for (Term term : termList) {
+    		newTermList.add(term.clone(subs));
+    	}
+    	
+    	return new FunctionInstance(function, newTermList);
     }
 }

@@ -28,6 +28,8 @@ public class Program1 {
         } else {
             System.err.println("Solution could not be found.");
         }
+        
+        System.out.println(new Long(Runtime.getRuntime().totalMemory()));
     }
 
     /**

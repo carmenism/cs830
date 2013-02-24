@@ -1,6 +1,5 @@
 import java.util.HashMap;
 
-
 public abstract class Term {
     protected String name;
     
@@ -43,4 +42,6 @@ public abstract class Term {
     }
     
     public abstract boolean matches(Term other, HashMap<String, Substitution> subs);
+    
+    public abstract Term clone(HashMap<String, Substitution> subs);
 }

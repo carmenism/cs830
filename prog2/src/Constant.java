@@ -24,8 +24,6 @@ public class Constant extends Term {
         return name;
     }
 
-    
-    
     @Override
     public boolean matches(Term other, HashMap<String, Substitution> subs) {        
         if (subs.containsKey(other.getName())) {
@@ -44,5 +42,9 @@ public class Constant extends Term {
         subs.put(other.getName(), new Substitution(this, (Variable) other));
         
         return true;
-    }   
+    }
+    
+    public Constant clone(HashMap<String, Substitution> subs) {
+    	return this;
+    }
 }

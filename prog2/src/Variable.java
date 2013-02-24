@@ -15,6 +15,7 @@ public class Variable extends Term {
     
     public static void resetVariables() {
         variables = new HashMap<String, Variable>();
+        System.out.println("RESET");
     }
     
     public static Variable getVariable(String name) {
@@ -24,6 +25,9 @@ public class Variable extends Term {
             variable = new Variable("x" + counter);
             variables.put(name, variable);
             counter++;
+            System.out.println("NEW VARIABLE");
+        } else {
+        	System.out.println("reuse variable");
         }
         
         return variable;
@@ -46,5 +50,21 @@ public class Variable extends Term {
         subs.put(this.getName(), newSub);
         
         return true;
+    }
+    
+    public Term clone(HashMap<String, Substitution> subs) {
+    	if (subs.containsKey(this.getName())) {
+    		Term term = subs.get(this.getName()).getSubstitute();
+    		
+    		if (term instanceof Variable) {
+    			Variable var = (Variable) term;
+    			
+    			return getVariable(var.getName());
+    		}
+    		
+    		return term.clone(subs);
+    	}
+    	
+    	return getVariable(this.getName());//new Variable(name);
     }
 }

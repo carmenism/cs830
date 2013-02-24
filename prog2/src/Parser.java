@@ -30,7 +30,7 @@ public class Parser {
     }
         
     public static void test() {
-        String clauseA = "-CoffeeMaker(x5) | -Makes(x5, F(a, b, c)) | Coffee(x6)";
+        String clauseA = "-CoffeeMaker(x5) | -Makes(x5, F(b)) | Coffee(x6)";
         String clauseB = "Makes(GreenMountain, F(a))";
         
         Clause a = parseClauseHelper(clauseA);
@@ -38,7 +38,7 @@ public class Parser {
         Clause b = parseClauseHelper(clauseB);
         b.printAllLiterals();
         
-        System.out.println(a.canResolve(b));
+        System.out.println(a.resolve(b));
     }
     
     private static Clause parseClauseHelper(String clause) {

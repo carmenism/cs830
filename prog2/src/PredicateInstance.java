@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -31,5 +33,15 @@ public class PredicateInstance {
             
             return ret + termList.get(termList.size() - 1) + ")";
         }
+    }
+    
+    public PredicateInstance clone(HashMap<String, Substitution> subs) {
+    	List<Term> newTermList = new ArrayList<Term>();
+    	
+    	for (Term term : termList) {
+    		newTermList.add(term.clone(subs));
+    	}
+    	
+    	return new PredicateInstance(this.predicate, newTermList);
     }
 }
