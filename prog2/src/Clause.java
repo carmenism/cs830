@@ -74,29 +74,30 @@ public class Clause {
 	}
 
 	public Clause resolve(Clause other) {
-        HashMap<String, Substitution> subs = null;
+        HashMap<String, Substitution> allSubs = new HashMap<String, Substitution>();
+        List<Integer> thisIndices = new ArrayList<Integer>();
+        List<Integer> otherIndices = new ArrayList<Integer>();
         
-        int thisIndex = -1;
-        int otherIndex = -1;
+        for (int i = 0; i < allLiterals.size(); i++) {
+            if (!thisIndices.contains(i)) {
+            	Literal lit = allLiterals.get(i);
+    
+    			for (int j = 0; j < other.allLiterals.size(); j++) {
+    				if (!otherIndices.contains(j)) {
+    			        Literal otherLit = other.allLiterals.get(j);
+    			        HashMap<String, Substitution> subs = lit.resolve(otherLit, allSubs);
         
-        for (int i = 0; i < allLiterals.size() && thisIndex == -1; i++) {
-        	Literal lit = allLiterals.get(i);
-
-			for (int j = 0; j < other.allLiterals.size() && otherIndex == -1; j++) {
-				Literal otherLit = other.allLiterals.get(j);
-				//System.out.println("Comparing \n\t" + lit + "\n\t" + otherLit);
-				subs = lit.resolve(otherLit);
-
-				if (subs != null) {
-					//System.out.println("VICTORY!!!!!!!!!!!!!!!!!!!!!!!!!!");
-					thisIndex = i;
-					otherIndex = j;
-				}
-			}
+        				if (subs != null) {
+        					thisIndices.add(i);
+        					otherIndices.add(j);					
+        					allSubs = subs;
+        				}
+    				}
+    			}
+            }
         }
         
-        if (thisIndex == -1 && otherIndex == -1) {
-        	//System.out.println("no literals matched");
+        if (thisIndices.isEmpty() && otherIndices.isEmpty()) {
         	return null;
         }
         
@@ -105,25 +106,20 @@ public class Clause {
         Variable.resetVariables();
         
         for (int i = 0; i < allLiterals.size(); i++) {
-        	if (i != thisIndex) {
-        		sharedLiterals.add(allLiterals.get(i).clone(subs));
+        	if (!thisIndices.contains(i)) {
+        		sharedLiterals.add(allLiterals.get(i).clone(allSubs));
         	}
         }
         
         for (int j = 0; j < other.allLiterals.size(); j++) {
-        	if (j != otherIndex) {
-        		sharedLiterals.add(other.allLiterals.get(j).clone(subs));
+        	if (!otherIndices.contains(j)) {
+        		sharedLiterals.add(other.allLiterals.get(j).clone(allSubs));
         	}
         }
         
         Clause parentA = this;
         Clause parentB = other;
-        
-        //if (this.getNumber() > other.getNumber()) {
-        //	parentA = other;
-        //	parentB = this;
-        //}
-        
+                
         if (sharedLiterals.isEmpty()) {
         	return new Clause(parentA, parentB);
         }

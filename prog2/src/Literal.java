@@ -23,7 +23,7 @@ public class Literal {
         return positive;
     }
     
-    public HashMap<String, Substitution> resolve(Literal other) {
+    public HashMap<String, Substitution> resolve(Literal other, HashMap<String, Substitution> allSubs) {
         if (!getPredicate().equals(other.getPredicate())) {
             //System.out.println("predicates are different");
             return null;
@@ -43,6 +43,7 @@ public class Literal {
         }
         
         HashMap<String, Substitution> subs = new HashMap<String, Substitution>();
+        subs.putAll(allSubs);
         
         for (int i = 0; i < termList.size(); i++) {
             Term term = termList.get(i);

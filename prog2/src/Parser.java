@@ -207,18 +207,21 @@ public class Parser {
         term = term.trim();
         
         if (Character.isLowerCase(term.charAt(0))) {
-            return Variable.getVariable(term);
+            return Variable.getVariable(term.toLowerCase());
         }
         
         int open = term.indexOf("(");
         
         if (open == -1) {
-            return Constant.getConstant(term);
+            return Constant.getConstant(term.toUpperCase());
         } else {
             String functionName = term.substring(0, open);                        
             String termList = term.substring(functionName.length() + 1, term.length() - 1);
             
-            return Function.getFunctionInstance(functionName.trim(), parseTermList(termList));
+            functionName = functionName.trim();
+            functionName = functionName.substring(0, 1) + functionName.substring(1).toLowerCase();
+            
+            return Function.getFunctionInstance(functionName, parseTermList(termList));
         } 
     }
 }
