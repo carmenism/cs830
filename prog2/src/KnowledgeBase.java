@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -9,7 +10,7 @@ public class KnowledgeBase {
     private List<Clause> solution;
     private PriorityQueue<Clause> sos;
     private List<Clause> sosGrave;
-    private List<Pair> pairs;
+    private HashSet<Pair> pairs;
     
     private int numberResolved = 0;
     
@@ -56,11 +57,12 @@ public class KnowledgeBase {
 	public boolean resolve() {
 	    sos = new PriorityQueue<Clause>(setOfSupport);
 	    sosGrave = new ArrayList<Clause>();
-	    pairs = new ArrayList<Pair>();
+	    pairs = new HashSet<Pair>();
 	    
 	    while (!sos.isEmpty()) {
 	    	//if (numberResolved % 25 == 0) {
 	    	//	System.out.println(numberResolved);
+	    	//	System.out.println("\t"+sos.size());
 	    	//}
 	    	
 	        Clause smallest = sos.poll();
@@ -74,7 +76,7 @@ public class KnowledgeBase {
 		        Clause other = others.poll();
 		        Pair pair = new Pair(smallest, other);
 		        
-		        if (!pairResolvedBefore(pair)) {
+		        if (!pairs.contains(pair)) {
 			        Clause resolved = smallest.resolve(other);
 			        
 			        if (resolved != null) {
@@ -85,6 +87,8 @@ public class KnowledgeBase {
 		                    
 		                    return true; 
 		                } else {
+		                	//check for duplicates?
+		                	
 		                	sos.add(resolved);
 		                }   
 		            }

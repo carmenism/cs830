@@ -54,7 +54,7 @@ public class Parser {
     	BufferedReader br = null;
     	
         try { 
-        	br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog2/problems/cnf/complex/unprovable.cnf")));
+        	br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog2/problems/cnf/complex/small-3.cnf")));
             //br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("/home/csg/crr8/spring2013/cs830/prog2/problems/lotr_3.cnf")));
         } catch (java.io.FileNotFoundException e1) {
         	e1.printStackTrace();
