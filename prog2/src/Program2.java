@@ -1,7 +1,8 @@
 
 public class Program2 {
 	public Program2() {
-		Parser.milestone();
+		KnowledgeBase kb = Parser.getKBFromStandardIn();
+		kb.resolve();
 	}
 	
 	public static void main(String [] args) {

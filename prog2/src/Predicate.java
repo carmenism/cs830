@@ -3,7 +3,7 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class Predicate {
+public class Predicate implements Comparable<Predicate> {
     private static HashMap<String, Predicate> predicates = new HashMap<String, Predicate>();
     
     private String name;
@@ -27,6 +27,10 @@ public class Predicate {
         return pi;
     }
     
+    public String getName() {
+        return name;
+    }
+
     @Override
     public String toString() {
         return name;
@@ -55,5 +59,10 @@ public class Predicate {
         } else if (!name.equals(other.name))
             return false;
         return true;
+    }
+
+    @Override
+    public int compareTo(Predicate other) {
+        return name.compareTo(other.name);
     }  
 }

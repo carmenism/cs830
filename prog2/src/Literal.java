@@ -2,7 +2,11 @@ import java.util.HashMap;
 import java.util.List;
 
 
-public class Literal {
+public class Literal implements Comparable<Literal> {
+    private final int BEFORE = -1;
+    private final int EQUAL = 0;
+    private final int AFTER = 1;
+    
     private final PredicateInstance predicateInstance;
     private final boolean positive;
     
@@ -69,5 +73,25 @@ public class Literal {
     
     public Literal clone(HashMap<String, Substitution> subs) {
     	return new Literal(predicateInstance.clone(subs), positive);
+    }
+
+    @Override
+    public int compareTo(Literal other) {
+        Predicate p = this.getPredicate();
+        Predicate otherP = other.getPredicate();
+        
+        if (p.getName().equals(otherP.getName())) {
+            if (!positive && other.positive) {
+                return BEFORE;
+            }
+            
+            if (positive && !other.positive) {
+                return AFTER;
+            }
+            
+            return EQUAL;
+        }
+        
+        return p.compareTo(otherP);
     }
 }

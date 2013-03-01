@@ -1,9 +1,10 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.PriorityQueue;
 
 
-public class Clause {
+public class Clause implements Comparable<Clause> {
     private final Literal literal;
     private final Clause clause;
     
@@ -35,16 +36,18 @@ public class Clause {
         allLiterals.add(literal);
     }
     
-    public Clause(List<Literal> literals, Clause parentA, Clause parentB) {
+    public Clause(PriorityQueue<Literal> literals, Clause parentA, Clause parentB) {
     	this(literals);
     	
     	this.parentA = parentA;
     	this.parentB = parentB;
+    	
+    	addAllLiterals(this);
     }
     
-    private Clause(List<Literal> literals) {
-    	this.literal = literals.get(0);
-    	literals.remove(0);
+    private Clause(PriorityQueue<Literal> literals) {
+    	this.literal = literals.poll();
+    	//literals.remove(0);
     	
     	if (!literals.isEmpty()) {
     		this.clause = new Clause(literals);
@@ -88,6 +91,7 @@ public class Clause {
     			        HashMap<String, Substitution> subs = lit.resolve(otherLit, allSubs);
         
         				if (subs != null) {
+        				    //System.out.println("succeeded");
         					thisIndices.add(i);
         					otherIndices.add(j);					
         					allSubs = subs;
@@ -101,7 +105,7 @@ public class Clause {
         	return null;
         }
         
-        List<Literal> sharedLiterals = new ArrayList<Literal>();
+        PriorityQueue<Literal> sharedLiterals = new PriorityQueue<Literal>();
         
         Variable.resetVariables();
         
@@ -116,17 +120,14 @@ public class Clause {
         		sharedLiterals.add(other.allLiterals.get(j).clone(allSubs));
         	}
         }
-        
-        Clause parentA = this;
-        Clause parentB = other;
-                
+                        
         if (sharedLiterals.isEmpty()) {
-        	return new Clause(parentA, parentB);
+        	return new Clause(this, other);
         }
         
-        return new Clause(sharedLiterals, parentA, parentB);
+        return new Clause(sharedLiterals, this, other);
     }
-    
+    	
     private void addAllLiterals(Clause c) {
         allLiterals.add(c.literal);
         
@@ -161,5 +162,18 @@ public class Clause {
     	}
     	
     	return new Clause(literal.clone(subs), clause.clone(subs));
+    }
+
+    public static Clause getSortedClause(Clause c) {
+        PriorityQueue<Literal> lits = new PriorityQueue<Literal>(c.allLiterals);
+        Clause newClause = new Clause(lits, null, null);
+        //newClause.allLiterals = c.allLiterals;
+
+        return newClause;
+    }
+
+    @Override
+    public int compareTo(Clause other) {
+        return allLiterals.size() - other.allLiterals.size();
     }
 }

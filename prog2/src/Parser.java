@@ -4,14 +4,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class Parser {
 	public static void main(String [] args) {
-		KnowledgeBase kb = getKBFromStandardIn();
-		
-		if (kb != null) {
-			kb.print();
-		}
+		milestone();
 	}
 	
     public static void milestone() {
@@ -54,56 +49,51 @@ public class Parser {
     }
     
     public static KnowledgeBase getKBFromStandardIn() {
-    	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    	//BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     	
-    	/*BufferedReader br = null;
+    	BufferedReader br = null;
     	
         try { 
-        	br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog2/problems/lotr_1.cnf")));
+        	//br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog2/problems/lotr_1.cnf")));
+            br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("/home/csg/crr8/spring2013/cs830/prog2/problems/lotr_1.cnf")));
         } catch (java.io.FileNotFoundException e1) {
         	e1.printStackTrace();
         	System.exit(1);
-        }*/
+        }
         
-        List<Clause> clauses = new ArrayList<Clause>();
-        Clause query = null;
+        List<Clause> input = new ArrayList<Clause>();
+        List<Clause> setOfSupport = new ArrayList<Clause>();
+        boolean readingInput = true;
         
         while (true) {
 	        try {
 				String line = br.readLine();
 				
-				if (line.equals("--- negated query ---")) {
-					line = br.readLine();
-					query = parseClauseHelper(line);
-					
-					break;
+				if (line == null) {
+				    break;
+				} else if (line.equals("--- negated query ---")) {
+				    readingInput = false;
+				} else if (readingInput) {
+					input.add(parseClauseHelper(line));
 				} else {
-					clauses.add(parseClauseHelper(line));
+				    setOfSupport.add(parseClauseHelper(line));
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
         }
         
-        if (query != null) {
-        	return new KnowledgeBase(clauses, query);
-        }
-        
         try {
-			br.close();
-		} catch (IOException e) {}
+            br.close();
+        } catch (IOException e) {}
         
+        if (!setOfSupport.isEmpty()) {
+        	return new KnowledgeBase(input, setOfSupport);
+        }
+               
         return null;
     }
-    
-    /*public static void parse(String []  clauses, String negatedClause) {
-        for (String s : clauses) {
-            Clause c = parseClauseHelper(s);
-            System.out.println(c);
-            c.printAllLiterals();
-        }
-    }*/
-        
+            
     public static void test() {
         String clauseA = "-CoffeeMaker(x5) | -Makes(x5, F(b)) | Coffee(x6)";
         String clauseB = "Makes(GreenMountain, F(a))";
@@ -118,8 +108,9 @@ public class Parser {
     
     private static Clause parseClauseHelper(String clause) {
         Variable.resetVariables();
+        Clause c = parseClause(clause);
         
-        return parseClause(clause);
+        return Clause.getSortedClause(c);
     }
     
     private static Clause parseClause(String clause) {
