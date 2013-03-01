@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.PriorityQueue;
 
@@ -10,6 +9,7 @@ public class KnowledgeBase {
     private List<Clause> solution;
     private PriorityQueue<Clause> sos;
     private List<Clause> sosGrave;
+    private List<Pair> pairs;
     
     private int numberResolved = 0;
     
@@ -43,33 +43,68 @@ public class KnowledgeBase {
 		System.out.println(numberResolved + " total resolutions");
 	}
 	
+	private boolean pairResolvedBefore(Pair pair) {
+		for (Pair p : pairs) {
+			if (p.equals(pair)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	public boolean resolve() {
 	    sos = new PriorityQueue<Clause>(setOfSupport);
 	    sosGrave = new ArrayList<Clause>();
+	    pairs = new ArrayList<Pair>();
 	    
 	    while (!sos.isEmpty()) {
+	    	//if (numberResolved % 25 == 0) {
+	    	//	System.out.println(numberResolved);
+	    	//}
+	    	
 	        Clause smallest = sos.poll();
 
-	        if (resolve(sos, smallest)) {
-	        	return true;
+	        PriorityQueue<Clause> others = new PriorityQueue<Clause>();
+	        others.addAll(sos);
+	        others.addAll(sosGrave);
+	        others.addAll(input);
+	        
+	        while (!others.isEmpty()) {
+		        Clause other = others.poll();
+		        Pair pair = new Pair(smallest, other);
+		        
+		        if (!pairResolvedBefore(pair)) {
+			        Clause resolved = smallest.resolve(other);
+			        
+			        if (resolved != null) {
+	                    numberResolved++;
+	                    
+		                if (resolved.isEmpty()) {
+		                    printSolution(resolved);
+		                    
+		                    return true; 
+		                } else {
+		                	sos.add(resolved);
+		                }   
+		            }
+			        
+			        pairs.add(pair);
+		        }
 	        }
 	        
-	        if (resolve(sosGrave, smallest)) {
-	        	return true;
-	        }
-	                
-	        if (resolve(input, smallest)) {
-	        	return true;
-	        }
-	        	        
 	        sosGrave.add(smallest);
 	    }
 	    
-        System.out.println("empty :(");
+	    printInput();
+	    printSetOfSupport();
+        System.out.println("No proof exists.");
+        printNumberResolutions();
+	    
         return false;
 	}
 	
-	private boolean resolve(Collection<Clause> clauses, Clause clause) {
+	/*private boolean resolve(Collection<Clause> clauses, Clause clause) {
 		for (Clause other : clauses) {
             Clause resolved = clause.resolve(other);
             
@@ -87,7 +122,7 @@ public class KnowledgeBase {
         }
 		
 		return false;
-	}
+	}*/
 	
 	private void printSolution(Clause emptyClause) {
 	    buildSolution(emptyClause);

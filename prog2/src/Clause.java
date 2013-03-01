@@ -2,9 +2,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.UUID;
 
 
 public class Clause implements Comparable<Clause> {
+	private final UUID id = UUID.randomUUID();
+	
     private final Literal literal;
     private final Clause clause;
     
@@ -13,7 +16,7 @@ public class Clause implements Comparable<Clause> {
     private Clause parentB;
     
     private List<Literal> allLiterals = new ArrayList<Literal>();
-    
+        
     private Clause(Clause parentA, Clause parentB) {
     	this.literal = null;
     	this.clause = null;
@@ -144,7 +147,11 @@ public class Clause implements Comparable<Clause> {
         }
     }
     
-    @Override
+    public UUID getId() {
+		return id;
+	}
+
+	@Override
     public String toString() {        
     	if (isEmpty()) {
     		return "<empty>";
