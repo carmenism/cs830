@@ -141,13 +141,15 @@ public class KnowledgeBase {
 	        int a = clause.getParentA().getNumber();
 	        int b = clause.getParentB().getNumber();
 	        
-	        if (a > b) {
-	        	int sub = a;
-	        	a = b;
-	        	b = sub;
-	        }
+	        //if (a > b) {
+	        //	int sub = a;
+	        //	a = b;
+	        //	b = sub;
+	        //}
 	        
 	        System.out.println(a + " and " + b + " give " + c + ": " + clause);
+	       // System.out.println("\t" + clause.getParentA());
+	        //System.out.println("\t" + clause.getParentB());
         }
 	    
 	    printNumberResolutions();
