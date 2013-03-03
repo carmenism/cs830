@@ -35,17 +35,17 @@ public class Parser {
     }
     
     public static KnowledgeBase getKBFromStandardIn() {
-    	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    	//BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     	
-    	/*BufferedReader br = null;
+    	BufferedReader br = null;
     	
         try { 
-        	br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog2/problems/cnf/complex/small-3.cnf")));
+        	br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog2/problems/cnf/complex/grads/ans-literal.cnf")));
             //br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("/home/csg/crr8/spring2013/cs830/prog2/problems/lotr_3.cnf")));
         } catch (java.io.FileNotFoundException e1) {
         	e1.printStackTrace();
         	System.exit(1);
-        }*/
+        }
         
         List<Clause> input = new ArrayList<Clause>();
         List<Clause> setOfSupport = new ArrayList<Clause>();

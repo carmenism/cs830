@@ -26,6 +26,10 @@ public class Literal implements Comparable<Literal> {
         return positive;
     }
     
+    public boolean isAns() {
+    	return getPredicate().isAns();
+    }
+    
     public void subVariablesForPrinting(HashMap<String, String> subs) {        
         predicateInstance.subVariablesForPrinting(subs);
     }    

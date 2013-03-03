@@ -6,12 +6,10 @@ import java.util.PriorityQueue;
 public class KnowledgeBase {
 	private final List<Clause> input;
 	private final List<Clause> setOfSupport;
-	
-    private List<Clause> solution;
-    private PriorityQueue<Clause> sos;
-    private List<Clause> sosGrave;
-    private HashSet<Pair> pairs;
-    private HashSet<String> clausesProduced;
+    
+	private boolean lookForEmpty;
+    
+	private List<Clause> solution;
     
     private int numberResolved = 0;
     
@@ -24,8 +22,15 @@ public class KnowledgeBase {
 		    input.get(i).setNumber(i + 1);
 		}
 		
+		this.lookForEmpty = true;
+		
 		for (int i = 0; i < setOfSupport.size(); i++) {
-		    setOfSupport.get(i).setNumber(i + 1 + input.size());
+		    Clause clause = setOfSupport.get(i);		    
+		    clause.setNumber(i + 1 + input.size());
+		    
+		    if (clause.containsAns()) {
+		    	this.lookForEmpty = false;
+		    }
         }
 	}
 	
@@ -44,12 +49,20 @@ public class KnowledgeBase {
 	private void printNumberResolutions() {
 		System.out.println(numberResolved + " total resolutions");
 	}
+	
+	public boolean isGoal(Clause clause) {
+		if (lookForEmpty) {
+			return clause.isEmpty();
+		}
 		
+		return clause.isAns();
+	}
+	
 	public boolean resolve() {	    
-	    sos = new PriorityQueue<Clause>(setOfSupport);
-	    sosGrave = new ArrayList<Clause>();
-	    pairs = new HashSet<Pair>();
-	    clausesProduced = new HashSet<String>();
+		PriorityQueue<Clause> sos = new PriorityQueue<Clause>(setOfSupport);
+		List<Clause> sosGrave = new ArrayList<Clause>();
+		HashSet<Pair> pairs = new HashSet<Pair>();
+		HashSet<String> clausesProduced = new HashSet<String>();
 	    
 	    for (Clause i : input) {
 	        clausesProduced.add(i.toString());
@@ -58,29 +71,22 @@ public class KnowledgeBase {
             clausesProduced.add(s.toString());
         }
 	    
-	    while (!sos.isEmpty()) {
-	    	//if (numberResolved > 20) {
-	    	//    break;
-	    	//}
-	    	
+	    while (!sos.isEmpty()) {	    	
 	        Clause smallest = sos.poll();
 
-	        PriorityQueue<Clause> others = new PriorityQueue<Clause>();
-	        others.addAll(sos);
-	        others.addAll(sosGrave);
-	        others.addAll(input);
+	        PriorityQueue<Clause> others = getOtherClauses(sos, sosGrave);
 	        
 	        while (!others.isEmpty()) {
-		        Clause other = others.poll();
-		        Pair pair = new Pair(smallest, other);
+		        Clause smallestOther = others.poll();
+		        Pair pair = new Pair(smallest, smallestOther);
 		        
 		        if (!pairs.contains(pair)) {
-			        Clause resolved = smallest.resolve(other);
+			        Clause resolved = smallest.resolve(smallestOther);
 			        
 			        if (resolved != null) {
 	                    numberResolved++;
 	                    
-		                if (resolved.isEmpty()) {
+		                if (isGoal(resolved)) {
 		                    printSolution(resolved);
 		                    
 		                    return true; 
@@ -103,6 +109,16 @@ public class KnowledgeBase {
         printNumberResolutions();
 	    
         return false;
+	}
+	
+	private PriorityQueue<Clause> getOtherClauses(PriorityQueue<Clause> sos, List<Clause> sosGrave) {
+		PriorityQueue<Clause> others = new PriorityQueue<Clause>();
+		
+        others.addAll(sos);
+        others.addAll(sosGrave);
+        others.addAll(input);
+        
+        return others;
 	}
 	
 	/*private boolean resolve(Collection<Clause> clauses, Clause clause) {

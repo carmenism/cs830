@@ -73,6 +73,24 @@ public class Clause implements Comparable<Clause> {
     	return literal == null && clause == null;
     }
     
+    public boolean isAns() {
+    	if (clause != null) {
+    		return false;
+    	}
+    	
+    	return literal.isAns();
+    }
+    
+    public boolean containsAns() {
+    	for (Literal lit : allLiterals) {
+    		if (lit.isAns()) {
+    			return true;
+    		}
+    	}
+    	
+    	return false;
+    }
+    
     public Clause getParentA() {
 		return parentA;
 	}

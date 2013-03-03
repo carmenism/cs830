@@ -36,6 +36,10 @@ public class Predicate implements Comparable<Predicate> {
         return name;
     }
 
+    public boolean isAns() {
+    	return name.equals("Ans");
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;
