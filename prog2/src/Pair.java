@@ -1,10 +1,21 @@
 import java.util.UUID;
 
-
+/**
+ * Represents a pair of Clauses that have been previously resolved with each
+ * other.
+ * 
+ * @author Carmen St. Jean
+ * 
+ */
 public class Pair {	
 	private UUID a;
 	private UUID b;
 	
+	/**
+	 * Creates a Pair from two clauses.
+	 * @param clauseA The first Clause.
+	 * @param clauseB The second Clause.
+	 */
 	public Pair(Clause clauseA, Clause clauseB) {
 		if (clauseA.getId().compareTo(clauseB.getId()) < 0) {
 			this.a = clauseA.getId();

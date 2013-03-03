@@ -57,17 +57,17 @@ public class Parser {
      * @return A KnowledgeBase containing a collection of Clauses.
      */
     public static KnowledgeBase getKBFromStandardIn() {
-        //BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
     	// For running on my PC.
-    	BufferedReader br = null;    	
+    	/*BufferedReader br = null;    	
         try { 
-        	br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog2/problems/cnf/complex/unprovable.cnf")));
+        	br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog2/problems/cnf/complex/grads/curious.cnf")));
             //br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("/home/csg/crr8/spring2013/cs830/prog2/problems/lotr_3.cnf")));
         } catch (java.io.FileNotFoundException e1) {
         	e1.printStackTrace();
         	System.exit(1);
-        }
+        }*/
 
         List<Clause> input = new ArrayList<Clause>();
         List<Clause> setOfSupport = new ArrayList<Clause>();

@@ -4,6 +4,12 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.UUID;
 
+/**
+ * Represents a clause in first-order logic in conjunctive normal form.
+ * 
+ * @author Carmen St. Jean
+ * 
+ */
 public class Clause implements Comparable<Clause> {
     private final UUID id = UUID.randomUUID();
 
@@ -16,6 +22,14 @@ public class Clause implements Comparable<Clause> {
 
     private List<Literal> allLiterals = new ArrayList<Literal>();
 
+    /**
+     * Creates a Clause from a Literal and another Clause.
+     * 
+     * @param literal
+     *            The Literal.
+     * @param clause
+     *            The Clause.
+     */
     public Clause(Literal literal, Clause clause) {
         this.literal = literal;
         this.clause = clause;
@@ -23,6 +37,12 @@ public class Clause implements Comparable<Clause> {
         addAllLiterals(this);
     }
 
+    /**
+     * Creates a Clause from a single Literal.
+     * 
+     * @param literal
+     *            The Literal.
+     */
     public Clause(Literal literal) {
         this.literal = literal;
         this.clause = null;
@@ -30,6 +50,17 @@ public class Clause implements Comparable<Clause> {
         allLiterals.add(literal);
     }
 
+    /**
+     * Create a Clause from a PriorityQueue of Literals with parent pointers.
+     * 
+     * @param literals
+     *            A PriorityQueue of Literals that this Clause should consist
+     *            of.
+     * @param parentA
+     *            The first parent that this Clause was derived from.
+     * @param parentB
+     *            The second parent that this Clause was derived from.
+     */
     public Clause(PriorityQueue<Literal> literals, Clause parentA,
             Clause parentB) {
         this(literals);
@@ -40,6 +71,14 @@ public class Clause implements Comparable<Clause> {
         addAllLiterals(this);
     }
 
+    /**
+     * Create an empty Clause.
+     * 
+     * @param parentA
+     *            The first parent that this Clause was derived from.
+     * @param parentB
+     *            The second parent that this Clause was derived from.
+     */
     private Clause(Clause parentA, Clause parentB) {
         this.literal = null;
         this.clause = null;
@@ -48,6 +87,13 @@ public class Clause implements Comparable<Clause> {
         this.parentB = parentB;
     }
 
+    /**
+     * Create a Clause from a PriorityQueue of Literals.
+     * 
+     * @param literals
+     *            A PriorityQueue of Literals that this Clause should consist
+     *            of.
+     */
     private Clause(PriorityQueue<Literal> literals) {
         this.literal = literals.poll();
 
@@ -58,10 +104,68 @@ public class Clause implements Comparable<Clause> {
         }
     }
 
+    /**
+     * Get a parent which this Clause was derived from.
+     * 
+     * @return The primary parent of this Clause.
+     */
+    public Clause getParentA() {
+        return parentA;
+    }
+
+    /**
+     * Get a parent which this Clause was derived from.
+     * 
+     * @return The secondary parent of this Clause.
+     */
+    public Clause getParentB() {
+        return parentB;
+    }
+
+    /**
+     * Get the number for this Clause.
+     * 
+     * @return The number for this Clause.
+     */
+    public int getNumber() {
+        return number;
+    }
+
+    /**
+     * Set the number for this Clause.
+     * 
+     * @param number
+     *            The desired number for this Clause.
+     */
+    public void setNumber(int number) {
+        this.number = number;
+    }
+
+    /**
+     * Get the ID for this Clause.
+     * 
+     * @return The UUID for this Clause.
+     */
+    public UUID getId() {
+        return id;
+    }
+
+    /**
+     * Determines whether or not this Clause is the empty Clause - i.e., logical
+     * bottom.
+     * 
+     * @return True if this Clause is an empty Clause.
+     */
     public boolean isEmpty() {
         return literal == null && clause == null;
     }
 
+    /**
+     * Determines whether or not this Clause contains a single Literal which is
+     * the anwers Literal.
+     * 
+     * @return True if there is only one Literal in this clause and it is "Ans".
+     */
     public boolean isAns() {
         if (clause != null) {
             return false;
@@ -70,6 +174,11 @@ public class Clause implements Comparable<Clause> {
         return literal.isAns();
     }
 
+    /**
+     * Determines whether or not this Clause contains an answer Literal.
+     * 
+     * @return True if one of the Literals is "Ans".
+     */
     public boolean containsAns() {
         for (Literal lit : allLiterals) {
             if (lit.isAns()) {
@@ -80,22 +189,12 @@ public class Clause implements Comparable<Clause> {
         return false;
     }
 
-    public Clause getParentA() {
-        return parentA;
-    }
-
-    public Clause getParentB() {
-        return parentB;
-    }
-
-    public int getNumber() {
-        return number;
-    }
-
-    public void setNumber(int number) {
-        this.number = number;
-    }
-    
+    /**
+     * Adds all Literals found in the specified Clause to this Clause's list of
+     * Literals.
+     * 
+     * @param c
+     */
     private void addAllLiterals(Clause c) {
         allLiterals.add(c.literal);
 
@@ -104,10 +203,13 @@ public class Clause implements Comparable<Clause> {
         }
     }
 
-    public UUID getId() {
-        return id;
-    }
-    
+    /**
+     * Attempts to resolve this Clause with another Clause.
+     * 
+     * @param other
+     *            The other Clause to attempt resolution with.
+     * @return A new Clause if resolution worked, null if resolution failed.
+     */
     public Clause resolve(Clause other) {
         HashMap<String, Term> allSubs = new HashMap<String, Term>();
         List<Integer> thisIndices = new ArrayList<Integer>();
@@ -115,20 +217,21 @@ public class Clause implements Comparable<Clause> {
 
         for (int i = 0; i < allLiterals.size(); i++) {
             if (!thisIndices.contains(i)) {
-            	Literal lit = allLiterals.get(i);
-    
-    			for (int j = 0; j < other.allLiterals.size(); j++) {
-    				if (!otherIndices.contains(j)) {
-    			        Literal otherLit = other.allLiterals.get(j);
-    			        HashMap<String, Term> subs = lit.resolve(otherLit, allSubs);
-        
-        				if (subs != null) {
-        					thisIndices.add(i);
-        					otherIndices.add(j);					
-        					allSubs = subs;
-        				}
-    				}
-    			}
+                Literal lit = allLiterals.get(i);
+
+                for (int j = 0; j < other.allLiterals.size(); j++) {
+                    if (!otherIndices.contains(j)) {
+                        Literal otherLit = other.allLiterals.get(j);
+                        HashMap<String, Term> subs = lit.resolve(otherLit,
+                                allSubs);
+
+                        if (subs != null) {
+                            thisIndices.add(i);
+                            otherIndices.add(j);
+                            allSubs = subs;
+                        }
+                    }
+                }
             }
         }
 
@@ -166,10 +269,17 @@ public class Clause implements Comparable<Clause> {
 
         return removeDuplicatesClauses(clause);
     }
-    
+
+    /**
+     * Removes duplicate Literals found in this clause.
+     * 
+     * @param c
+     *            The Clause to look for duplicate Literals in.
+     * @return The Clause without duplicate Literals.
+     */
     private Clause removeDuplicatesClauses(Clause c) {
         List<Integer> dupIndices = new ArrayList<Integer>();
-        
+
         for (int i = 0; i < c.allLiterals.size(); i++) {
             for (int j = i + 1; j < c.allLiterals.size(); j++) {
                 Literal litA = c.allLiterals.get(i);
@@ -180,25 +290,28 @@ public class Clause implements Comparable<Clause> {
                 }
             }
         }
-        
+
         if (dupIndices.isEmpty()) {
             return c;
         }
-        
+
         PriorityQueue<Literal> lits = new PriorityQueue<Literal>();
-        
+
         for (int i = 0; i < c.allLiterals.size(); i++) {
             if (!dupIndices.contains(i)) {
                 lits.add(c.allLiterals.get(i));
             }
         }
-                
+
         Clause newC = new Clause(lits, c.parentA, c.parentB);
         newC.subAllVariablesForPrinting();
-                
+
         return newC;
     }
-    
+
+    /**
+     * Prints all literals of this Clause to standard output.
+     */
     public void printAllLiterals() {
         System.out.println("Literals of: " + this);
 
@@ -207,10 +320,21 @@ public class Clause implements Comparable<Clause> {
         }
     }
 
+    /**
+     * Creates substitutions for Variables found within this clause so the
+     * printing is more standardized.
+     */
     public void subAllVariablesForPrinting() {
         subVariablesForPrinting(new HashMap<String, String>());
     }
-    
+
+    /**
+     * Creates substitutes for the Variables found within this Clause so the
+     * printing is more standardized.
+     * 
+     * @param subs
+     *            The substitutions for Variables for printing purposes.
+     */
     private void subVariablesForPrinting(HashMap<String, String> subs) {
         literal.subVariablesForPrinting(subs);
 
@@ -220,10 +344,12 @@ public class Clause implements Comparable<Clause> {
     }
 
     /**
-     * Clones the given Clause, taking any of the given substitutions into account as well.
+     * Makes a copy of this Clause, taking the specified substitutions into
+     * account.
      * 
-     * @param subs A HashMap of 
-     * @return
+     * @param subs
+     *            The substitutions for Variables determined during unification.
+     * @return A new copy of this Clause.
      */
     public Clause clone(HashMap<String, Term> subs) {
         if (clause == null) {
