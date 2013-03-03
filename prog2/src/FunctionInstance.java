@@ -33,18 +33,28 @@ public class FunctionInstance extends Term {
 		return termList;
 	}
     
-    public boolean containsVariable(Variable var) {
+    public void subVariablesForPrinting(HashMap<String, String> subs) {
+        for (Term term : termList) {
+            term.subVariablesForPrinting(subs);
+        }
+    } 
+    
+    public boolean containsVariable(Variable var, HashMap<String, Substitution> subs) {
     	for (Term term : termList) {
+    	    if (subs.containsKey(term.getName())) {
+                term = subs.get(term.getName()).getSubstitute();
+            }
+    	    
     		if (term instanceof Variable) {
     			Variable v = (Variable) term;
     			
     			if (v.equals(var)) {
     				return true;
     			}
-    		} else if (term instanceof FunctionInstance) {
+    		} else if (term instanceof FunctionInstance) {                
     			FunctionInstance fi = (FunctionInstance) term;
     			
-    			if (fi.containsVariable(var)) {
+    			if (fi.containsVariable(var, subs)) {
     				return true;
     			}
     		}
@@ -62,10 +72,7 @@ public class FunctionInstance extends Term {
         if (other instanceof FunctionInstance) {
             FunctionInstance otherFunction = (FunctionInstance) other;
             
-            System.out.println("COMPARING TWO FUNCTIONS");
-            
             if (!otherFunction.function.equals(function)) {
-                System.out.println("function names are different");
                 return false;
             }
             
@@ -86,8 +93,9 @@ public class FunctionInstance extends Term {
         
         // then other is a variable
         Variable otherVariable = (Variable) other;
-        
-        if (containsVariable(otherVariable)) {
+
+        System.out.println("check to see if this is contained");
+        if (containsVariable(otherVariable, subs)) {
         	return false;
         }
         
@@ -105,5 +113,38 @@ public class FunctionInstance extends Term {
     	}
     	
     	return new FunctionInstance(function, newTermList);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result
+                + ((function == null) ? 0 : function.hashCode());
+        result = prime * result
+                + ((termList == null) ? 0 : termList.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        FunctionInstance other = (FunctionInstance) obj;
+        if (function == null) {
+            if (other.function != null)
+                return false;
+        } else if (!function.equals(other.function))
+            return false;
+        if (termList == null) {
+            if (other.termList != null)
+                return false;
+        } else if (!termList.equals(other.termList))
+            return false;
+        return true;
     }
 }

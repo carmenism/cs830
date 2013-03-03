@@ -47,4 +47,9 @@ public class Constant extends Term {
     public Constant clone(HashMap<String, Substitution> subs) {
     	return this;
     }
+    
+    public void subVariablesForPrinting(HashMap<String, String> subs) {
+        return;
+    }
+
 }

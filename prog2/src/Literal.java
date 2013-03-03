@@ -4,12 +4,11 @@ import java.util.List;
 
 public class Literal implements Comparable<Literal> {
     private final int BEFORE = -1;
-    private final int EQUAL = 0;
     private final int AFTER = 1;
     
     private final PredicateInstance predicateInstance;
     private final boolean positive;
-    
+        
     public Literal(PredicateInstance predicateInstance, boolean positive) {
         this.predicateInstance = predicateInstance;
         this.positive = positive;
@@ -26,6 +25,10 @@ public class Literal implements Comparable<Literal> {
     public boolean isPositive() {
         return positive;
     }
+    
+    public void subVariablesForPrinting(HashMap<String, String> subs) {        
+        predicateInstance.subVariablesForPrinting(subs);
+    }    
     
     public HashMap<String, Substitution> resolve(Literal other, HashMap<String, Substitution> allSubs) {
         if (!getPredicate().equals(other.getPredicate())) {
@@ -89,9 +92,40 @@ public class Literal implements Comparable<Literal> {
                 return AFTER;
             }
             
-            return EQUAL;
+            return this.toString().compareTo(other.toString());
         }
         
         return p.compareTo(otherP);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (positive ? 1231 : 1237);
+        result = prime
+                * result
+                + ((predicateInstance == null) ? 0 : predicateInstance
+                        .hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Literal other = (Literal) obj;
+        if (positive != other.positive)
+            return false;
+        if (predicateInstance == null) {
+            if (other.predicateInstance != null)
+                return false;
+        } else if (!predicateInstance.equals(other.predicateInstance))
+            return false;
+        return true;
     }
 }

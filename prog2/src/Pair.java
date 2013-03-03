@@ -1,22 +1,15 @@
 import java.util.UUID;
 
 
-public class Pair {
-	private final Clause clauseA;
-	private final Clause clauseB;
-	
+public class Pair {	
 	private UUID a;
 	private UUID b;
 	
 	public Pair(Clause clauseA, Clause clauseB) {
 		if (clauseA.getId().compareTo(clauseB.getId()) < 0) {
-			this.clauseA = clauseA;
-			this.clauseB = clauseB;
 			this.a = clauseA.getId();
 			this.b = clauseB.getId();
 		} else {
-			this.clauseA = clauseB;
-			this.clauseB = clauseA;
 			this.a = clauseB.getId();
 			this.b = clauseA.getId();
 		}	

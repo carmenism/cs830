@@ -44,4 +44,6 @@ public abstract class Term {
     public abstract boolean matches(Term other, HashMap<String, Substitution> subs);
     
     public abstract Term clone(HashMap<String, Substitution> subs);
+    
+    public abstract void subVariablesForPrinting(HashMap<String, String> subs);
 }

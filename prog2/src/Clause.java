@@ -15,21 +15,24 @@ public class Clause implements Comparable<Clause> {
     private Clause parentA;
     private Clause parentB;
     
-    private List<Literal> allLiterals = new ArrayList<Literal>();
+    private List<Literal> allLiterals = new ArrayList<Literal>();   
+    
+    
+    private void subVariablesForPrinting(HashMap<String, String> subs) {
+        literal.subVariablesForPrinting(subs);
         
-    private Clause(Clause parentA, Clause parentB) {
-    	this.literal = null;
-    	this.clause = null;
-    	
-    	this.parentA = parentA;
-    	this.parentB = parentB;
+        if (clause != null) {
+            clause.subVariablesForPrinting(subs);
+        }
     }
+        
     
     public Clause(Literal literal, Clause clause) {
         this.literal = literal;
         this.clause = clause;
         
-        addAllLiterals(this);        
+        addAllLiterals(this); 
+        
     }
     
     public Clause(Literal literal) {
@@ -48,9 +51,16 @@ public class Clause implements Comparable<Clause> {
     	addAllLiterals(this);
     }
     
+    private Clause(Clause parentA, Clause parentB) {
+        this.literal = null;
+        this.clause = null;
+        
+        this.parentA = parentA;
+        this.parentB = parentB;
+    }
+    
     private Clause(PriorityQueue<Literal> literals) {
     	this.literal = literals.poll();
-    	//literals.remove(0);
     	
     	if (!literals.isEmpty()) {
     		this.clause = new Clause(literals);
@@ -94,7 +104,6 @@ public class Clause implements Comparable<Clause> {
     			        HashMap<String, Substitution> subs = lit.resolve(otherLit, allSubs);
         
         				if (subs != null) {
-        				    //System.out.println("succeeded");
         					thisIndices.add(i);
         					otherIndices.add(j);					
         					allSubs = subs;
@@ -109,18 +118,23 @@ public class Clause implements Comparable<Clause> {
         }
         
         PriorityQueue<Literal> sharedLiterals = new PriorityQueue<Literal>();
+        HashMap<String, String> printSubs = new HashMap<String, String>();
         
         Variable.resetVariables();
         
         for (int i = 0; i < allLiterals.size(); i++) {
         	if (!thisIndices.contains(i)) {
-        		sharedLiterals.add(allLiterals.get(i).clone(allSubs));
+        	    Literal clone = allLiterals.get(i).clone(allSubs);
+        	    clone.subVariablesForPrinting(printSubs);
+        		sharedLiterals.add(clone);
         	}
         }
         
         for (int j = 0; j < other.allLiterals.size(); j++) {
         	if (!otherIndices.contains(j)) {
-        		sharedLiterals.add(other.allLiterals.get(j).clone(allSubs));
+        	    Literal clone = other.allLiterals.get(j).clone(allSubs);
+        	    clone.subVariablesForPrinting(printSubs);
+        		sharedLiterals.add(clone);
         	}
         }
                         
@@ -128,7 +142,28 @@ public class Clause implements Comparable<Clause> {
         	return new Clause(this, other);
         }
         
-        return new Clause(sharedLiterals, this, other);
+        Clause clause = new Clause(sharedLiterals, this, other);
+        clause.subAllVariablesForPrinting();
+        
+        for (int i = 0; i < clause.allLiterals.size(); i++) {
+            for (int j = i + 1; j < clause.allLiterals.size(); j++) {
+                Literal litA = clause.allLiterals.get(i);
+                Literal litB = clause.allLiterals.get(j);
+                
+                if (litA.equals(litB)) {
+                    return null;
+                }
+                
+                if (litA.isPositive() == litB.isPositive() && litA.getPredicate().equals(litB.getPredicate())) {
+                    //System.out.println(clause);
+                    //System.out.println("\t"+this);
+                    //System.out.println("\t"+other);
+                    //System.exit(1);
+                }
+            }
+        }
+        
+        return clause;
     }
     	
     private void addAllLiterals(Clause c) {
@@ -174,7 +209,6 @@ public class Clause implements Comparable<Clause> {
     public static Clause getSortedClause(Clause c) {
         PriorityQueue<Literal> lits = new PriorityQueue<Literal>(c.allLiterals);
         Clause newClause = new Clause(lits, null, null);
-        //newClause.allLiterals = c.allLiterals;
 
         return newClause;
     }
@@ -182,5 +216,9 @@ public class Clause implements Comparable<Clause> {
     @Override
     public int compareTo(Clause other) {
         return allLiterals.size() - other.allLiterals.size();
+    }
+    
+    public void subAllVariablesForPrinting() {
+        subVariablesForPrinting(new HashMap<String, String>());
     }
 }

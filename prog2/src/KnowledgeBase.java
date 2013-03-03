@@ -11,6 +11,7 @@ public class KnowledgeBase {
     private PriorityQueue<Clause> sos;
     private List<Clause> sosGrave;
     private HashSet<Pair> pairs;
+    private HashSet<String> clausesProduced;
     
     private int numberResolved = 0;
     
@@ -43,26 +44,23 @@ public class KnowledgeBase {
 	private void printNumberResolutions() {
 		System.out.println(numberResolved + " total resolutions");
 	}
-	
-	private boolean pairResolvedBefore(Pair pair) {
-		for (Pair p : pairs) {
-			if (p.equals(pair)) {
-				return true;
-			}
-		}
 		
-		return false;
-	}
-	
-	public boolean resolve() {
+	public boolean resolve() {	    
 	    sos = new PriorityQueue<Clause>(setOfSupport);
 	    sosGrave = new ArrayList<Clause>();
 	    pairs = new HashSet<Pair>();
+	    clausesProduced = new HashSet<String>();
+	    
+	    for (Clause i : input) {
+	        clausesProduced.add(i.toString());
+	    }
+	    for (Clause s : setOfSupport) {
+            clausesProduced.add(s.toString());
+        }
 	    
 	    while (!sos.isEmpty()) {
-	    	//if (numberResolved % 25 == 0) {
-	    	//	System.out.println(numberResolved);
-	    	//	System.out.println("\t"+sos.size());
+	    	//if (numberResolved > 20) {
+	    	//    break;
 	    	//}
 	    	
 	        Clause smallest = sos.poll();
@@ -86,11 +84,10 @@ public class KnowledgeBase {
 		                    printSolution(resolved);
 		                    
 		                    return true; 
-		                } else {
-		                	//check for duplicates?
-		                	
+		                } else if (!clausesProduced.contains(resolved.toString())) {
+		                    clausesProduced.add(resolved.toString());
 		                	sos.add(resolved);
-		                }   
+		                }
 		            }
 			        
 			        pairs.add(pair);

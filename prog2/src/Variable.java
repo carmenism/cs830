@@ -4,15 +4,12 @@ public class Variable extends Term {
     private static HashMap<String, Variable> variables;
     private static int counter = 0;
     
+    private String substitution;
+    
     private Variable(String name) {
         super(name);
     }
-    
-    @Override
-    public String toString() {
-        return name;
-    }
-    
+        
     public static void resetVariables() {
         variables = new HashMap<String, Variable>();
     }
@@ -29,7 +26,34 @@ public class Variable extends Term {
         return variable;
     }
     
-    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Variable other = (Variable) obj;
+        if (substitution == null) {
+            if (other.substitution != null)
+                return false;
+        } else if (!substitution.equals(other.substitution))
+            return false;
+        return true;
+    }
+
+    public void subVariablesForPrinting(HashMap<String, String> subs) {
+        String sub = subs.get(this.getName());
+        
+        if (sub == null) {
+            sub = "v" + subs.size();
+            
+            subs.put(this.getName(), sub);
+        }
+        
+        this.substitution = sub;
+    } 
     
     public boolean matches(Term other, HashMap<String, Substitution> subs) {
         if (subs.containsKey(this.getName())) {
@@ -45,7 +69,7 @@ public class Variable extends Term {
         if (other instanceof FunctionInstance) {
         	FunctionInstance fi = (FunctionInstance) other;
         	
-        	if (fi.containsVariable(this)) {
+        	if (fi.containsVariable(this, subs)) {
             	return false;
             }
         }
@@ -63,12 +87,21 @@ public class Variable extends Term {
     		if (term instanceof Variable) {
     			Variable var = (Variable) term;
     			
-    			return getVariable(var.getName());
+    			return new Variable(getVariable(var.getName()).getName());
     		}
     		
     		return term.clone(subs);
     	}
     	
-    	return getVariable(this.getName());//new Variable(name);
+    	return new Variable(getVariable(this.getName()).getName());//new Variable(name);
+    }
+    
+    @Override
+    public String toString() {
+        if (substitution != null) {
+            return substitution;
+        }
+        
+        return name;
     }
 }

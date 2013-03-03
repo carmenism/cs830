@@ -10,27 +10,13 @@ public class Parser {
 	}
 	
     public static void milestone() {
-    	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    	
-    	/*
-    	BufferedReader br = null;
-    	
-        try { 
-        	br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog2/problems/milestone4.cnf")));
-        } catch (java.io.FileNotFoundException e1) {
-        	e1.printStackTrace();
-        	System.exit(1);
-        }*/
         
         Clause clauseA = null;
         Clause clauseB = null;
         
-        try {
-			clauseA = parseClauseHelper(br.readLine());
-	        clauseB = parseClauseHelper(br.readLine());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			clauseA = parseClauseHelper("-Coffee(FRENCHROAST) | Good(FRENCHROAST) | -Makes(STARBUCKS, FRENCHROAST)");
+	        clauseB = parseClauseHelper("Coffee(v1) | -CoffeeMaker(v0) | -Makes(v0, v1)");
+
         
         if (clauseA != null && clauseB != null)  {
         	System.out.println("1: " + clauseA);
@@ -49,9 +35,9 @@ public class Parser {
     }
     
     public static KnowledgeBase getKBFromStandardIn() {
-    	//BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     	
-    	BufferedReader br = null;
+    	/*BufferedReader br = null;
     	
         try { 
         	br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog2/problems/cnf/complex/small-3.cnf")));
@@ -59,7 +45,7 @@ public class Parser {
         } catch (java.io.FileNotFoundException e1) {
         	e1.printStackTrace();
         	System.exit(1);
-        }
+        }*/
         
         List<Clause> input = new ArrayList<Clause>();
         List<Clause> setOfSupport = new ArrayList<Clause>();
@@ -109,8 +95,10 @@ public class Parser {
     private static Clause parseClauseHelper(String clause) {
         Variable.resetVariables();
         Clause c = parseClause(clause);
+        c = Clause.getSortedClause(c);        
+        c.subAllVariablesForPrinting();
         
-        return Clause.getSortedClause(c);
+        return c;
     }
     
     private static Clause parseClause(String clause) {
