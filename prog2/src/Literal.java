@@ -34,7 +34,7 @@ public class Literal implements Comparable<Literal> {
         predicateInstance.subVariablesForPrinting(subs);
     }    
     
-    public HashMap<String, Substitution> resolve(Literal other, HashMap<String, Substitution> allSubs) {
+    public HashMap<String, Term> resolve(Literal other, HashMap<String, Term> allSubs) {
         if (!getPredicate().equals(other.getPredicate())) {
             //System.out.println("predicates are different");
             return null;
@@ -53,7 +53,7 @@ public class Literal implements Comparable<Literal> {
             return null;
         }
         
-        HashMap<String, Substitution> subs = new HashMap<String, Substitution>();
+        HashMap<String, Term> subs = new HashMap<String, Term>();
         subs.putAll(allSubs);
         
         for (int i = 0; i < termList.size(); i++) {
@@ -78,7 +78,7 @@ public class Literal implements Comparable<Literal> {
         }
     }
     
-    public Literal clone(HashMap<String, Substitution> subs) {
+    public Literal clone(HashMap<String, Term> subs) {
     	return new Literal(predicateInstance.clone(subs), positive);
     }
 

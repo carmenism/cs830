@@ -39,10 +39,10 @@ public class FunctionInstance extends Term {
         }
     } 
     
-    public boolean containsVariable(Variable var, HashMap<String, Substitution> subs) {
+    public boolean containsVariable(Variable var, HashMap<String, Term> subs) {
     	for (Term term : termList) {
     	    if (subs.containsKey(term.getName())) {
-                term = subs.get(term.getName()).getSubstitute();
+                term = subs.get(term.getName());
             }
     	    
     		if (term instanceof Variable) {
@@ -64,9 +64,9 @@ public class FunctionInstance extends Term {
     }
 
 	@Override
-    public boolean matches(Term other, HashMap<String, Substitution> subs) {
+    public boolean matches(Term other, HashMap<String, Term> subs) {
         if (subs.containsKey(other.getName())) {
-            other = subs.get(other.getName()).getSubstitute();
+            other = subs.get(other.getName());
         }
         
         if (other instanceof FunctionInstance) {
@@ -99,13 +99,13 @@ public class FunctionInstance extends Term {
         	return false;
         }
         
-        Substitution newSub = new Substitution(this, otherVariable);
-        subs.put(otherVariable.getName(), newSub);
+        //Substitution newSub = new Substitution(this, otherVariable);
+        subs.put(otherVariable.getName(), this);
         
         return true;
     }
     
-    public FunctionInstance clone(HashMap<String, Substitution> subs) {
+    public FunctionInstance clone(HashMap<String, Term> subs) {
     	List<Term> newTermList = new ArrayList<Term>();
     	
     	for (Term term : termList) {

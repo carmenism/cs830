@@ -55,15 +55,15 @@ public class Variable extends Term {
         this.substitution = sub;
     } 
     
-    public boolean matches(Term other, HashMap<String, Substitution> subs) {
+    public boolean matches(Term other, HashMap<String, Term> subs) {
         if (subs.containsKey(this.getName())) {
-            Term sub = subs.get(this.getName()).getSubstitute();
+            Term sub = subs.get(this.getName());
             
             return sub.matches(other, subs);
         }
         
         if (subs.containsKey(other.getName())) {
-            other = subs.get(other.getName()).getSubstitute();
+            other = subs.get(other.getName());
         }
         
         if (other instanceof FunctionInstance) {
@@ -74,15 +74,15 @@ public class Variable extends Term {
             }
         }
         
-        Substitution newSub = new Substitution(other, this);
-        subs.put(this.getName(), newSub);
+        //Substitution newSub = new Substitution(other, this);
+        subs.put(this.getName(), other);
         
         return true;
     }
     
-    public Term clone(HashMap<String, Substitution> subs) {
+    public Term clone(HashMap<String, Term> subs) {
     	if (subs.containsKey(this.getName())) {
-    		Term term = subs.get(this.getName()).getSubstitute();
+    		Term term = subs.get(this.getName());
     		
     		if (term instanceof Variable) {
     			Variable var = (Variable) term;

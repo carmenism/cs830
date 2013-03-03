@@ -141,25 +141,34 @@ public class KnowledgeBase {
 	        int a = clause.getParentA().getNumber();
 	        int b = clause.getParentB().getNumber();
 	        
-	        //if (a > b) {
-	        //	int sub = a;
-	        //	a = b;
-	        //	b = sub;
-	        //}
+	        // Make sure the larger number comes first.
+	        if (a < b) {
+	        	int sub = a;
+	        	a = b;
+	        	b = sub;
+	        }
 	        
 	        System.out.println(a + " and " + b + " give " + c + ": " + clause);
-	       // System.out.println("\t" + clause.getParentA());
-	        //System.out.println("\t" + clause.getParentB());
         }
 	    
 	    printNumberResolutions();
 	}
 	
+	/**
+	 * Recursively builds the solution from the given clauses.
+	 * @param clause 
+	 */
 	private void buildSolution(Clause clause) {
-	    if (clause.getParentA() != null && clause.getParentB() != null) {
+	    if (clause.getParentA() != null || clause.getParentB() != null) {
 	    	solution.add(clause);
-	        buildSolution(clause.getParentA());
-	        buildSolution(clause.getParentB());
+	    	
+	    	if (clause.getParentA() != null) {
+	    		buildSolution(clause.getParentA());
+	    	}
+	    	
+	    	if (clause.getParentA() != null) {
+	    		buildSolution(clause.getParentB());
+	    	}
         }
 	}
 }

@@ -25,9 +25,9 @@ public class Constant extends Term {
     }
 
     @Override
-    public boolean matches(Term other, HashMap<String, Substitution> subs) {        
+    public boolean matches(Term other, HashMap<String, Term> subs) {        
         if (subs.containsKey(other.getName())) {
-            other = subs.get(other.getName()).getSubstitute();
+            other = subs.get(other.getName());
         }
         
         if (other instanceof Constant) {
@@ -38,13 +38,13 @@ public class Constant extends Term {
             return false;
         }
         
-        // then other is a variable        
-        subs.put(other.getName(), new Substitution(this, (Variable) other));
+        // Then other is a Variable.     
+        subs.put(other.getName(), this);
         
         return true;
     }
     
-    public Constant clone(HashMap<String, Substitution> subs) {
+    public Constant clone(HashMap<String, Term> subs) {
     	return this;
     }
     

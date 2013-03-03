@@ -41,7 +41,7 @@ public class PredicateInstance {
         }
     }
     
-    public PredicateInstance clone(HashMap<String, Substitution> subs) {
+    public PredicateInstance clone(HashMap<String, Term> subs) {
     	List<Term> newTermList = new ArrayList<Term>();
     	
     	for (Term term : termList) {
