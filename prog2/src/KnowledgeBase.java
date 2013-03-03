@@ -159,7 +159,7 @@ public class KnowledgeBase {
         PriorityQueue<Clause> others = new PriorityQueue<Clause>();
 
         others.addAll(sos);
-        //others.addAll(sosGrave);
+        others.addAll(sosGrave);
         others.addAll(input);
 
         return others;
