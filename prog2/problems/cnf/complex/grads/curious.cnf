@@ -1,0 +1,9 @@
+Dog(Rover)
+Owns(Jack, Rover)
+-Dog(y) | -Owns(x, y) | AnimalLover(x)
+-AnimalLover(x) | -Animal(y) | -Kills(x, y)
+Cat(Morris)
+-Cat(x) | Animal(x)
+Kills(Jack, Morris) | Kills(Curiosity, Morris)
+--- negated query ---
+-Kills(x, Morris) | Ans(x)
