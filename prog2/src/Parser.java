@@ -6,17 +6,12 @@ import java.util.List;
 
 public class Parser {
 	public static void main(String [] args) {
-		milestone();
+		resolveTest();
 	}
 	
-    public static void milestone() {
-        
-        Clause clauseA = null;
-        Clause clauseB = null;
-        
-			clauseA = parseClauseHelper("-Coffee(FRENCHROAST) | Good(FRENCHROAST) | -Makes(STARBUCKS, FRENCHROAST)");
-	        clauseB = parseClauseHelper("Coffee(v1) | -CoffeeMaker(v0) | -Makes(v0, v1)");
-
+    public static void resolveTest() {        
+        Clause clauseA = parseClauseHelper("-Coffee(FRENCHROAST) | Good(FRENCHROAST) | -Makes(STARBUCKS, FRENCHROAST)");
+        Clause clauseB = parseClauseHelper("Coffee(v1) | -CoffeeMaker(v0) | -Makes(v0, v1)");
         
         if (clauseA != null && clauseB != null)  {
         	System.out.println("1: " + clauseA);
@@ -35,17 +30,17 @@ public class Parser {
     }
     
     public static KnowledgeBase getKBFromStandardIn() {
-    	//BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     	
-    	BufferedReader br = null;
+    	/*BufferedReader br = null;
     	
         try { 
-        	br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog2/problems/cnf/complex/grads/ans-literal.cnf")));
+        	br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog2/problems/cnf/complex/grads/curious.cnf")));
             //br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("/home/csg/crr8/spring2013/cs830/prog2/problems/lotr_3.cnf")));
         } catch (java.io.FileNotFoundException e1) {
         	e1.printStackTrace();
         	System.exit(1);
-        }
+        }*/
         
         List<Clause> input = new ArrayList<Clause>();
         List<Clause> setOfSupport = new ArrayList<Clause>();
@@ -79,19 +74,7 @@ public class Parser {
                
         return null;
     }
-            
-    public static void test() {
-        String clauseA = "-CoffeeMaker(x5) | -Makes(x5, F(b)) | Coffee(x6)";
-        String clauseB = "Makes(GreenMountain, F(a))";
         
-        Clause a = parseClauseHelper(clauseA);
-        a.printAllLiterals();
-        Clause b = parseClauseHelper(clauseB);
-        b.printAllLiterals();
-        
-        System.out.println(a.resolve(b));
-    }
-    
     private static Clause parseClauseHelper(String clause) {
         Variable.resetVariables();
         Clause c = parseClause(clause);

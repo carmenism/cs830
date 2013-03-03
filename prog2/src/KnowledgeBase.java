@@ -120,27 +120,7 @@ public class KnowledgeBase {
         
         return others;
 	}
-	
-	/*private boolean resolve(Collection<Clause> clauses, Clause clause) {
-		for (Clause other : clauses) {
-            Clause resolved = clause.resolve(other);
-            
-            if (resolved != null) {
-                if (resolved.isEmpty()) {
-                    printSolution(resolved);
-                    
-                    return true; 
-                } else {
-                	System.out.println(resolved);
-                    sos.add(resolved);
-                    numberResolved++;
-                }
-            }
-        }
 		
-		return false;
-	}*/
-	
 	private void printSolution(Clause emptyClause) {
 	    buildSolution(emptyClause);
 	    
@@ -157,8 +137,15 @@ public class KnowledgeBase {
 	    for (int i = solution.size() - 1; i >= 0; i--) {
 	    	Clause clause = solution.get(i);	
 	    	int c = clause.getNumber();
+	    	
 	        int a = clause.getParentA().getNumber();
 	        int b = clause.getParentB().getNumber();
+	        
+	        if (a > b) {
+	        	int sub = a;
+	        	a = b;
+	        	b = sub;
+	        }
 	        
 	        System.out.println(a + " and " + b + " give " + c + ": " + clause);
         }
@@ -168,7 +155,6 @@ public class KnowledgeBase {
 	
 	private void buildSolution(Clause clause) {
 	    if (clause.getParentA() != null && clause.getParentB() != null) {
-	    	//System.out.println("Adding " + clause);
 	    	solution.add(clause);
 	        buildSolution(clause.getParentA());
 	        buildSolution(clause.getParentB());
