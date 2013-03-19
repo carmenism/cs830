@@ -9,6 +9,19 @@ public class Parser {
     private static final String CONSTANTS = "constants:";
     private static final String COMMENT = "#";
     
+    public static void main(String [] args) {
+        parseConstants("constants: A B C DEF");
+        parsePredicateSpecs("predicates: On(x, y) Clear(x)");
+        
+        for (Constant c : Program3.constants) {
+            System.out.println(c);
+        }
+        
+        for (PredicateSpec ps : Program3.predicateSpecs.values()) {
+            System.out.println(ps);
+        }
+    }
+    
     private static void parseInput() {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
@@ -21,50 +34,41 @@ public class Parser {
             e1.printStackTrace();
             System.exit(1);
         }*/
+        String line = null;
+        
+        if (line.startsWith(PREDICATES)) {
+            line = line.substring(PREDICATES.length()).trim();
+        }
     }
     
     private static void parseAction(List<String> lines) {
         
     }
     
-    private static void parsePredicateSpecs(String line) {
-        line = line.substring(PREDICATES.length()).trim();
-        
+    private static void parsePredicateSpecs(String line) {        
         int open = line.indexOf("(");
         
         while (open != -1) {
             int closed = line.indexOf(")");
             
             String name = line.substring(0, open);
-            Predicate predicate = getPredicate(name);
             
             String terms = line.substring(open + 1, closed);
             List<Variable> termList = parseVariableList(terms);
                         
-            Program3.predicateSpecs.add(new PredicateSpec(predicate, termList));
+            Program3.predicateSpecs.put(name, new PredicateSpec(name, termList));
             
-            line = line.substring(closed + 1);
+            line = line.substring(closed + 1).trim();
             open = line.indexOf("(");
         }
     }
-    
-    private static Predicate getPredicate(String name) {
-        Predicate predicate = Program3.predicates.get(name);
         
-        if (predicate == null) {
-            predicate = new Predicate(name);
-            
-            Program3.predicates.put(name, predicate);
-        }
-        
-        return predicate;
-    }
-    
     private static List<Variable> parseVariableList(String terms) {
         HashMap<String, Variable> vars = new HashMap<String, Variable>();
         List<Variable> termList = new ArrayList<Variable>();
         
         for (String term : terms.split(",")) {
+            term = term.trim();
             Variable var = vars.get(term);
             
             if (var == null) {
