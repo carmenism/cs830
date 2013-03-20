@@ -1,16 +1,16 @@
 import java.util.List;
 
 public class PredicateSpec {
-    private final String name;
-    private final List<Variable> variables;
+    private final Predicate predicate;
+    private final List<Variable> variables;   
     
-    public PredicateSpec(String name, List<Variable> variables) {
-        this.name = name;
+    public PredicateSpec(Predicate predicate, List<Variable> variables) {
+        this.predicate = predicate;
         this.variables = variables;
     }
 
-    public String getName() {
-        return name;
+    public Predicate getPredicate() {
+        return predicate;
     }
 
     public List<Variable> getVariables() {
@@ -19,22 +19,29 @@ public class PredicateSpec {
     
     @Override
     public String toString() {
-        String ret = name + "(";
+        StringBuffer ret = new StringBuffer();
         
-        for (Variable var : variables) {
-            ret = ret + var + ", ";
+        ret.append(predicate);
+        ret.append("(");
+        
+        for (Variable variable : variables) {
+            ret.append(variable);
+            ret.append(", ");
         }
         
-        ret = ret.substring(0, ret.length() - 2) + ")";
+        ret.deleteCharAt(ret.length() - 1);
+        ret.deleteCharAt(ret.length() - 1);
+        ret.append(")");
         
-        return ret;
+        return ret.toString();
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result
+                + ((predicate == null) ? 0 : predicate.hashCode());
         result = prime * result
                 + ((variables == null) ? 0 : variables.hashCode());
         return result;
@@ -49,10 +56,10 @@ public class PredicateSpec {
         if (getClass() != obj.getClass())
             return false;
         PredicateSpec other = (PredicateSpec) obj;
-        if (name == null) {
-            if (other.name != null)
+        if (predicate == null) {
+            if (other.predicate != null)
                 return false;
-        } else if (!name.equals(other.name))
+        } else if (!predicate.equals(other.predicate))
             return false;
         if (variables == null) {
             if (other.variables != null)

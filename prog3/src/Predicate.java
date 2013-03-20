@@ -1,3 +1,4 @@
+
 public class Predicate {
     private final String name;
     
@@ -37,5 +38,5 @@ public class Predicate {
         } else if (!name.equals(other.name))
             return false;
         return true;
-    }    
+    }
 }
