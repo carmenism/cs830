@@ -1,16 +1,16 @@
 import java.util.List;
 
-public class PredicateSpec {
-    private final Predicate predicate;
+public class UngroundedPredicate {
+    private final String name;
     private final List<Variable> variables;   
     
-    public PredicateSpec(Predicate predicate, List<Variable> variables) {
-        this.predicate = predicate;
+    public UngroundedPredicate(String name, List<Variable> variables) {
+        this.name = name;
         this.variables = variables;
     }
 
-    public Predicate getPredicate() {
-        return predicate;
+    public String getName() {
+        return name;
     }
 
     public List<Variable> getVariables() {
@@ -21,7 +21,7 @@ public class PredicateSpec {
     public String toString() {
         StringBuffer ret = new StringBuffer();
         
-        ret.append(predicate);
+        ret.append(name);
         ret.append("(");
         
         for (Variable variable : variables) {
@@ -40,8 +40,7 @@ public class PredicateSpec {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((predicate == null) ? 0 : predicate.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result
                 + ((variables == null) ? 0 : variables.hashCode());
         return result;
@@ -55,11 +54,11 @@ public class PredicateSpec {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        PredicateSpec other = (PredicateSpec) obj;
-        if (predicate == null) {
-            if (other.predicate != null)
+        UngroundedPredicate other = (UngroundedPredicate) obj;
+        if (name == null) {
+            if (other.name != null)
                 return false;
-        } else if (!predicate.equals(other.predicate))
+        } else if (!name.equals(other.name))
             return false;
         if (variables == null) {
             if (other.variables != null)

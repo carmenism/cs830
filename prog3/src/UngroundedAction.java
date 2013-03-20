@@ -1,49 +1,49 @@
 import java.util.List;
 
-public class Action {
-    private List<PredicateSpec> pre;
-    private List<PredicateSpec> preneg;
+public class UngroundedAction {
+    private List<UngroundedPredicate> pre;
+    private List<UngroundedPredicate> preneg;
     
-    private List<PredicateSpec> del;
-    private List<PredicateSpec> add;
+    private List<UngroundedPredicate> del;
+    private List<UngroundedPredicate> add;
     
     private final String name;
     private final List<Variable> variables;
     
-    public Action(String name, List<Variable> variables) {
+    public UngroundedAction(String name, List<Variable> variables) {
         this.name = name;
         this.variables = variables;
     }
 
-    public List<PredicateSpec> getPre() {
+    public List<UngroundedPredicate> getPre() {
         return pre;
     }
 
-    public void setPre(List<PredicateSpec> pre) {
+    public void setPre(List<UngroundedPredicate> pre) {
         this.pre = pre;
     }
 
-    public List<PredicateSpec> getPreneg() {
+    public List<UngroundedPredicate> getPreneg() {
         return preneg;
     }
 
-    public void setPreneg(List<PredicateSpec> preneg) {
+    public void setPreneg(List<UngroundedPredicate> preneg) {
         this.preneg = preneg;
     }
 
-    public List<PredicateSpec> getDel() {
+    public List<UngroundedPredicate> getDel() {
         return del;
     }
 
-    public void setDel(List<PredicateSpec> del) {
+    public void setDel(List<UngroundedPredicate> del) {
         this.del = del;
     }
 
-    public List<PredicateSpec> getAdd() {
+    public List<UngroundedPredicate> getAdd() {
         return add;
     }
 
-    public void setAdd(List<PredicateSpec> add) {
+    public void setAdd(List<UngroundedPredicate> add) {
         this.add = add;
     }
 
@@ -68,30 +68,30 @@ public class Action {
         
         ret.append("\npre:");
         
-        for (PredicateSpec ps : pre) {
+        for (UngroundedPredicate up : pre) {
             ret.append(" ");
-            ret.append(ps);
+            ret.append(up);
         }
         
         ret.append("\npreneg:");
         
-        for (PredicateSpec ps : preneg) {
+        for (UngroundedPredicate up : preneg) {
             ret.append(" ");
-            ret.append(ps);
+            ret.append(up);
         }
         
         ret.append("\ndel:");
         
-        for (PredicateSpec ps : del) {
+        for (UngroundedPredicate up : del) {
             ret.append(" ");
-            ret.append(ps);
+            ret.append(up);
         }
         
         ret.append("\nadd:");
         
-        for (PredicateSpec ps : add) {
+        for (UngroundedPredicate up : add) {
             ret.append(" ");
-            ret.append(ps);
+            ret.append(up);
         }
         
         return ret.toString();

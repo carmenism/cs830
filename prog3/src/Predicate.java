@@ -1,24 +1,47 @@
+import java.util.List;
 
 public class Predicate {
     private final String name;
+    private final List<Constant> constants;
     
-    public Predicate(String name) {
+    public Predicate(String name, List<Constant> constants) {
         this.name = name;
+        this.constants = constants;
     }
 
     public String getName() {
         return name;
     }
 
-    @Override
-    public String toString() {
-        return name;
+    public List<Constant> getConstants() {
+        return constants;
     }
     
+    @Override
+    public String toString() {
+        StringBuffer ret = new StringBuffer();
+        
+        ret.append(name);
+        ret.append("(");
+        
+        for (Constant constant : constants) {
+            ret.append(constant);
+            ret.append(", ");
+        }
+        
+        ret.deleteCharAt(ret.length() - 1);
+        ret.deleteCharAt(ret.length() - 1);
+        ret.append(")");
+        
+        return ret.toString();
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result
+                + ((constants == null) ? 0 : constants.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         return result;
     }
@@ -32,6 +55,11 @@ public class Predicate {
         if (getClass() != obj.getClass())
             return false;
         Predicate other = (Predicate) obj;
+        if (constants == null) {
+            if (other.constants != null)
+                return false;
+        } else if (!constants.equals(other.constants))
+            return false;
         if (name == null) {
             if (other.name != null)
                 return false;

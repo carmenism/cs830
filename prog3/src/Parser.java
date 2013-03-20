@@ -22,17 +22,42 @@ public class Parser {
     
     public static void main(String [] args) {
         parseInput();
+
+        System.out.println("CONSTANTS");
         
         for (Constant c : Program3.constants.values()) {
             System.out.println(c);
         }
+
+        System.out.println("\nPREDICATES");
         
-        for (PredicateSpec ps : Program3.predSpecs) {
-            System.out.println(ps);
+        for (UngroundedPredicate up : Program3.ungroundedPreds.values()) {
+            System.out.println(up);
         }
         
-        for (Action act : Program3.actions) {
-            System.out.println(act);
+        System.out.println("\nACTIONS");
+        
+        for (UngroundedAction act : Program3.ungroundedActions) {
+            System.out.println(act+"\n");
+        }
+        
+
+        System.out.println("\nACTIONS");
+        
+        for (UngroundedAction act : Program3.ungroundedActions) {
+            System.out.println(act+"\n");
+        }
+        
+        System.out.println("\nINITIAL");
+        
+        for (Predicate p : Program3.initial) {
+            System.out.println(p);
+        }
+
+        System.out.println("\nGOAL");
+        
+        for (Predicate p : Program3.goal) {
+            System.out.println(p);
         }
     }
     
@@ -62,7 +87,9 @@ public class Parser {
                 } else if (line.startsWith(PREDICATES)) {
                     line = removeHeader(line, PREDICATES);
                     
-                    Program3.predSpecs.addAll(parsePredicateSpecs(line));
+                    for (UngroundedPredicate up : parseUngroundedPredicates(line)) {
+                        Program3.ungroundedPreds.put(up.getName(), up);
+                    }
                 } else if (line.startsWith(CONSTANTS)) {
                     line = removeHeader(line, CONSTANTS);
                     
@@ -72,20 +99,20 @@ public class Parser {
                 } else if (line.startsWith(INITIAL)) {
                     line = removeHeader(line, INITIAL);
                     
-                    Program3.initial.addAll(parsePredicateUsages(line));
+                    Program3.initial.addAll(parsePredicates(line));
                 } else if (line.startsWith(GOAL)) {
                     line = removeHeader(line, GOAL);
                     
-                    Program3.goal.addAll(parsePredicateUsages(line));
+                    Program3.goal.addAll(parsePredicates(line));
                 } else if (line.startsWith(GOALNEG)) {
                     line = removeHeader(line, GOALNEG);
                     
-                    Program3.goalNeg.addAll(parsePredicateUsages(line));
+                    Program3.goalNeg.addAll(parsePredicates(line));
                 } else if (line.trim().isEmpty()) { 
                     if (readingAction) {
                         readingAction = false;
                         
-                        Program3.actions.add(parseAction(actionLines));
+                        Program3.ungroundedActions.add(parseUngroundedAction(actionLines));
                     }
                 } else if (readingAction) {
                     actionLines.add(line.trim());
@@ -106,14 +133,14 @@ public class Parser {
         return line.substring(header.length()).trim();
     }
     
-    private static Action parseAction(List<String> lines) {
+    private static UngroundedAction parseUngroundedAction(List<String> lines) {
         boolean firstLine = true;
-        List<PredicateSpec> pre = new ArrayList<PredicateSpec>();
-        List<PredicateSpec> preneg = new ArrayList<PredicateSpec>();
-        List<PredicateSpec> del = new ArrayList<PredicateSpec>();
-        List<PredicateSpec> add = new ArrayList<PredicateSpec>();
+        List<UngroundedPredicate> pre = new ArrayList<UngroundedPredicate>();
+        List<UngroundedPredicate> preneg = new ArrayList<UngroundedPredicate>();
+        List<UngroundedPredicate> del = new ArrayList<UngroundedPredicate>();
+        List<UngroundedPredicate> add = new ArrayList<UngroundedPredicate>();
         
-        Action action = null;
+        UngroundedAction action = null;
         
         for (String line : lines) {
             if (firstLine) {
@@ -124,23 +151,23 @@ public class Parser {
                 line = line.substring(space);                
                 List<Variable> vars = parseVariableList(line);
                 
-                action = new Action(name, vars);
+                action = new UngroundedAction(name, vars);
             } else if (line.startsWith(PRE)) {
                 line = removeHeader(line, PRE);
                 
-                pre.addAll(parsePredicateSpecs(line));
+                pre.addAll(parseUngroundedPredicates(line));
             } else if (line.startsWith(PRENEG)) {
                 line = removeHeader(line, PRENEG);
                 
-                preneg.addAll(parsePredicateSpecs(line));       
+                preneg.addAll(parseUngroundedPredicates(line));       
             } else if (line.startsWith(DEL)) {                
                 line = removeHeader(line, DEL); 
                 
-                del.addAll(parsePredicateSpecs(line));               
+                del.addAll(parseUngroundedPredicates(line));               
             } else if (line.startsWith(ADD)) {
                 line = removeHeader(line, ADD);
                 
-                add.addAll(parsePredicateSpecs(line));                 
+                add.addAll(parseUngroundedPredicates(line));                 
             }
         }
         
@@ -154,42 +181,42 @@ public class Parser {
         return action;
     }
     
-    private static List<PredicateSpec> parsePredicateSpecs(String line) {  
-        List<PredicateSpec> predSpecs = new ArrayList<PredicateSpec>();
+    private static List<UngroundedPredicate> parseUngroundedPredicates(String line) {  
+        List<UngroundedPredicate> preds = new ArrayList<UngroundedPredicate>();
         int open = line.indexOf("(");
         
         while (open != -1) {
             int closed = line.indexOf(")");
             
             String name = line.substring(0, open);
-            Predicate pred = getPredicate(name);
+            //Predicate pred = getPredicate(name);
             
             String terms = line.substring(open + 1, closed);
             List<Variable> termList = parseVariableList(terms);
                         
-            predSpecs.add(new PredicateSpec(pred, termList));
+            preds.add(new UngroundedPredicate(name, termList));
             
             line = line.substring(closed + 1).trim();
             open = line.indexOf("(");
         }
         
-        return predSpecs;
+        return preds;
     }
     
-    private static List<PredicateUsage> parsePredicateUsages(String line) {  
-        List<PredicateUsage> predUses = new ArrayList<PredicateUsage>();
+    private static List<Predicate> parsePredicates(String line) {  
+        List<Predicate> predUses = new ArrayList<Predicate>();
         int open = line.indexOf("(");
         
         while (open != -1) {
             int closed = line.indexOf(")");
             
             String name = line.substring(0, open);
-            Predicate pred = getPredicate(name);
+            //UngroundedPredicate pred = getUngroundedPredicate(name);
             
             String terms = line.substring(open + 1, closed);
             List<Constant> termList = parseConstantList(terms);
                         
-            predUses.add(new PredicateUsage(pred, termList));
+            predUses.add(new Predicate(name, termList));
             
             line = line.substring(closed + 1).trim();
             open = line.indexOf("(");
@@ -198,17 +225,17 @@ public class Parser {
         return predUses;
     }
     
-    private static Predicate getPredicate(String name) {
-        Predicate predicate = Program3.predicates.get(name);
+    /*private static UngroundedPredicate getUngroundedPredicate(String name) {
+        UngroundedPredicate predicate = Program3.ungroundedPreds.get(name);
         
-        if (predicate == null) {
-            predicate = new Predicate(name);
-            
-            Program3.predicates.put(name, predicate);
-        }
+        //if (predicate == null) {
+        //    predicate = new UngroundedPredicate(name);
+        //    
+        //    Program3.predicates.put(name, predicate);
+        //}
         
         return predicate;
-    }
+    }*/
     
     private static List<Variable> parseVariableList(String terms) {
         HashMap<String, Variable> vars = new HashMap<String, Variable>();
