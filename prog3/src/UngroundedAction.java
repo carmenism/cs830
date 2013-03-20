@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.ArrayList;
 
 public class UngroundedAction {
     private List<UngroundedPredicate> pre;
@@ -53,6 +54,12 @@ public class UngroundedAction {
 
     public List<Variable> getVariables() {
         return variables;
+    }
+    
+    public void ground(ConstantSet constantSets) {
+        for (List<Constant> list : constantSets) {
+            
+        }
     }
     
     @Override
