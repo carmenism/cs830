@@ -21,11 +21,35 @@ public class Program3 {
     public static HashSet<Predicate> goalNeg = new HashSet<Predicate>();
     
     public Program3() {
+        milestone();
+    }
+    
+    private static void milestone() {
         Parser.parseInput();
         
         addAllGroundedPredicates();
         
         groundAllActions();
+        
+        State initialState = getInitialState();
+        
+        HashSet<Action> actions = initialState.getPossibleActions();
+        
+        for (Action action : actions) {
+            System.out.println(action.toStringDetails() + "\n");
+        }
+    }
+    
+    private static State getInitialState() {
+        HashSet<Predicate> initialNeg = new HashSet<Predicate>();
+        
+        for (Predicate predicate : allGroundedPredicates.values()) {
+            if (!initial.contains(predicate)) {
+                initialNeg.add(predicate);
+            }
+        }
+        
+        return new State(initial, initialNeg);
     }
     
     private static void groundAllActions() {        

@@ -70,7 +70,7 @@ public class Parser {
         BufferedReader br = null;     
         try { 
             //br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog3/input/coffeeworld-1.in")));
-            br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("/home/csg/crr8/spring2013/cs830/prog3/input/coffeeworld-1.in")));
+            br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("/home/csg/crr8/spring2013/cs830/prog3/input/coffeeworld-2.in")));
         } catch (java.io.FileNotFoundException e1) {
             e1.printStackTrace();
             System.exit(1);

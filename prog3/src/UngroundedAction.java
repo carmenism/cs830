@@ -61,23 +61,17 @@ public class UngroundedAction {
         return variables.size();
     }
     
-    public List<Action> ground(ConstantSet constantSets) {
-        System.out.println("grounding:\n" + this + "\n");
-        
+    public List<Action> ground(ConstantSet constantSets) {        
         List<Action> actions = new ArrayList<Action>();
         
         for (List<Constant> constants : constantSets) {
             Action action = ground(constants);
             
             if (action != null) {
-                System.out.println(action.toStringDetails() + "\n");
                 actions.add(action);
             }
         }
-        
-
-        System.out.println("\n************************************\n");
-        
+                
         return actions;
     }
     
