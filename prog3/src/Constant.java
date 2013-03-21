@@ -14,7 +14,7 @@ public class Constant {
     public String toString() {
         return name;
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;

@@ -1,3 +1,4 @@
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -56,10 +57,59 @@ public class UngroundedAction {
         return variables;
     }
     
-    public void ground(ConstantSet constantSets) {
-        for (List<Constant> list : constantSets) {
+    public int length() {
+        return variables.size();
+    }
+    
+    public List<Action> ground(ConstantSet constantSets) {
+        System.out.println("grounding:\n" + this + "\n");
+        
+        List<Action> actions = new ArrayList<Action>();
+        
+        for (List<Constant> constants : constantSets) {
+            Action action = ground(constants);
             
+            if (action != null) {
+                System.out.println(action + "\n");
+                actions.add(action);
+            }
         }
+        
+
+        System.out.println("\n************************************\n");
+        
+        return actions;
+    }
+    
+    public Action ground(List<Constant> constants) {
+        List<Predicate> newPre = null;            
+        List<Predicate> newPreneg = null;
+        List<Predicate> newDel = null;
+        List<Predicate> newAdd = null;
+        
+        try {
+            if (variables.size() == constants.size()) {
+                HashMap<Variable, Constant> subs = new HashMap<Variable, Constant>();
+                
+                for (int i = 0; i < variables.size(); i++) {
+                    Variable var = variables.get(i);
+                    Constant con = constants.get(i);
+                    
+                    subs.put(var, con);
+                }                
+                
+                newPre = UngroundedPredicate.ground(pre, subs);            
+                newPreneg = UngroundedPredicate.ground(preneg, subs);
+                newDel = UngroundedPredicate.ground(del, subs);
+                newAdd = UngroundedPredicate.ground(add, subs);
+                
+                return new Action(newPre, newPreneg, newDel, newAdd);
+            }
+        } catch (SubstitutionMissingException e) {
+            e.printStackTrace();
+        }
+        
+        return null;
     }
     
     @Override

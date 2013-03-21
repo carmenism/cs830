@@ -30,6 +30,41 @@ public class Action {
     }
 
     @Override
+    public String toString() {
+        StringBuffer ret = new StringBuffer();
+        
+        ret.append("\npre:");
+        
+        for (Predicate p : pre) {
+            ret.append(" ");
+            ret.append(p);
+        }
+        
+        ret.append("\npreneg:");
+        
+        for (Predicate p : preneg) {
+            ret.append(" ");
+            ret.append(p);
+        }
+        
+        ret.append("\ndel:");
+        
+        for (Predicate p : del) {
+            ret.append(" ");
+            ret.append(p);
+        }
+        
+        ret.append("\nadd:");
+        
+        for (Predicate p : add) {
+            ret.append(" ");
+            ret.append(p);
+        }
+        
+        return ret.toString();
+    }
+    
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

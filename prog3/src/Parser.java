@@ -19,6 +19,8 @@ public class Parser {
     private static final String DEL = "del:";
     
     private static final String COMMENT = "#";
+    private static final String DELIM_SPACE = "\\s+";
+    private static final String DELIM_COMMA = ",";
     
     public static void main(String [] args) {
         parseInput();
@@ -67,8 +69,8 @@ public class Parser {
         // For running on my PC.
         BufferedReader br = null;     
         try { 
-            br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog3/input/coffeeworld-1.in")));
-            //br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("/home/csg/crr8/spring2013/cs830/prog2/problems/lotr_3.cnf")));
+            //br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog3/input/coffeeworld-1.in")));
+            br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("/home/csg/crr8/spring2013/cs830/prog3/input/coffeeworld-1.in")));
         } catch (java.io.FileNotFoundException e1) {
             e1.printStackTrace();
             System.exit(1);
@@ -149,7 +151,7 @@ public class Parser {
                 int space = line.indexOf(" ");
                 String name = line.substring(0, space);
                 line = line.substring(space);                
-                List<Variable> vars = parseVariableList(line);
+                List<Variable> vars = parseVariableList(DELIM_SPACE, line);
                 
                 action = new UngroundedAction(name, vars);
             } else if (line.startsWith(PRE)) {
@@ -192,7 +194,7 @@ public class Parser {
             //Predicate pred = getPredicate(name);
             
             String terms = line.substring(open + 1, closed);
-            List<Variable> termList = parseVariableList(terms);
+            List<Variable> termList = parseVariableList(DELIM_COMMA, terms);
                         
             preds.add(new UngroundedPredicate(name, termList));
             
@@ -237,11 +239,11 @@ public class Parser {
         return predicate;
     }*/
     
-    private static List<Variable> parseVariableList(String terms) {
+    private static List<Variable> parseVariableList(String delimiter, String terms) {
         HashMap<String, Variable> vars = new HashMap<String, Variable>();
         List<Variable> list = new ArrayList<Variable>();
         
-        for (String term : terms.split(",")) {
+        for (String term : terms.trim().split(delimiter)) {
             term = term.trim();
             Variable var = vars.get(term);
             
@@ -268,7 +270,7 @@ public class Parser {
     
     private static List<Constant> parseConstants(String line) {        
         List<Constant> constants = new ArrayList<Constant>();
-        String[] tokens = line.split("\\s+");
+        String[] tokens = line.split(DELIM_SPACE);
 
         for (String token : tokens) {
             constants.add(new Constant(token));

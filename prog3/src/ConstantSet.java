@@ -4,8 +4,12 @@ import java.util.ArrayList;
 
 public class ConstantSet extends HashSet<List<Constant>> {
     private static final long serialVersionUID = 1L;
+    
+    private final Integer length;
 
     public ConstantSet(int length, List<Constant> allConstants) {
+        this.length = length;
+        
         int n = allConstants.size();
         
         for (int r = 0; r < Math.pow(n, length); r++) {
@@ -21,6 +25,10 @@ public class ConstantSet extends HashSet<List<Constant>> {
         } 
     }
     
+    public Integer getLength() {
+        return length;
+    }
+
     @SuppressWarnings("unused")
     public static void main(String [] args) {
         List<Constant> constants = new ArrayList<Constant>();
