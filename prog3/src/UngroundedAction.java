@@ -70,7 +70,7 @@ public class UngroundedAction {
             Action action = ground(constants);
             
             if (action != null) {
-                System.out.println(action + "\n");
+                System.out.println(action.toStringDetails() + "\n");
                 actions.add(action);
             }
         }
@@ -103,7 +103,7 @@ public class UngroundedAction {
                 newDel = UngroundedPredicate.ground(del, subs);
                 newAdd = UngroundedPredicate.ground(add, subs);
                 
-                return new Action(newPre, newPreneg, newDel, newAdd);
+                return new Action(this, subs, newPre, newPreneg, newDel, newAdd);
             }
         } catch (SubstitutionMissingException e) {
             e.printStackTrace();
