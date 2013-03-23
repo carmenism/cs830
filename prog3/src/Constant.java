@@ -1,5 +1,5 @@
 
-public class Constant {
+public class Constant extends Term {
     private final String name;
     
     public Constant(String name) {

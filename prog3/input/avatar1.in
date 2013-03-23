@@ -1,0 +1,26 @@
+predicates: MasteredElement(person, element) Know(personA, personB) CanBend(person, element) HasTeacher(student, element) FullyRealizedAvatar(person)
+constants: Air Water Earth Fire 
+3 actions
+
+Meet personA personB 
+pre: 
+preneg: Know(personA, personB) Know(personB, personA)
+del: 
+add: Know(personA, personB) Know(personB, personA)
+
+BecomeTeacherOf teacher student element
+pre: MasteredElement(teacher, element) Know(teacher, student) Know(student, teacher)
+preneg: HasTeacher(student, element)
+del: 
+add: HasTeacher(student, element)
+
+StudyElement student element
+pre: HasTeacher(student, element) CanBend(student, element)
+preneg: MasteredElement(student, element)
+del:
+add: MasteredElement(student, element)
+
+constants: Aang Katara Zuko Toph
+initial: MasteredElement(Katara, Water) MasteredElement(Aang, Air) MasteredElement(Toph, Earth) MasteredElement(Zuko, Fire) CanBend(Aang, Fire) CanBend(Aang, Water) CanBend(Aang, Earth)
+goal: MasteredElement(Aang, Water) MasteredElement(Aang, Fire) MasteredElement(Aang, Earth)
+goalneg:

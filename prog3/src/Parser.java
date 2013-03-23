@@ -64,13 +64,13 @@ public class Parser {
     }
     
     public static void parseInput() {
-        //BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        // BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         // For running on my PC.
         BufferedReader br = null;     
         try { 
             //br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog3/input/coffeeworld-1.in")));
-            br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("/home/csg/crr8/spring2013/cs830/prog3/input/coffeeworld-2.in")));
+            br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("/home/csg/crr8/spring2013/cs830/prog3/input/switches.in")));
         } catch (java.io.FileNotFoundException e1) {
             e1.printStackTrace();
             System.exit(1);
@@ -194,7 +194,7 @@ public class Parser {
             //Predicate pred = getPredicate(name);
             
             String terms = line.substring(open + 1, closed);
-            List<Variable> termList = parseVariableList(DELIM_COMMA, terms);
+            List<Term> termList = parseTermList(DELIM_COMMA, terms);
                         
             preds.add(new UngroundedPredicate(name, termList));
             
@@ -238,6 +238,39 @@ public class Parser {
         
         return predicate;
     }*/
+    
+    private static List<Term> parseTermList(String delimiter, String terms) {
+        HashMap<String, Variable> vars = new HashMap<String, Variable>();
+        HashMap<String, Constant> cons = new HashMap<String, Constant>();
+        List<Term> list = new ArrayList<Term>();
+        
+        for (String term : terms.trim().split(delimiter)) {
+            term = term.trim();
+            String firstChar = term.substring(0, 1);
+            
+            if (firstChar.equals(firstChar.toLowerCase())) {
+                Variable var = vars.get(term);
+                
+                if (var == null) {
+                    var = new Variable(term);
+                    vars.put(term, var);
+                }
+                
+                list.add(var);
+            } else {
+                Constant con = cons.get(term);
+                
+                if (con == null) {
+                    con = new Constant(term);
+                    cons.put(term, con);
+                }
+                
+                list.add(con);
+            }
+        }
+        
+        return list;
+    }
     
     private static List<Variable> parseVariableList(String delimiter, String terms) {
         HashMap<String, Variable> vars = new HashMap<String, Variable>();

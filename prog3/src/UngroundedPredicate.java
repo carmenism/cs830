@@ -4,27 +4,32 @@ import java.util.List;
 
 public class UngroundedPredicate {
     private final String name;
-    private final List<Variable> variables;
+    private final List<Term> terms;
 
-    public UngroundedPredicate(String name, List<Variable> variables) {
+    public UngroundedPredicate(String name, List<Term> terms) {
         this.name = name;
-        this.variables = variables;
+        this.terms = terms;
     }
 
     public Predicate ground(HashMap<Variable, Constant> substitutions)
             throws SubstitutionMissingException {
         List<Constant> constants = new ArrayList<Constant>();
 
-        for (Variable var : variables) {
-            Constant con = substitutions.get(var);
-
-            if (con == null) {
-                System.out.println("Variable: " + var);
-
-                System.out.println(substitutions.keySet());
-                System.out.println(substitutions.values());
-                
-                throw new SubstitutionMissingException();
+        for (Term term : terms) {
+            Constant con = null;
+            
+            if (term instanceof Variable) {
+                Variable var = (Variable) term;
+                con = substitutions.get(var);
+    
+                if (con == null) {    
+                    System.out.println(substitutions.keySet());
+                    System.out.println(substitutions.values());
+                    
+                    throw new SubstitutionMissingException();
+                }
+            } else {
+                con = (Constant) term;
             }
 
             constants.add(con);
@@ -57,8 +62,8 @@ public class UngroundedPredicate {
         return name;
     }
 
-    public List<Variable> getVariables() {
-        return variables;
+    public List<Term> getVariables() {
+        return terms;
     }
 
     @Override
@@ -68,8 +73,8 @@ public class UngroundedPredicate {
         ret.append(name);
         ret.append("(");
 
-        for (Variable variable : variables) {
-            ret.append(variable);
+        for (Term term : terms) {
+            ret.append(term);
             ret.append(", ");
         }
 
@@ -86,7 +91,7 @@ public class UngroundedPredicate {
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result
-                + ((variables == null) ? 0 : variables.hashCode());
+                + ((terms == null) ? 0 : terms.hashCode());
         return result;
     }
 
@@ -104,10 +109,10 @@ public class UngroundedPredicate {
                 return false;
         } else if (!name.equals(other.name))
             return false;
-        if (variables == null) {
-            if (other.variables != null)
+        if (terms == null) {
+            if (other.terms != null)
                 return false;
-        } else if (!variables.equals(other.variables))
+        } else if (!terms.equals(other.terms))
             return false;
         return true;
     }

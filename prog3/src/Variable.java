@@ -1,5 +1,5 @@
 
-public class Variable {
+public class Variable extends Term {
     private final String name;
     
     public Variable(String name) {
