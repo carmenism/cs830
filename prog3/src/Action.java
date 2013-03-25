@@ -53,6 +53,22 @@ public class Action {
         return add;
     }
 
+    public boolean interferes(Action other) {
+        for (Predicate predicate : del) {
+            if (other.pre.contains(predicate)) {
+                return true;
+            }
+        }
+        
+        for (Predicate predicate : del) {
+            if (other.add.contains(predicate)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
     public boolean possible(State state) {
         return possible(state.getPositive(), state.getNegative());
     }

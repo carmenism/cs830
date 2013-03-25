@@ -1,8 +1,7 @@
-import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
 
-public class ConstantSet extends HashSet<List<Constant>> {
+public class ConstantSet extends ArrayList<List<Constant>> {
     private static final long serialVersionUID = 1L;
     
     private final Integer length;

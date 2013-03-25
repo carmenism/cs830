@@ -38,10 +38,10 @@ public class UngroundedPredicate {
 
         Predicate predicate = new Predicate(name, constants);
         
-        if (Program3.allGroundedPredicates.containsKey(predicate)) {
-            predicate = Program3.allGroundedPredicates.get(predicate);
+        if (Program3.groundedPredicates.containsKey(predicate)) {
+            predicate = Program3.groundedPredicates.get(predicate);
         } else {
-            Program3.allGroundedPredicates.put(predicate, predicate);
+            Program3.groundedPredicates.put(predicate, predicate);
         }
         
         return predicate;
