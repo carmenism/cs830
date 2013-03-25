@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class UngroundedPredicate {
@@ -46,10 +47,10 @@ public class UngroundedPredicate {
         return predicate;
     }
 
-    public static List<Predicate> ground(List<UngroundedPredicate> ugPreds,
+    public static HashSet<Predicate> ground(List<UngroundedPredicate> ugPreds,
             HashMap<Variable, Constant> substitutions)
             throws SubstitutionMissingException {
-        List<Predicate> preds = new ArrayList<Predicate>();
+        HashSet<Predicate> preds = new HashSet<Predicate>();
 
         for (UngroundedPredicate ugPred : ugPreds) {
             preds.add(ugPred.ground(substitutions));

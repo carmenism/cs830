@@ -22,7 +22,7 @@ public class Parser {
     private static final String DELIM_SPACE = "\\s+";
     private static final String DELIM_COMMA = ",";
     
-    public static void main(String [] args) {
+    /*public static void main(String [] args) {
         parseInput();
 
         System.out.println("CONSTANTS");
@@ -61,20 +61,20 @@ public class Parser {
         for (Predicate p : Program3.goal) {
             System.out.println(p);
         }
-    }
+    }*/
     
     public static void parseInput() {
-        // BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         // For running on my PC.
-        BufferedReader br = null;     
+        /*BufferedReader br = null;     
         try { 
             //br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog3/input/coffeeworld-1.in")));
-            br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("/home/csg/crr8/spring2013/cs830/prog3/input/switches.in")));
+            br = new BufferedReader(new InputStreamReader(new java.io.FileInputStream("/home/csg/crr8/spring2013/cs830/prog3/input/study2.in")));
         } catch (java.io.FileNotFoundException e1) {
             e1.printStackTrace();
             System.exit(1);
-        }
+        }*/
         
         String line = null;
         List<String> actionLines = new ArrayList<String>();

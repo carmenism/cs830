@@ -1,3 +1,4 @@
+import java.util.HashSet;
 import java.util.List;
 
 public class Predicate {
@@ -15,6 +16,30 @@ public class Predicate {
 
     public List<Constant> getConstants() {
         return constants;
+    }
+    
+    public HashSet<Action> actionsWherePrecondition(HashSet<Action> actions) {
+        HashSet<Action> subset = new HashSet<Action>();
+        
+        for (Action action : actions) {
+            if (action.getPre().contains(this)) {
+                subset.add(action);
+            }
+        }
+        
+        return subset;
+    }
+    
+    public HashSet<Action> actionsWherePrenegcondition(HashSet<Action> actions) {
+        HashSet<Action> subset = new HashSet<Action>();
+        
+        for (Action action : actions) {
+            if (action.getPreneg().contains(this)) {
+                subset.add(action);
+            }
+        }
+        
+        return subset;
     }
     
     @Override

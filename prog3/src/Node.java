@@ -22,7 +22,7 @@ public class Node {
         this.state = state;
         this.parent = parent;
         this.g = g;
-        this.h = -1;
+        this.h = Heuristic.compute(state);
     }
 
     /**
@@ -44,6 +44,10 @@ public class Node {
         return children;
     }
     
+    public boolean isGoal() {
+        return state.isGoal();
+    }
+    
     public State getState() {
         return state;
     }
@@ -53,6 +57,10 @@ public class Node {
     }
     
     public double getF() {
+        if (h == Double.MAX_VALUE) {
+            return Double.MAX_VALUE;
+        }
+        
         return g + Program3.w * h;
     }
 

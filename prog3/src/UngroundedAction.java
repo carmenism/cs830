@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -76,10 +77,10 @@ public class UngroundedAction {
     }
     
     public Action ground(List<Constant> constants) {
-        List<Predicate> newPre = null;            
-        List<Predicate> newPreneg = null;
-        List<Predicate> newDel = null;
-        List<Predicate> newAdd = null;
+        HashSet<Predicate> newPre = null;            
+        HashSet<Predicate> newPreneg = null;
+        HashSet<Predicate> newDel = null;
+        HashSet<Predicate> newAdd = null;
         
         try {
             if (variables.size() == constants.size()) {

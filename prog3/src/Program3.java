@@ -20,11 +20,58 @@ public class Program3 {
     public static HashSet<Predicate> goal = new HashSet<Predicate>();
     public static HashSet<Predicate> goalNeg = new HashSet<Predicate>();
     
-    public Program3() {
-        milestone();
+    public Program3(String [] args) {
+        //milestone();
+        
+        parseArgs(args);        
+        Parser.parseInput();
+        
+        addAllGroundedPredicates();        
+        groundAllActions();
+        
+        State initialState = getInitialState();
+        Solution solution = new AStar(initialState).search();
+
+        if (solution != null) {
+            solution.print();
+        } else {
+            System.err.println("No plan found.");
+        }
     }
     
-    private static void milestone() {
+    private static void usage() {
+        System.err.println("Usage: ./run.sh [-parallel] <weight> <heuristic>");
+        System.err.println();
+        System.err.println("where <weight> is the weight for weighted A* and");
+        System.err.println("and <heuristic> is either h0, h-goal-lits, h1, or h1sum.");
+        System.err.println("Expects a problem domain and instance on standard input.");
+    }
+    
+    private static void parseArgs(String [] args) {
+        try {
+            w = Double.parseDouble(args[0]);
+        } catch (NumberFormatException nfe) {
+            usage();
+            System.exit(1);
+        }
+        
+        if (args[1].equals("h0")) {
+            Heuristic.type = Heuristic.Type.H0;
+        } else if (args[1].equals("h1")) {
+            Heuristic.type = Heuristic.Type.H1_MAX;
+        } else if (args[1].equals("h1sum")) {
+            Heuristic.type = Heuristic.Type.H1_SUM;
+        } else if (args[1].equals("h-goal-lits")) {
+            Heuristic.type = Heuristic.Type.H_GOAL_LITS;
+        } else {
+            usage();
+            System.exit(1);
+        }
+        
+        // ADD PARALLEL STUFF LATER
+    }
+    
+    /*private static void milestone() {
         Parser.parseInput();
         
         addAllGroundedPredicates();
@@ -38,7 +85,7 @@ public class Program3 {
         for (Action action : actions) {
             System.out.println(action.toStringDetails() + "\n");
         }
-    }
+    }*/
     
     private static State getInitialState() {
         HashSet<Predicate> initialNeg = new HashSet<Predicate>();
@@ -49,7 +96,7 @@ public class Program3 {
             }
         }
         
-        return new State(initial, initialNeg);
+        return new State(new ArrayList<SolutionStep>(), initial, initialNeg, 0);
     }
     
     private static void groundAllActions() {        
@@ -85,6 +132,6 @@ public class Program3 {
     }
     
     public static void main(String [] args) {
-        new Program3();
+        new Program3(args);
     }
 }
