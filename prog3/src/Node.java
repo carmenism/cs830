@@ -32,60 +32,34 @@ public class Node {
     public List<Node> expand() {
         List<Node> children = new ArrayList<Node>();
 
-        for (State possibleFuture : state.expand()) {
-            // Prune away the parent state.
-            if (parent == null || !possibleFuture.equals(parent.state)) {
-                Node n = null;
+        if (!Program3.isParallel) {
+            for (State possibleFuture : state.expand()) {
+                // Prune away the parent state.
+                if (parent == null || !possibleFuture.equals(parent.state)) {
+                    Node n = new Node(possibleFuture, this, g + 1);
 
-                if (!Program3.isParallel) {
-                    n = new Node(possibleFuture, this, getG() + 1);
-                    
                     children.add(n);
-                } else {
-                    n = new Node(possibleFuture, this, getG());
-                    
-                    // check for conflicting actions
-                    if (!interferes(n)) {
-                        children.add(n);
-                    }
                 }
-
             }
-        }
-
-        if (Program3.isParallel) {
-            // / add dummy advance time node
-            State futureState = new State(state.getStepsTaken(), state.getPositive(), state.getNegative(), state.getTime() + 1);            
-            children.add(new Node(futureState, this, getG() + 1));
+        } else {
+            for (State possibleFuture : state.expand()) {
+                if (state.getTime() < possibleFuture.getTime()) {
+                    // Advance time node.
+                    children.add(new Node(possibleFuture, this, g + 1));
+                } else {
+                    Node n = new Node(possibleFuture, this, g);                    
+                    children.add(n);
+                }
+            }
         }
 
         return children;
     }
-    
+
     public Action getLastAction() {
         return state.getLastAction();
     }
-
-    public boolean interferes(Node other) {
-        Action otherLastAction = other.getLastAction();
-        Node n = this;
-
-        while (n != null && n.state.getTime() == other.state.getTime()) {
-            Action nLastAction = n.getLastAction();
-                        
-            if (nLastAction != null) {
-                if (otherLastAction.interferes(nLastAction)
-                        || nLastAction.interferes(otherLastAction)) {
-                    return true;
-                }
-            }
-            
-            n = n.parent;
-        }
-        
-        return false;
-    }
-
+    
     public boolean isGoal() {
         return state.isGoal();
     }

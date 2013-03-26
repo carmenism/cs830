@@ -1,17 +1,14 @@
-import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 
 public class Action {
     private final HashSet<Predicate> pre;
     private final HashSet<Predicate> preneg;
     private final HashSet<Predicate> del;
     private final HashSet<Predicate> add;
-
+    
     private final String action;
-
+    
     public Action(UngroundedAction ungroundedAction,
             HashMap<Variable, Constant> substitutions, HashSet<Predicate> pre,
             HashSet<Predicate> preneg, HashSet<Predicate> del,
@@ -53,7 +50,7 @@ public class Action {
         return add;
     }
 
-    public boolean interferes(Action other) {
+    public boolean interferes(Action other) {        
         for (Predicate predicate : del) {
             if (other.pre.contains(predicate)) {
                 return true;
@@ -66,6 +63,12 @@ public class Action {
             }
         }
         
+        for (Predicate predicate : add) {
+            if (other.preneg.contains(predicate)) {
+                return true;
+            }
+        }
+                
         return false;
     }
     
@@ -74,38 +77,8 @@ public class Action {
     }
 
     public boolean possible(HashSet<Predicate> positive,
-            HashSet<Predicate> negative) {
-        BitSet pos = new BitSet(pre.size());
-        BitSet neg = new BitSet(preneg.size());
-
-        List<Predicate> preTemp = new ArrayList<Predicate>(pre);
-        List<Predicate> prenegTemp = new ArrayList<Predicate>(preneg);
-        
-        if (pre.size() != 0) {
-            pos.flip(0, pre.size());
-
-            for (int i = 0; i < preTemp.size(); i++) {
-                Predicate p = preTemp.get(i);
-
-                if (positive.contains(p)) {
-                    pos.clear(i);
-                }
-            }
-        }
-
-        if (preneg.size() != 0) {
-            neg.flip(0, preneg.size());
-
-            for (int i = 0; i < prenegTemp.size(); i++) {
-                Predicate p = prenegTemp.get(i);
-
-                if (negative.contains(p)) {
-                    neg.clear(i);
-                }
-            }
-        }
-
-        return pos.isEmpty() && neg.isEmpty();
+            HashSet<Predicate> negative) {        
+        return positive.containsAll(pre) && negative.containsAll(preneg);
     }
 
     public String toStringDetails() {

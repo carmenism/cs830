@@ -22,47 +22,6 @@ public class Parser {
     private static final String DELIM_SPACE = "\\s+";
     private static final String DELIM_COMMA = ",";
     
-    /*public static void main(String [] args) {
-        parseInput();
-
-        System.out.println("CONSTANTS");
-        
-        for (Constant c : Program3.constants.values()) {
-            System.out.println(c);
-        }
-
-        System.out.println("\nPREDICATES");
-        
-        for (UngroundedPredicate up : Program3.ungroundedPreds.values()) {
-            System.out.println(up);
-        }
-        
-        System.out.println("\nACTIONS");
-        
-        for (UngroundedAction act : Program3.ungroundedActions) {
-            System.out.println(act+"\n");
-        }
-        
-
-        System.out.println("\nACTIONS");
-        
-        for (UngroundedAction act : Program3.ungroundedActions) {
-            System.out.println(act+"\n");
-        }
-        
-        System.out.println("\nINITIAL");
-        
-        for (Predicate p : Program3.initial) {
-            System.out.println(p);
-        }
-
-        System.out.println("\nGOAL");
-        
-        for (Predicate p : Program3.goal) {
-            System.out.println(p);
-        }
-    }*/
-    
     public static void parseInput() {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 

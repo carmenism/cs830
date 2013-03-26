@@ -38,13 +38,13 @@ public abstract class BestFirstSearch extends SearchAlgorithm {
         while (true) {
             if (openList.isEmpty()) {
                 // Failure.
-                return null;
+                return new Solution(null, nodesGenerated, nodesExpanded);
             }
 
             Node node = openList.poll();
 
             if (node.isGoal()) {
-                // The goal was found.                
+                // The goal was found.
                 return new Solution(node.getState().getStepsTaken(),
                         nodesGenerated, nodesExpanded);
             } else {
@@ -62,7 +62,8 @@ public abstract class BestFirstSearch extends SearchAlgorithm {
                     if (incumbent == null) {
                         openList.add(child);
                         closedList.put(child.getState(), child);
-                    } else if (child.getG() < incumbent.getG()) {
+                    } else if (compare(child, incumbent) != AFTER
+                            || Program3.isParallel) {
                         closedList.remove(incumbent.getState());
                         openList.add(child);
                         closedList.put(child.getState(), child);

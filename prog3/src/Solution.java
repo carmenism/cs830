@@ -40,7 +40,11 @@ public class Solution {
      * Prints the solution to standard out.
      */
     public void print() {
-        printActionsTaken();
+        if (stepsTaken != null) {
+            printActionsTaken();
+        } else {
+            System.out.println("No plan found.");
+        }
 
         System.out.println(nodesGenerated + " nodes generated");
         System.out.println(nodesExpanded + " nodes expanded");

@@ -28,10 +28,10 @@ public class AStar extends BestFirstSearch {
 
         if (n1.getG() > n2.getG()) {
             return BEFORE;
-        } else if (n1.getG() < n2.getF()) {
+        } else if (n1.getG() < n2.getG()) {
             return AFTER;
         }
-
+        
         return EQUAL;
     }
 }

@@ -93,8 +93,12 @@ public class Program3 {
                 initialNeg.add(predicate);
             }
         }
+        
+        State init = new State(new ArrayList<SolutionStep>(), initial, initialNeg, 0);
 
-        return new State(new ArrayList<SolutionStep>(), initial, initialNeg, 0);
+        init.setTreeDepth(0);
+        
+        return init;
     }
 
     private static void groundAllActions() {
