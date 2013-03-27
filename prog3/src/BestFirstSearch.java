@@ -60,10 +60,13 @@ public abstract class BestFirstSearch extends SearchAlgorithm {
                     Node incumbent = closedList.get(child.getState());
 
                     if (incumbent == null) {
+                        // There is no state like this already.
                         openList.add(child);
                         closedList.put(child.getState(), child);
                     } else if (compare(child, incumbent) != AFTER
                             || Program3.isParallel) {
+                        // This state is a duplicate, but the child is
+                        // preferrable, so add it.
                         closedList.remove(incumbent.getState());
                         openList.add(child);
                         closedList.put(child.getState(), child);

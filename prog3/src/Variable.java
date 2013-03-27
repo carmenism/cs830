@@ -1,15 +1,20 @@
-
+/**
+ * Represents a variable, which stands for an arbitrary object.
+ * 
+ * @author Carmen St. Jean
+ * 
+ */
 public class Variable extends Term {
-    private final String name;
-    
+    /**
+     * Creates a Variable from a name.
+     * 
+     * @param name
+     *            The name for this Variable.
+     */
     public Variable(String name) {
-        this.name = name;
+        super(name);
     }
 
-    public String getName() {
-        return name;
-    }
-    
     @Override
     public String toString() {
         return name;

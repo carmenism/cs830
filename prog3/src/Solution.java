@@ -1,7 +1,7 @@
 import java.util.List;
 
 /**
- * Represents a solution to the vacuum robot planning problem.
+ * Represents a solution to the STRIPS planning world problem.
  * 
  * @author Carmen St. Jean
  * 
@@ -21,7 +21,8 @@ public class Solution {
      * @param nodesExpanded
      *            The number of nodes expanded to reach the solution.
      */
-    public Solution(List<SolutionStep> stepsTaken, int nodesGenerated, int nodesExpanded) {
+    public Solution(List<SolutionStep> stepsTaken, int nodesGenerated,
+            int nodesExpanded) {
         this.stepsTaken = stepsTaken;
         this.nodesGenerated = nodesGenerated;
         this.nodesExpanded = nodesExpanded;
@@ -58,7 +59,7 @@ public class Solution {
     public int getLength() {
         return stepsTaken.size();
     }
-    
+
     public List<SolutionStep> getStepsTaken() {
         return stepsTaken;
     }

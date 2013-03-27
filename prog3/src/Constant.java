@@ -1,13 +1,18 @@
-
+/**
+ * Represents a constant, that is a symbol that represents some object.
+ * 
+ * @author Carmen St. Jean
+ * 
+ */
 public class Constant extends Term {
-    private final String name;
-    
+    /**
+     * Creates a Constant from a name.
+     * 
+     * @param name
+     *            The name for this Constant.
+     */
     public Constant(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
+        super(name);
     }
 
     @Override

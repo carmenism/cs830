@@ -1,6 +1,12 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a node of the search tree for the STRIPS planning problem.
+ * 
+ * @author Carmen St. Jean
+ * 
+ */
 public class Node {
     private final State state;
     private final Node parent;
@@ -47,7 +53,7 @@ public class Node {
                     // Advance time node.
                     children.add(new Node(possibleFuture, this, g + 1));
                 } else {
-                    Node n = new Node(possibleFuture, this, g);                    
+                    Node n = new Node(possibleFuture, this, g);
                     children.add(n);
                 }
             }
@@ -56,22 +62,20 @@ public class Node {
         return children;
     }
 
-    public Action getLastAction() {
-        return state.getLastAction();
-    }
-    
+    /**
+     * Determines whether or not this Node contains the goal State.
+     * 
+     * @return True if this Node contains the goal.
+     */
     public boolean isGoal() {
         return state.isGoal();
     }
 
-    public State getState() {
-        return state;
-    }
-
-    public Node getParent() {
-        return parent;
-    }
-
+    /**
+     * Gets the f value for this node, which is calculated as g + w * h.
+     * 
+     * @return The f value.
+     */
     public double getF() {
         if (h == Double.MAX_VALUE) {
             return Double.MAX_VALUE;
@@ -80,11 +84,31 @@ public class Node {
         return g + Program3.w * h;
     }
 
+    /**
+     * Gets the g value for this node, which is the cost it has taken to reach
+     * the corresponding state.
+     * 
+     * @return The g value.
+     */
     public double getG() {
         return g;
     }
 
+    /**
+     * Gets the h (heuristic) value for this node, which is the lower bound on
+     * the cost to go until the goal.
+     * 
+     * @return The h value.
+     */
     public double getH() {
         return h;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public Node getParent() {
+        return parent;
     }
 }

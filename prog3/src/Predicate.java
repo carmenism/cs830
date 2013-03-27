@@ -1,13 +1,65 @@
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ * Represents a grounded (fully instantiated) predicate, which consists of a
+ * name and a list of constants.
+ * 
+ * @author Carmen St. Jean
+ * 
+ */
 public class Predicate {
     private final String name;
     private final List<Constant> constants;
-    
+
+    /**
+     * Creates a Predicate from a name String and a list of Constants.
+     * 
+     * @param name
+     *            The name for the Predicate.
+     * @param constants
+     */
     public Predicate(String name, List<Constant> constants) {
         this.name = name;
         this.constants = constants;
+    }
+
+    /**
+     * Gets a list of Actions where this Predicate is a positive precondition.
+     * 
+     * @param actions
+     *            The HashSet of all grounded Actions.
+     * @return A HashSet where this Predicate is a pre-condition.
+     */
+    public HashSet<Action> actionsWherePrecondition(HashSet<Action> actions) {
+        HashSet<Action> subset = new HashSet<Action>();
+
+        for (Action action : actions) {
+            if (action.getPre().contains(this)) {
+                subset.add(action);
+            }
+        }
+
+        return subset;
+    }
+
+    /**
+     * Gets a list of Actions where this Predicate is a negative precondition.
+     * 
+     * @param actions
+     *            The HashSet of all grounded Actions.
+     * @return A HashSet where this Predicate is a preneg-condition.
+     */
+    public HashSet<Action> actionsWherePrenegcondition(HashSet<Action> actions) {
+        HashSet<Action> subset = new HashSet<Action>();
+
+        for (Action action : actions) {
+            if (action.getPreneg().contains(this)) {
+                subset.add(action);
+            }
+        }
+
+        return subset;
     }
 
     public String getName() {
@@ -17,47 +69,23 @@ public class Predicate {
     public List<Constant> getConstants() {
         return constants;
     }
-    
-    public HashSet<Action> actionsWherePrecondition(HashSet<Action> actions) {
-        HashSet<Action> subset = new HashSet<Action>();
-        
-        for (Action action : actions) {
-            if (action.getPre().contains(this)) {
-                subset.add(action);
-            }
-        }
-        
-        return subset;
-    }
-    
-    public HashSet<Action> actionsWherePrenegcondition(HashSet<Action> actions) {
-        HashSet<Action> subset = new HashSet<Action>();
-        
-        for (Action action : actions) {
-            if (action.getPreneg().contains(this)) {
-                subset.add(action);
-            }
-        }
-        
-        return subset;
-    }
-    
+
     @Override
     public String toString() {
         StringBuffer ret = new StringBuffer();
-        
+
         ret.append(name);
         ret.append("(");
-        
+
         for (Constant constant : constants) {
             ret.append(constant);
             ret.append(", ");
         }
-        
+
         ret.deleteCharAt(ret.length() - 1);
         ret.deleteCharAt(ret.length() - 1);
         ret.append(")");
-        
+
         return ret.toString();
     }
 

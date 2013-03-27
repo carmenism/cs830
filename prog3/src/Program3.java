@@ -3,9 +3,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+/**
+ * CS 830 - Artificial Intelligence Program 3 - STRIPS Planner
+ * 
+ * @author Carmen St. Jean
+ * 
+ */
 public class Program3 {
     public static boolean isParallel = false;
-    
+
     public static double w = 1.0;
 
     public static HashMap<String, Constant> constants = new HashMap<String, Constant>();
@@ -38,6 +44,9 @@ public class Program3 {
         }
     }
 
+    /**
+     * Prints the usage of this program.
+     */
     private static void usage() {
         System.err.println("Usage: ./run.sh [-parallel] <weight> <heuristic>");
         System.err.println();
@@ -48,24 +57,30 @@ public class Program3 {
                 .println("Expects a problem domain and instance on standard input.");
     }
 
-    private static void parseArgs(String[] args) {        
+    /**
+     * Parses the command line arguments.
+     * 
+     * @param args
+     *            The command line arguments.
+     */
+    private static void parseArgs(String[] args) {
         String weight = args[0];
         String heuristic = args[1];
-        
+
         if (args[0].equals("-parallel")) {
             weight = args[1];
             heuristic = args[2];
-            
+
             isParallel = true;
         }
-        
+
         try {
             w = Double.parseDouble(weight);
         } catch (NumberFormatException nfe) {
             usage();
             System.exit(1);
         }
-        
+
         if (w < 1) {
             System.err.println("Weight should be greater than or equal to 1.");
             System.exit(1);
@@ -85,6 +100,11 @@ public class Program3 {
         }
     }
 
+    /**
+     * Gets the initial state of the STRIPS planning world.
+     * 
+     * @return The initial state.
+     */
     private static State getInitialState() {
         HashSet<Predicate> initialNeg = new HashSet<Predicate>();
 
@@ -93,14 +113,19 @@ public class Program3 {
                 initialNeg.add(predicate);
             }
         }
-        
-        State init = new State(new ArrayList<SolutionStep>(), initial, initialNeg, 0);
+
+        State init = new State(new ArrayList<SolutionStep>(), initial,
+                initialNeg, 0);
 
         init.setTreeDepth(0);
-        
+
         return init;
     }
 
+    /**
+     * Grounds all actions - i.e., instantiates all actions with all possible
+     * combinations of objects.
+     */
     private static void groundAllActions() {
         List<Constant> allConstants = new ArrayList<Constant>(
                 constants.values());
@@ -120,6 +145,10 @@ public class Program3 {
         }
     }
 
+    /**
+     * Adds the initial, goal, and negative goal predicates to the list of all
+     * possible grounded predicates.
+     */
     private static void addAllGroundedPredicates() {
         for (Predicate p : initial) {
             groundedPredicates.put(p, p);

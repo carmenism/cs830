@@ -1,7 +1,7 @@
 /**
  * Defines a class to represent A* search. A* is a best-first search that sorts
- * the open list based on f(n) (where f(n) = g(n) + h(n)) with ties broken on
- * g(n).
+ * the open list based on f(n) (where f(n) = g(n) + w * h(n)) with ties broken
+ * on g(n).
  * 
  * @author Carmen St. Jean
  * 
@@ -31,7 +31,7 @@ public class AStar extends BestFirstSearch {
         } else if (n1.getG() < n2.getG()) {
             return AFTER;
         }
-        
+
         return EQUAL;
     }
 }
