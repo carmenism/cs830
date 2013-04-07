@@ -40,10 +40,12 @@ public class Node {
 
         if (!Program3.isParallel) {
             for (State possibleFuture : state.expand()) {
+                System.out.println("checking child");
                 // Prune away the parent state.
                 if (parent == null || !possibleFuture.equals(parent.state)) {
                     Node n = new Node(possibleFuture, this, g + 1);
 
+                    System.out.println("adding child");
                     children.add(n);
                 }
             }
@@ -59,6 +61,7 @@ public class Node {
             }
         }
 
+        System.out.println("exit expand");
         return children;
     }
 

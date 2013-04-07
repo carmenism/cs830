@@ -52,24 +52,33 @@ public abstract class BestFirstSearch extends SearchAlgorithm {
                 closedList.put(node.getState(), node);
                 nodesExpanded++;
 
+                System.out.println(node.getState().getStepsTaken());
+                
                 List<Node> children = expand(node);
                 nodesGenerated += children.size();
 
                 for (Node child : children) {
+                    System.out.println("checking child");
                     // Make sure the generated node is not a duplicate.
                     Node incumbent = closedList.get(child.getState());
 
                     if (incumbent == null) {
                         // There is no state like this already.
+                        System.out.println("adding node");
                         openList.add(child);
                         closedList.put(child.getState(), child);
-                    } else if (compare(child, incumbent) != AFTER
+                    } else if (child.getF() < incumbent.getF()
+                            || (child.getF() == incumbent.getF() && child.getG() > incumbent.getG())
                             || Program3.isParallel) {
                         // This state is a duplicate, but the child is
                         // preferrable, so add it.
+                        System.out.println("replacing child");
                         closedList.remove(incumbent.getState());
                         openList.add(child);
                         closedList.put(child.getState(), child);
+                    } else {
+
+                        System.out.println("not adding child");
                     }
                 }
             }

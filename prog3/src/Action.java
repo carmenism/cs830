@@ -1,5 +1,8 @@
+import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Represents a grounded (fully instantiated) action. An action consists of
@@ -108,7 +111,39 @@ public class Action {
      */
     public boolean possible(HashSet<Predicate> positive,
             HashSet<Predicate> negative) {
-        return positive.containsAll(pre) && negative.containsAll(preneg);
+        BitSet pos = new BitSet(pre.size());
+        BitSet neg = new BitSet(preneg.size());
+
+        List<Predicate> preTemp = new ArrayList<Predicate>(pre);
+        List<Predicate> prenegTemp = new ArrayList<Predicate>(preneg);
+        
+        if (pre.size() != 0) {
+            pos.flip(0, pre.size());
+
+            for (int i = 0; i < preTemp.size(); i++) {
+                Predicate p = preTemp.get(i);
+
+                if (positive.contains(p)) {
+                    pos.clear(i);
+                }
+            }
+        }
+
+        if (preneg.size() != 0) {
+            neg.flip(0, preneg.size());
+
+            for (int i = 0; i < prenegTemp.size(); i++) {
+                Predicate p = prenegTemp.get(i);
+
+                if (negative.contains(p)) {
+                    neg.clear(i);
+                }
+            }
+        }
+
+        return pos.isEmpty() && neg.isEmpty();
+        
+        //return positive.containsAll(pre) && negative.containsAll(preneg);
     }
 
     /**
