@@ -35,7 +35,7 @@ public class Program4 {
     private static int numStatesEncountered = 0;
     private static int numActionsEncountered = 0;
 
-    public static int k = 4;
+    public static int k = 3;
 
     enum Algorithm {
         RANDOM, GREEDY, Q, VI
@@ -161,14 +161,14 @@ public class Program4 {
 
     private void updateU() {
         double[] newU = new double[numberStates];
-        double loss = 0.8;
+        double loss = 1;
         double bound = 0.1;
 
         int i = 0;
-        while (true) {
+        while (true) {//(true) {
             i++;
             for (int stateIndex = 0; stateIndex < U.length; stateIndex++) {
-                double max = Double.MIN_VALUE;
+                double max = -1 * Double.MAX_VALUE;
 
                 for (int actionIndex = 0; actionIndex < numberActions; actionIndex++) {
                     StateAction sa = T[stateIndex][actionIndex];
@@ -211,16 +211,12 @@ public class Program4 {
             int actionIndex = lookupActionIndex(possibleAction);
             StateAction sa = T[stateIndex][actionIndex];
 
-            /*
-             * if (sa.isUnexplored()) { return possibleAction; }
-             */
-
             // double expectedValue = sa.getExpectedUtility();
-            double expectedValue = sa.getF();
+            double f = sa.getF();
 
-            if (expectedValue >= max) {
+            if (f >= max) {
                 maxAction = possibleAction;
-                max = expectedValue;
+                max = f;
             }
         }
 
@@ -273,6 +269,7 @@ public class Program4 {
             }
 
             double expectedValue = sa.getExpectedValue();
+            //double expectedValue = sa.getFGreedy();
 
             if (expectedValue > max) {
                 maxAction = possibleAction;
@@ -390,6 +387,7 @@ public class Program4 {
             }
         }
 
+        //k = numberActions;
         T = new StateAction[numberStates][numberActions];
         Q = new double[numberStates][numberActions];
 

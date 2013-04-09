@@ -6,7 +6,7 @@ public class StateAction {
         statePrimes = new int[numberStates];
 
         for (int s = 0; s < numberStates; s++) {
-            statePrimes[s] = 1;
+            statePrimes[s] = 0;
         }
     }
     
@@ -19,7 +19,7 @@ public class StateAction {
     }
 
     public boolean isUnexplored() {
-        return getTotal() == statePrimes.length;
+        return getTotal() == 0;//statePrimes.length;
     }
     
     public int getTotal() {
@@ -49,20 +49,31 @@ public class StateAction {
 
         return u;
     }
-    
+   
+    public double getFGreedy() {
+        double u = getExpectedValue();
+        int n = getNumberTimesTaken();
+
+        if (n  < Program4.k) {
+            return Program4.maxReward;
+        }
+
+        return u;
+    }
+ 
     public double getExpectedUtility() {
-        double expectedValue = 0.0;
+        double expectedUtility = 0.0;
         int total = getTotal();
         
         if (total != 0) {
             for (int s = 0; s < statePrimes.length; s++) {
                 double probability = ((double) statePrimes[s]) / total;
 
-                expectedValue += probability * Program4.lookupUtilityByIndex(s);
+                expectedUtility += probability * Program4.lookupUtilityByIndex(s);
             }
         }
         
-        return expectedValue;
+        return expectedUtility;
     }
     
     public double getExpectedValue() {
