@@ -60,7 +60,7 @@ public class StateAction {
 
         return u;
     }
- 
+     
     public double getExpectedUtility() {
         double expectedUtility = 0.0;
         int total = getTotal();
