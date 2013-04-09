@@ -32,7 +32,7 @@ public class StateAction {
         return total;
     }
 
-    public double getProbability(String state) {
+    public double getProbability(State state) {
         int stateIndex = Program4.lookupStateIndex(state);
         int total = getTotal();
         

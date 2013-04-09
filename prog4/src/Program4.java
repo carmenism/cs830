@@ -29,8 +29,8 @@ public class Program4 {
     public static double[] U;
     public static double[][] Q;
 
-    private static HashMap<String, Integer> stateToIndex = new HashMap<String, Integer>();
-    private static HashMap<String, Integer> actionToIndex = new HashMap<String, Integer>();
+    private static HashMap<State, Integer> stateToIndex = new HashMap<State, Integer>();
+    private static HashMap<Action, Integer> actionToIndex = new HashMap<Action, Integer>();
 
     private static int numStatesEncountered = 0;
     private static int numActionsEncountered = 0;
@@ -48,7 +48,7 @@ public class Program4 {
     private int numberActions;
     public static double maxReward;
 
-    private String currentState;
+    private State currentState;
 
     public Program4(String[] args) {
         parseArgs(args);
@@ -74,9 +74,9 @@ public class Program4 {
                         line = br.readLine();
                         currentState = parseState(line);
                     } else if (line.contains(ACTIONS)) {
-                        List<String> actions = parseActions(line);
+                        List<Action> actions = parseActions(line);
 
-                        String action = chooseAction(currentState, actions);
+                        Action action = chooseAction(currentState, actions);
                         System.out.println(action);
 
                         if ((line = br.readLine()) == null) {
@@ -86,10 +86,10 @@ public class Program4 {
                         double reward = parseReward(line);
 
                         line = br.readLine();
-                        String oldState = currentState;
+                        State oldState = currentState;
                         currentState = parseState(line);
 
-                        updateT(oldState, action, currentState, reward);
+                        update(oldState, action, currentState, reward);
                         addReward(currentState, reward);
                     }
                 }
@@ -100,19 +100,12 @@ public class Program4 {
         }
     }
 
-    private void updateT(String oldState, String action, String newState,
+    private void update(State oldState, Action action, State newState,
             double reward) {
         if (algorithm == Algorithm.Q) {
             updateQ(oldState, action, newState, reward);
         } else {
-
-            int oldStateIndex = lookupStateIndex(oldState);
-            int actionIndex = lookupActionIndex(action);
-            int newStateIndex = lookupStateIndex(newState);
-
-            StateAction sa = T[oldStateIndex][actionIndex];
-            sa.statePrimes[newStateIndex]++;
-            sa.addTimeTaken();
+            updateT(oldState, action, newState, reward);
 
             if (algorithm == Algorithm.VI) {
                 updateU();
@@ -120,7 +113,18 @@ public class Program4 {
         }
     }
 
-    private String chooseAction(String state, List<String> actions) {
+    private void updateT(State oldState, Action action, State newState,
+            double reward) {
+        int oldStateIndex = lookupStateIndex(oldState);
+        int actionIndex = lookupActionIndex(action);
+        int newStateIndex = lookupStateIndex(newState);
+        
+        StateAction sa = T[oldStateIndex][actionIndex];
+        sa.statePrimes[newStateIndex]++;
+        sa.addTimeTaken();
+    }
+    
+    private Action chooseAction(State state, List<Action> actions) {
         switch (algorithm) {
         case GREEDY:
             return chooseGreedy(state, actions);
@@ -135,7 +139,7 @@ public class Program4 {
         return null;
     }
 
-    private void updateQ(String s, String a, String sPrime, double r) {
+    private void updateQ(State s, Action a, State sPrime, double r) {
         int sIndex = lookupStateIndex(s);
         int aIndex = lookupActionIndex(a);
         int sPrimeIndex = lookupStateIndex(sPrime);
@@ -198,12 +202,12 @@ public class Program4 {
         }
     }
 
-    private String chooseVI(String state, List<String> actions) {
+    private Action chooseVI(State state, List<Action> actions) {
         int stateIndex = lookupStateIndex(state);
-        String maxAction = null;
+        Action maxAction = null;
         double max = -1 * Double.MAX_VALUE;
 
-        for (String possibleAction : actions) {
+        for (Action possibleAction : actions) {
             int actionIndex = lookupActionIndex(possibleAction);
             StateAction sa = T[stateIndex][actionIndex];
 
@@ -223,12 +227,12 @@ public class Program4 {
         return maxAction;
     }
 
-    private String chooseQ(String state, List<String> actions) {
+    private Action chooseQ(State state, List<Action> actions) {
         int stateIndex = lookupStateIndex(state);
         double max = 0;//-1 * Double.MAX_VALUE;
-        String maxAction = null;
+        Action maxAction = null;
 
-        for (String possibleAction : actions) {
+        for (Action possibleAction : actions) {
             int actionIndex = lookupActionIndex(possibleAction);
             double q = Q[stateIndex][actionIndex];
 
@@ -249,18 +253,18 @@ public class Program4 {
         return U[stateIndex];
     }
 
-    public static double lookupUtility(String state) {
+    public static double lookupUtility(State state) {
         int stateIndex = lookupStateIndex(state);
 
         return U[stateIndex];
     }
 
-    private String chooseGreedy(String state, List<String> actions) {
+    private Action chooseGreedy(State state, List<Action> actions) {
         int stateIndex = lookupStateIndex(state);
-        String maxAction = null;
+        Action maxAction = null;
         double max = -1 * Double.MAX_VALUE;
 
-        for (String possibleAction : actions) {
+        for (Action possibleAction : actions) {
             int actionIndex = lookupActionIndex(possibleAction);
             StateAction sa = T[stateIndex][actionIndex];
 
@@ -283,41 +287,41 @@ public class Program4 {
         return chooseRandom(actions);
     }
 
-    private String chooseRandom(List<String> actions) {
+    private Action chooseRandom(List<Action> actions) {
         Random random = new Random();
 
-        String action = actions.get(random.nextInt(actions.size()));
+        Action action = actions.get(random.nextInt(actions.size()));
 
         return action;
     }
 
-    public static int lookupStateIndex(String state) {
-        Integer stateIndex = stateToIndex.get(state.trim());
+    public static int lookupStateIndex(State state) {
+        Integer stateIndex = stateToIndex.get(state);
 
         if (stateIndex == null) {
             stateIndex = numStatesEncountered;
 
-            stateToIndex.put(state.trim(), stateIndex);
+            stateToIndex.put(state, stateIndex);
             numStatesEncountered++;
         }
 
         return stateIndex;
     }
 
-    public static int lookupActionIndex(String action) {
-        Integer actionIndex = actionToIndex.get(action.trim());
+    public static int lookupActionIndex(Action action) {
+        Integer actionIndex = actionToIndex.get(action);
 
         if (actionIndex == null) {
             actionIndex = numActionsEncountered;
 
-            actionToIndex.put(action.trim(), actionIndex);
+            actionToIndex.put(action, actionIndex);
             numActionsEncountered++;
         }
 
         return actionIndex;
     }
 
-    public static void addReward(String state, double reward) {
+    public static void addReward(State state, double reward) {
         int stateIndex = lookupStateIndex(state);
 
         if (!R.containsKey(stateIndex)) {
@@ -335,21 +339,14 @@ public class Program4 {
         return 0;
     }
 
-    public static double lookupReward(String state) {
+    public static double lookupReward(State state) {
         int stateIndex = lookupStateIndex(state);
 
         return lookupRewardFromIndex(stateIndex);
     }
 
-    /*
-     * private void addReward(double reward) { totalReward = totalReward +
-     * discount * reward; }
-     */
-
-    private String parseState(String line) {
-        String s = line.replace(STATE, "").trim();
-
-        return s;
+    private State parseState(String line) {
+        return new State(line.replace(STATE, "").trim());
     }
 
     private double parseReward(String line) {
@@ -358,15 +355,15 @@ public class Program4 {
         return Double.parseDouble(r);
     }
 
-    private List<String> parseActions(String line) {
+    private List<Action> parseActions(String line) {
         int firstSpace = line.indexOf(" ");
         String a = line.substring(firstSpace).replace(ACTIONS, "").trim();
 
         String[] tokens = a.split(" ");
-        List<String> actions = new ArrayList<String>();
+        List<Action> actions = new ArrayList<Action>();
 
         for (String token : tokens) {
-            actions.add(token.trim());
+            actions.add(new Action(token));
         }
 
         return actions;
