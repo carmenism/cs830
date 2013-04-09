@@ -1,9 +1,13 @@
 public class StateAction {
     public int[] statePrimes;
     private int numberTimesTaken = 0;
+    private final int stateIndex;
+    private final int actionIndex;
 
-    public StateAction(int numberStates) {
+    public StateAction(int numberStates, int stateIndex, int actionIndex) {
         statePrimes = new int[numberStates];
+        this.stateIndex = stateIndex;
+        this.actionIndex = actionIndex;
 
         for (int s = 0; s < numberStates; s++) {
             statePrimes[s] = 0;
@@ -38,28 +42,10 @@ public class StateAction {
         
         return ((double) statePrimes[stateIndex]) / total;
     }
-    
-    public double getF() {
-        double u = getExpectedUtility();
-        int n = getNumberTimesTaken();
-        
-        if (n < Program4.k) {
-            return Program4.maxReward;
-        }
-
-        return u;
-    }
-   
-    public double getFGreedy() {
-        double u = getExpectedValue();
-        int n = getNumberTimesTaken();
-
-        if (n  < Program4.k) {
-            return Program4.maxReward;
-        }
-
-        return u;
-    }
+       
+    public double getQ() {
+        return Program4.Q[stateIndex][actionIndex];
+    }       
      
     public double getExpectedUtility() {
         double expectedUtility = 0.0;
@@ -89,5 +75,35 @@ public class StateAction {
         }
 
         return expectedValue;
+    }
+    
+    public double getF() {
+        double u = 0;
+        int n = getNumberTimesTaken();
+
+        switch (Program4.algorithm) {
+        case GREEDY:
+            u = getExpectedValue();
+            break;
+        case Q:
+            u = getQ();
+            break;
+        case VI:
+            u = getExpectedUtility();
+            break;
+        case PI:
+            // u = ??
+            break;
+        }
+
+        return getF(u, n);
+    }
+    
+    public static double getF(double u, double n) {
+        if (n < Program4.k) {
+            return Program4.maxReward;
+        }
+
+        return u;
     }
 }

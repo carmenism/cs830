@@ -36,7 +36,7 @@ public class Program4 {
     private static int numStatesEncountered = 0;
     private static int numActionsEncountered = 0;
 
-    public static int k = 3;
+    public static int k = 1;
 
     private int N = 0;
 
@@ -150,33 +150,31 @@ public class Program4 {
         double[] newU = new double[numberStates];
 
         while (true) {
-            for (int stateIndex = 0; stateIndex < U.length; stateIndex++) {
+            for (int state = 0; state < U.length; state++) {
                 double max = -1 * Double.MAX_VALUE;
 
-                for (int actionIndex = 0; actionIndex < numberActions; actionIndex++) {
-                    StateAction sa = T[stateIndex][actionIndex];
-
-                    double f = getF(sa);
+                for (int action = 0; action < numberActions; action++) {
+                    double f = T[state][action].getF();
 
                     if (f > max) {
                         max = f;
                     }
                 }
 
-                double reward = lookupRewardFromIndex(stateIndex);
-                newU[stateIndex] = reward + discount * max;
+                double reward = lookupRewardFromIndex(state);
+                newU[state] = reward + discount * max;
             }
 
             double maxDiff = 0.0;
 
-            for (int stateIndex = 0; stateIndex < U.length; stateIndex++) {
-                double diff = Math.abs(U[stateIndex] - newU[stateIndex]);
+            for (int state = 0; state < U.length; state++) {
+                double diff = Math.abs(U[state] - newU[state]);
 
                 if (diff > maxDiff) {
                     maxDiff = diff;
                 }
 
-                U[stateIndex] = newU[stateIndex];
+                U[state] = newU[state];
             }
 
             if (maxDiff <= 0.001) {
@@ -186,35 +184,13 @@ public class Program4 {
     }
 
     private Action chooseAction(State state, List<Action> actions) {
-        switch (algorithm) {
-        case GREEDY:
-            return chooseGreedy(state, actions);
-        case Q:
-            return chooseQ(state, actions);
-        case RANDOM:
-            return chooseRandom(actions);
-        case VI:
-            return chooseVI(state, actions);
-        case PI:
-            // return choosePI(state, actions);
-        }
-
-        return null;
-    }
-
-    private Action chooseVI(State state, List<Action> actions) {
-        // updateU();
-
         int stateIndex = lookupStateIndex(state);
         Action maxAction = null;
         double max = -1 * Double.MAX_VALUE;
 
         for (Action possibleAction : actions) {
             int actionIndex = lookupActionIndex(possibleAction);
-            StateAction sa = T[stateIndex][actionIndex];
-
-            // double expectedValue = sa.getExpectedUtility();
-            double f = sa.getF();
+            double f = T[stateIndex][actionIndex].getF();
 
             if (f >= max) {
                 maxAction = possibleAction;
@@ -222,57 +198,10 @@ public class Program4 {
             }
         }
 
-        return maxAction;
-    }
-
-    private Action chooseQ(State state, List<Action> actions) {
-        int stateIndex = lookupStateIndex(state);
-        double max = 0;// -1 * Double.MAX_VALUE;
-        Action maxAction = null;
-
-        for (Action possibleAction : actions) {
-            int actionIndex = lookupActionIndex(possibleAction);
-            double q = Q[stateIndex][actionIndex];
-
-            if (q > max) {
-                max = q;
-                maxAction = possibleAction;
-            }
-        }
-
-        if (max == 0) {
-            return chooseRandom(actions);
-        }
-
-        return maxAction;
-    }
-
-    private Action chooseGreedy(State state, List<Action> actions) {
-        int stateIndex = lookupStateIndex(state);
-        Action maxAction = null;
-        double max = -1 * Double.MAX_VALUE;
-
-        for (Action possibleAction : actions) {
-            int actionIndex = lookupActionIndex(possibleAction);
-            StateAction sa = T[stateIndex][actionIndex];
-
-            if (sa.isUnexplored()) {
-                return possibleAction;
-            }
-
-            double expectedValue = sa.getExpectedValue();
-            // double expectedValue = sa.getFGreedy();
-
-            if (expectedValue > max) {
-                maxAction = possibleAction;
-                max = expectedValue;
-            }
-        }
-
         if (maxAction != null) {
             return maxAction;
         }
-
+        
         return chooseRandom(actions);
     }
 
@@ -282,36 +211,6 @@ public class Program4 {
         Action action = actions.get(random.nextInt(actions.size()));
 
         return action;
-    }
-
-    public double getF(StateAction sa) {
-        double u = 0;
-        int n = sa.getNumberTimesTaken();
-
-        switch (algorithm) {
-        case GREEDY:
-            u = sa.getExpectedValue();
-            break;
-        case Q:
-            //u = ??
-            break;
-        case VI:
-            u = sa.getExpectedUtility();
-            break;
-        case PI:
-            // u = ??
-            break;
-        }
-
-        return getF(u, n);
-    }
-
-    public double getF(double u, double n) {
-        if (n < k) {
-            return maxReward;
-        }
-
-        return u;
     }
 
     public static double lookupUtilityByIndex(int stateIndex) {
@@ -425,7 +324,7 @@ public class Program4 {
 
         for (int action = 0; action < numberActions; action++) {
             for (int state = 0; state < numberStates; state++) {
-                T[state][action] = new StateAction(numberStates);
+                T[state][action] = new StateAction(numberStates, state, action);
                 Q[state][action] = 0.0;
             }
         }
