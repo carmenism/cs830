@@ -1,5 +1,6 @@
 public class StateAction {
     public int[] statePrimes;
+    private int numberTimesTaken = 0;
 
     public StateAction(int numberStates) {
         statePrimes = new int[numberStates];
@@ -8,7 +9,19 @@ public class StateAction {
             statePrimes[s] = 1;
         }
     }
+    
+    public void addTimeTaken() {
+        numberTimesTaken++;
+    }
+    
+    public int getNumberTimesTaken() {
+        return numberTimesTaken;
+    }
 
+    public boolean isUnexplored() {
+        return getTotal() == statePrimes.length;
+    }
+    
     public int getTotal() {
         int total = 0;
 
@@ -24,6 +37,17 @@ public class StateAction {
         int total = getTotal();
         
         return ((double) statePrimes[stateIndex]) / total;
+    }
+    
+    public double getF() {
+        double u = getExpectedUtility();
+        int n = getNumberTimesTaken();
+        
+        if (n < Program4.k) {
+            return Program4.maxReward;
+        }
+
+        return u;
     }
     
     public double getExpectedUtility() {
