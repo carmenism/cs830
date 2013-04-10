@@ -29,6 +29,7 @@ public class Program4 {
     public static HashMap<Integer, Double> R = new HashMap<Integer, Double>();
     public static double[] U;
     public static double[][] Q;
+    public static int[] PI;
 
     private static HashMap<State, Integer> stateToIndex = new HashMap<State, Integer>();
     private static HashMap<Action, Integer> actionToIndex = new HashMap<Action, Integer>();
@@ -36,7 +37,7 @@ public class Program4 {
     private static int numStatesEncountered = 0;
     private static int numActionsEncountered = 0;
 
-    public static int k = 1;
+    public static int k = 4;
 
     private int N = 0;
 
@@ -51,8 +52,6 @@ public class Program4 {
     private int numberActions;
     public static double maxReward;
 
-    private State currentState;
-
     public Program4(String[] args) {
         parseArgs(args);
         parseStandardIn();
@@ -62,6 +61,7 @@ public class Program4 {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String line;
         boolean firstLine = true;
+        State currentState = null;
 
         try {
             while ((line = br.readLine()) != null) {
@@ -73,7 +73,6 @@ public class Program4 {
                     if (line.equals(TERMINATION)) {
                         System.exit(0);
                     } else if (line.equals(NEW_TRIAL)) {
-                        // ????
                         line = br.readLine();
                         currentState = parseState(line);
                         N++;
@@ -94,7 +93,6 @@ public class Program4 {
                         currentState = parseState(line);
 
                         update(oldState, action, currentState, reward);
-                        addReward(currentState, reward);
                     }
                 }
             }
@@ -107,6 +105,7 @@ public class Program4 {
     private void update(State oldState, Action action, State newState,
             double reward) {
         updateT(oldState, action, newState, reward);
+        addReward(newState, reward);
 
         if (algorithm == Algorithm.Q) {
             updateQ(oldState, action, newState, reward);
@@ -137,6 +136,7 @@ public class Program4 {
 
         for (int action = 0; action < numberActions; action++) {
             double q = Q[sPrimeIndex][action];
+            // double q = T[sPrimeIndex][action].getF();
 
             if (q > max) {
                 max = q;
@@ -183,7 +183,70 @@ public class Program4 {
         }
     }
 
+    private void updatePI() {
+        double[] Upi = new double[numberStates];
+
+        while (true) {
+            boolean unchanged = true;
+            for (int s = 0; s < numberStates; s++) {
+                int a = PI[s];
+                double utility = T[s][a].getExpectedUtility();
+
+                Upi[s] = lookupRewardFromIndex(s) + discount * utility;
+            }
+            
+            for (int s = 0; s < numberStates; s++) {
+                U[s] = Upi[s];
+            }
+            
+            for (int s = 0; s < numberStates; s++) {
+                double maxUtility = -1 * Double.MAX_VALUE;
+                int maxAction = -1;
+
+                for (int a = 0; a < numberActions; a++) {
+                    double expectedUtility = T[s][a].getExpectedUtility();
+
+                    if (expectedUtility > maxUtility) {
+                        maxUtility = expectedUtility;
+                        maxAction = a;
+                    }
+                }
+
+                int pAction = PI[s];
+                double pUtility = T[s][pAction].getExpectedUtility();
+
+                if (maxUtility > pUtility) {
+                    PI[s] = maxAction;
+                    unchanged = false;
+                }
+            }
+
+            if (unchanged) {
+                break;
+            }
+        }
+    }
+
     private Action chooseAction(State state, List<Action> actions) {
+        if (algorithm == Algorithm.PI) {
+
+            updatePI();
+            int stateIndex = lookupStateIndex(state);
+            int policyAction = PI[stateIndex];
+
+            for (Action action : actions) {
+                int actionIndex = lookupActionIndex(action);
+
+                if (actionIndex == policyAction) {
+                    int n = T[stateIndex][actionIndex].getNumberTimesTaken();
+
+                    return chooseOtherRandom(action, actions, n);
+                }
+            }
+
+            return chooseLessVisited(stateIndex, actions);
+        }
+
         int stateIndex = lookupStateIndex(state);
         Action maxAction = null;
         double max = -1 * Double.MAX_VALUE;
@@ -201,10 +264,58 @@ public class Program4 {
         if (maxAction != null) {
             return maxAction;
         }
+
+        return chooseRandom(actions);
+    }
+    
+    private Action chooseLessVisited(int stateIndex, List<Action> actions) {
+        for (Action action : actions) {
+            int actionIndex = lookupActionIndex(action);
+
+            if (T[stateIndex][actionIndex].getNumberTimesTaken() < k) {
+                return action;
+            }
+        }
         
         return chooseRandom(actions);
     }
+    
+    private Action chooseRandomLessVisited(int stateIndex, List<Action> actions) {
+        ArrayList<Action> newList = new ArrayList<Action>();
+        
+        for (Action action : actions) {
+            int actionIndex = lookupActionIndex(action);
 
+            if (T[stateIndex][actionIndex].getNumberTimesTaken() < k) {
+                newList.add(action);
+            }
+        }
+        
+        if (newList.size() != 0) {
+            return chooseRandom(newList);
+        }
+        
+        return chooseRandom(actions);
+    }
+    
+    private Action chooseOtherRandom(Action action, List<Action> actions, int n) {
+        if (n == 0) {
+            return action;
+        }
+        
+        Random random = new Random(n);
+
+        if (random.nextInt(n) == 0) {
+            ArrayList<Action> newList = new ArrayList<Action>();
+            newList.addAll(actions);
+            newList.remove(action);
+
+            return chooseRandom(newList);
+        }
+        
+        return action;
+    }
+    
     private Action chooseRandom(List<Action> actions) {
         Random random = new Random();
 
@@ -330,9 +441,13 @@ public class Program4 {
         }
 
         U = new double[numberStates];
+        PI = new int[numberStates];
+
+        Random random = new Random();
 
         for (int state = 0; state < numberStates; state++) {
             U[state] = 0.0;
+            PI[state] = random.nextInt(numberActions);
         }
     }
 
