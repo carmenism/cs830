@@ -1,0 +1,40 @@
+\documentclass[letterpaper,11pt]{article}
+%\documentclass[12pt]{article}
+%\usepackage[margin=0.5in]{geometry}
+%\usepackage{hyperref}
+%\usepackage{tikz}
+%\usepackage{amsmath}
+%\newcommand{\superscript}[1]{\ensuremath{^{\textrm{#1}}}}
+%\newcommand{\unit}[1]{\ensuremath{\, \mathrm{#1}}}
+%\newcommand{\inlinecode}{\texttt}
+
+\begin{document}
+
+\title{CS 830: Program 4}
+\date{April 10, 2013}
+\author{Carmen St.\ Jean}
+
+\maketitle
+
+\begin{enumerate}
+\item \emph{Describe any implementation choices you made that you felt were important. Mention anything else that we should know when evaluating your program.}
+
+Answer
+\item \emph{What can you say about the the time and space complexity of your
+program?}
+
+Let $a$ be the number of actions available and $s$ be the number of states available in a reinforcement learning problem.
+
+Random will have a constant time complexity, since actions are selected at random.  Expected value or utility is never calculated.  Space complexity is constant as well since no information is stored and learned.
+
+Greedy will have a space complexity of $O(s^2 * a)$, since the transition function must be kept in memory.
+
+Value iteration will have a space complexity of $O(s^2 * a)$ because each ($s$, $a$, $s'$) triplet must be represented in memory.  It's time complexity for each iteration will be $O(s^2 * a)$, though this partially depends on the discount factor.  A larger discount factor, near 1, will make decisions be based on results further and further in the future, so the number of iterations could grow exponentially.
+
+
+\item \emph{What suggestions do you have for improving this assignment in the future?}
+
+Answer
+\end{enumerate}
+
+\end{document}
