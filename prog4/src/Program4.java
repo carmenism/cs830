@@ -26,7 +26,7 @@ public class Program4 {
     public static final String TERMINATION = "goodbye!";
 
     private StateAction[][] T;
-    public static HashMap<Integer, Double> R = new HashMap<Integer, Double>();
+    public static double[] R;
     public static double[] U;
     public static double[][] Q;
     public static int[] PI;
@@ -97,7 +97,6 @@ public class Program4 {
                 }
             }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -161,7 +160,7 @@ public class Program4 {
                     }
                 }
 
-                double reward = lookupRewardFromIndex(state);
+                double reward = R[state];
                 newU[state] = reward + discount * max;
             }
 
@@ -192,13 +191,13 @@ public class Program4 {
                 int a = PI[s];
                 double utility = T[s][a].getExpectedUtility();
 
-                Upi[s] = lookupRewardFromIndex(s) + discount * utility;
+                Upi[s] = R[s] + discount * utility;
             }
-            
+
             for (int s = 0; s < numberStates; s++) {
                 U[s] = Upi[s];
             }
-            
+
             for (int s = 0; s < numberStates; s++) {
                 double maxUtility = -1 * Double.MAX_VALUE;
                 int maxAction = -1;
@@ -229,22 +228,7 @@ public class Program4 {
 
     private Action chooseAction(State state, List<Action> actions) {
         if (algorithm == Algorithm.PI) {
-
-            updatePI();
-            int stateIndex = lookupStateIndex(state);
-            int policyAction = PI[stateIndex];
-
-            for (Action action : actions) {
-                int actionIndex = lookupActionIndex(action);
-
-                if (actionIndex == policyAction) {
-                    int n = T[stateIndex][actionIndex].getNumberTimesTaken();
-
-                    return chooseOtherRandom(action, actions, n);
-                }
-            }
-
-            return chooseLessVisited(stateIndex, actions);
+            return choosePI(state, actions);
         }
 
         int stateIndex = lookupStateIndex(state);
@@ -267,7 +251,25 @@ public class Program4 {
 
         return chooseRandom(actions);
     }
-    
+
+    private Action choosePI(State state, List<Action> actions) {
+        updatePI();
+        int stateIndex = lookupStateIndex(state);
+        int policyAction = PI[stateIndex];
+
+        for (Action action : actions) {
+            int actionIndex = lookupActionIndex(action);
+
+            if (actionIndex == policyAction) {
+                int n = T[stateIndex][actionIndex].getNumberTimesTaken();
+
+                return chooseOtherRandom(action, actions, n);
+            }
+        }
+
+        return chooseLessVisited(stateIndex, actions);
+    }
+
     private Action chooseLessVisited(int stateIndex, List<Action> actions) {
         for (Action action : actions) {
             int actionIndex = lookupActionIndex(action);
@@ -276,33 +278,15 @@ public class Program4 {
                 return action;
             }
         }
-        
-        return chooseRandom(actions);
-    }
-    
-    private Action chooseRandomLessVisited(int stateIndex, List<Action> actions) {
-        ArrayList<Action> newList = new ArrayList<Action>();
-        
-        for (Action action : actions) {
-            int actionIndex = lookupActionIndex(action);
 
-            if (T[stateIndex][actionIndex].getNumberTimesTaken() < k) {
-                newList.add(action);
-            }
-        }
-        
-        if (newList.size() != 0) {
-            return chooseRandom(newList);
-        }
-        
         return chooseRandom(actions);
     }
-    
+
     private Action chooseOtherRandom(Action action, List<Action> actions, int n) {
         if (n == 0) {
             return action;
         }
-        
+
         Random random = new Random(n);
 
         if (random.nextInt(n) == 0) {
@@ -312,10 +296,10 @@ public class Program4 {
 
             return chooseRandom(newList);
         }
-        
+
         return action;
     }
-    
+
     private Action chooseRandom(List<Action> actions) {
         Random random = new Random();
 
@@ -363,25 +347,13 @@ public class Program4 {
     public static void addReward(State state, double reward) {
         int stateIndex = lookupStateIndex(state);
 
-        if (!R.containsKey(stateIndex)) {
-            R.put(stateIndex, reward);
-        }
-    }
-
-    public static double lookupRewardFromIndex(int stateIndex) {
-        Double reward = R.get(stateIndex);
-
-        if (reward != null) {
-            return reward;
-        }
-
-        return 0;
+        R[stateIndex] = reward;
     }
 
     public static double lookupReward(State state) {
         int stateIndex = lookupStateIndex(state);
 
-        return lookupRewardFromIndex(stateIndex);
+        return R[stateIndex];
     }
 
     private State parseState(String line) {
@@ -429,7 +401,7 @@ public class Program4 {
             }
         }
 
-        // k = numberActions;
+        //k = numberActions + 1;
         T = new StateAction[numberStates][numberActions];
         Q = new double[numberStates][numberActions];
 
@@ -440,12 +412,14 @@ public class Program4 {
             }
         }
 
+        R = new double[numberStates];
         U = new double[numberStates];
         PI = new int[numberStates];
 
         Random random = new Random();
 
         for (int state = 0; state < numberStates; state++) {
+            R[state] = 0.0;
             U[state] = 0.0;
             PI[state] = random.nextInt(numberActions);
         }

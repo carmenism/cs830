@@ -23,7 +23,7 @@ public class StateAction {
     }
 
     public boolean isUnexplored() {
-        return getTotal() == 0;//statePrimes.length;
+        return getTotal() == 0;
     }
     
     public int getTotal() {
@@ -70,7 +70,7 @@ public class StateAction {
             for (int s = 0; s < statePrimes.length; s++) {
                 double probability = ((double) statePrimes[s]) / total;
 
-                expectedValue += Program4.lookupRewardFromIndex(s) * probability;
+                expectedValue += Program4.R[s] * probability;
             }
         }
 
@@ -90,9 +90,6 @@ public class StateAction {
             break;
         case VI:
             u = getExpectedUtility();
-            break;
-        case PI:
-            // u = ??
             break;
         }
 
