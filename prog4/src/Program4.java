@@ -176,7 +176,7 @@ public class Program4 {
                 U[state] = newU[state];
             }
 
-            if (maxDiff <= 0.001) {
+            if (maxDiff <= 0.01) {
                 break;
             }
         }
@@ -234,6 +234,7 @@ public class Program4 {
         int stateIndex = lookupStateIndex(state);
         Action maxAction = null;
         double max = -1 * Double.MAX_VALUE;
+        int n = 0;
 
         for (Action possibleAction : actions) {
             int actionIndex = lookupActionIndex(possibleAction);
@@ -242,10 +243,12 @@ public class Program4 {
             if (f >= max) {
                 maxAction = possibleAction;
                 max = f;
+                n = T[stateIndex][actionIndex].getNumberTimesTaken();
             }
         }
 
         if (maxAction != null) {
+            //return chooseOtherRandom(maxAction, actions, n);
             return maxAction;
         }
 
