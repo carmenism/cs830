@@ -291,7 +291,7 @@ public class Program5 {
         String[] tokens = line.trim().split(" ");
 
         int[] x = new int[numberAttributes + 1];
-        x[0] = 0;
+        x[0] = 1;
         
         for (int i = 0; i < tokens.length; i++) {
             x[i + 1] = Integer.parseInt(tokens[i]);
@@ -310,7 +310,7 @@ public class Program5 {
         String[] tokens = line.trim().split(" ");
 
         int[] x = new int[numberAttributes + 1];
-        x[0] = 0;
+        x[0] = 1;
         
         for (int i = 0; i < tokens.length; i++) {
             x[i + 1] = Integer.parseInt(tokens[i]);
