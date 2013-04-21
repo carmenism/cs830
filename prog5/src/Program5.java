@@ -291,7 +291,6 @@ public class Program5 {
         String[] tokens = line.trim().split(" ");
 
         int[] x = new int[numberAttributes + 1];
-
         x[0] = 0;
         
         for (int i = 0; i < tokens.length; i++) {
@@ -302,19 +301,19 @@ public class Program5 {
     }
 
     private TrainingSample parseTraining(String line) {
+        int firstSpace = line.indexOf(" ");
+        String firstNumber = line.substring(0, firstSpace);
+        line = line.substring(firstSpace);
+        
+        int y = Integer.parseInt(firstNumber);
+        
         String[] tokens = line.trim().split(" ");
 
         int[] x = new int[numberAttributes + 1];
-        int y = -1;
-
         x[0] = 0;
         
         for (int i = 0; i < tokens.length; i++) {
-            if (i == 0) {
-                y = Integer.parseInt(tokens[i]);
-            } else {                
-                x[i] = Integer.parseInt(tokens[i]);
-            }
+            x[i + 1] = Integer.parseInt(tokens[i]);
         }
 
         return new TrainingSample(x, numberClasses, y);
