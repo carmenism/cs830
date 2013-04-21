@@ -1,0 +1,8 @@
+4 attributes, 4 values, 10 classes
+-- training --
+0 0 1 0 0
+9 3 2 2 0
+1 0 2 0 2
+-- test --
+0 1 1 0
+3 1 2 1
