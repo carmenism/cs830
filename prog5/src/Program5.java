@@ -28,8 +28,11 @@ public class Program5 {
 
     private int k = 5;
 
+    private int N = 0;
+    
     private List<TrainingSample> trainingSamples = new ArrayList<TrainingSample>();
 
+    private double[][] thetas;
     private double[] averages;
     private double[] standardDeviations;
 
@@ -56,13 +59,16 @@ public class Program5 {
                     readingTraining = false;
                     normalize();
                 } else if (readingTraining) {
+                    N++;
+                    
                     TrainingSample sample = parseTraining(line);
 
                     trainingSamples.add(sample);
+                    
+                    learn(sample);
                 } else {
                     Sample sample = parseTest(line);
-                    sample.normalize(averages, standardDeviations);
-
+                    normalize(sample);
                     classify(sample);
                 }
             }
@@ -71,13 +77,27 @@ public class Program5 {
         }
     }
 
+    private void normalize(Sample sample) {
+        if (algorithm == Algorithm.LINEAR) {
+            return;
+        }        
+
+        sample.normalize(averages, standardDeviations);
+    }
+    
     private void normalize() {
-        averages = new double[numberAttributes];
-        standardDeviations = new double[numberAttributes];
+        if (algorithm == Algorithm.LINEAR) {
+            return;
+        } 
+        
+        averages = new double[numberAttributes + 1];
+        standardDeviations = new double[numberAttributes + 1];
 
         int N = trainingSamples.size();
 
-        for (int i = 0; i < numberAttributes; i++) {
+        averages[1] = 1;
+        
+        for (int i = 1; i < numberAttributes; i++) {
             averages[i] = 0.0;
 
             for (TrainingSample sample : trainingSamples) {
@@ -87,7 +107,9 @@ public class Program5 {
             averages[i] = averages[i] / N;
         }
 
-        for (int i = 0; i < numberAttributes; i++) {
+        standardDeviations[0] = 0;
+        
+        for (int i = 1; i < numberAttributes; i++) {
             standardDeviations[i] = 0.0;
 
             for (TrainingSample sample : trainingSamples) {
@@ -107,7 +129,73 @@ public class Program5 {
         }
     }
 
+    private void learn(TrainingSample sample) {
+        if (algorithm == Algorithm.LINEAR) {
+            offlineLinear(sample);
+        }        
+    }
+    
+    private void offlineLinear(TrainingSample sample) {
+        double alpha = 1.0 / N;        
+        double[] yHat = regressionPredict(sample);
+        
+        for (int aClass = 0; aClass < numberClasses; aClass++) {            
+            for (int attr = 0; attr < numberAttributes + 1; attr++) {
+                thetas[aClass][attr] = thetas[aClass][attr] - alpha * (yHat[aClass] - sample.y[aClass]) * sample.x[attr];
+            }
+        }
+    }
+    
+    private void regressionClassify(Sample sample) {
+        double[] yHat = regressionPredict(sample);
+        int maxIndex = 0;
+        double sumOfAll = 0.0;
+        
+        for (int i = 0; i < yHat.length; i++) {  
+            if (yHat[i] > yHat[maxIndex]) {
+                maxIndex = i;
+            }
+            
+            if (yHat[i] > 0) {
+                sumOfAll += 1;//Math.abs(yHat[i]);
+           }
+        }
+        
+        double confidence = 1.0/sumOfAll;//yHat[maxIndex] / sumOfAll;
+
+        //System.err.println(maxIndex + " " + confidence);
+        System.out.println(maxIndex + " " + confidence);
+    }
+    
+    private double[] regressionPredict(Sample sample) {
+        double[] yHat = new double[numberClasses];
+        
+        for (int i = 0; i < numberClasses; i++) {
+            yHat[i] = dotProduct(thetas[i], sample.x); 
+        }
+        
+        return yHat;
+    }
+    
+    private double dotProduct(double [] vectorA, int [] vectorB) {
+        double sum = 0.0;
+        
+        for (int i = 0; i < vectorA.length; i++) {
+            sum += vectorA[i] * vectorB[i];
+        }
+        
+        return sum;
+    }
+    
     private void classify(Sample sample) {
+        if (algorithm == Algorithm.KNN) {
+            knn(sample);
+        } else if (algorithm == Algorithm.LINEAR) {
+            regressionClassify(sample);
+        }
+    }
+    
+    private void knn(Sample sample) {
         List<TrainingSample> kNN = getKNearestNeightbors(sample, k);
 
         int kSize = k;
@@ -202,30 +290,34 @@ public class Program5 {
     private Sample parseTest(String line) {
         String[] tokens = line.trim().split(" ");
 
-        int[] x = new int[numberAttributes];
+        int[] x = new int[numberAttributes + 1];
 
+        x[0] = 0;
+        
         for (int i = 0; i < tokens.length; i++) {
-            x[i] = Integer.parseInt(tokens[i]);
+            x[i + 1] = Integer.parseInt(tokens[i]);
         }
 
-        return new Sample(numberAttributes, x);
+        return new Sample(x);
     }
 
     private TrainingSample parseTraining(String line) {
         String[] tokens = line.trim().split(" ");
 
-        int[] x = new int[numberAttributes];
+        int[] x = new int[numberAttributes + 1];
         int y = -1;
 
+        x[0] = 0;
+        
         for (int i = 0; i < tokens.length; i++) {
             if (i == 0) {
                 y = Integer.parseInt(tokens[i]);
             } else {                
-                x[i - 1] = Integer.parseInt(tokens[i]);
+                x[i] = Integer.parseInt(tokens[i]);
             }
         }
 
-        return new TrainingSample(numberAttributes, x, numberClasses, y);
+        return new TrainingSample(x, numberClasses, y);
     }
 
     private void parseFirstLine(String line) {
@@ -244,6 +336,14 @@ public class Program5 {
                 String classes = token.replaceAll(FIRST_LINE_CLASSES, "");
 
                 numberClasses = Integer.parseInt(classes);
+            }
+        }
+        
+        thetas = new double[numberClasses][numberAttributes + 1];
+        
+        for (int i = 0; i < numberClasses; i++) {
+            for (int j = 0; j < numberAttributes + 1; j++) {
+                thetas[i][j] = 0;
             }
         }
     }

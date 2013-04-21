@@ -2,18 +2,16 @@ public class Sample {
     public int[] x;
     public double[] xNormal;
     
-    public Sample(int numberAttributes, int[] xVals) {
-        this.x = new int[numberAttributes];
-        
-        for (int i = 0; i < numberAttributes; i++) {
-            this.x[i] = xVals[i];
-        }
+    public Sample(int[] xVals) {
+        this.x = xVals;
     }
     
     public void normalize(double[] averages, double[] standardDeviations) {
         this.xNormal = new double[x.length];
         
-        for (int i = 0; i < x.length; i++) {
+        this.xNormal[0] = 0;
+        
+        for (int i = 1; i < x.length; i++) {
             if (standardDeviations[i] == 0) {
                 xNormal[i] = 0;//x[i];
             } else {

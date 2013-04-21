@@ -8,8 +8,8 @@ public class TrainingSample extends Sample implements Comparable<TrainingSample>
     
     public double distance = -1.0;
     
-    public TrainingSample(int numberAttributes, int[] xVals, int numberClasses, int yVal) {
-        super(numberAttributes, xVals);
+    public TrainingSample(int[] xVals, int numberClasses, int yVal) {
+        super(xVals);
         
         this.yOriginal = yVal;
         this.y = new int[numberClasses];
@@ -24,7 +24,7 @@ public class TrainingSample extends Sample implements Comparable<TrainingSample>
     public void calculateDistance(Sample sample) {
         double sumSquares = 0.0;
         
-        for (int i = 0; i < xNormal.length; i++) {
+        for (int i = 1; i < xNormal.length; i++) {
             double diff = xNormal[i] - sample.xNormal[i];
             double diffSquared = Math.pow(diff, 2);
             
