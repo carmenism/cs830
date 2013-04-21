@@ -1,0 +1,50 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage{aaai}
+
+\begin{document}
+
+\title{CS 830: Project Proposal}
+\date{April 1, 2013}
+\author{Carmen St.\ Jean}
+
+\nocopyright{\gdef\copyright@on{}}
+
+\maketitle
+
+\section{Background}
+
+Greedy search and A* search are search algorithms whose efficiency depends on the quality of their heuristic function, which is the lower bound estimate of the remaining solution cost.  These algorithms can be applied to finding solutions to combinatorial problems, such as the 15-puzzle.  Pattern databases can be used to improve the efficiency of these algorithms by storing precomputed heuristic values.
+
+Design of a pattern database requires enumerating all configurations of the combinatorial problem that lead to a partial solution.  That partial solution is built by selecting $n$ elements of the goal permutation to form a pattern, while the other elements are abstracted.  At any point in the search, the minimal number of actions to place those $n$ elements in their goal positions can be looked up in the pattern database.
+
+\section{The Problem}
+
+For the 15-puzzle, there are several possible ways to design a pattern database.  One method is to build the pattern database for a specific start configuration by abstracting eight tiles whose Manhattan distance to the goal is smallest.  Another method, called fringe, is to abstract away the tiles that are not part of the bottom-most row or right-most column in the goal configuration.
+
+In most cases, the first method of abstraction makes for a stronger heuristic than the fringe abstraction, since it takes the initial configuration into account.  Christopher Wilt proposes that, although A* can efficiently use either form of abstraction, greedy search may actually perform better with the fringe pattern database, even though it is a weaker heuristic.  I will investigate this claim by comparing these two abstractions in their use with A* and greedy search. 
+
+\section{Why this problem?}
+
+This problem is interesting because it may illustrate that a weaker heuristic - the fringe pattern database - is more efficient for greedy search.  Greedy search prefers to expand nodes with the smallest heuristic value.  With a pattern database, many configurations of the 15-puzzle will have a heuristic value of zero even though they are not the goal.  To have a heuristic value of zero, it is only required that the $n$ tiles of the pattern database are located in their goal positions, with the abstracted tiles completely ignored.
+
+When the tiles of the fringe are in their goal location, a smaller 3-by-3 puzzle remains.  This smaller puzzle is trivial to solve and, more importantly, can be solved without disturbing the tiles on the fringe.  Since the subsequent actions will not move the fringe tiles, the pattern database will return a heuristic value of zero for those actions.  Therefore, a heuristic value of zero from the pattern database will be followed by more heuristic values of zero, indicating that the overall goal is close.
+
+The method of selecting the tiles with the largest Manhattan distance to the goal for the pattern cannot always make the same guarantee that a heuristic value of zero will soon lead to the goal.  The tiles which form the pattern may have their goal positions scattered around the board; they could even be isolated from each other or the blank tile.  Placing these tiles in their goal positions could be placing the abstracted tiles far from their goal positions, requiring further actions.  Worse, actions taken to move the abstracted tiles into their goal position could move the pattern tiles away from their goal position.  When that occurs, a heuristic value greater than zero will be returned from the pattern database.  Therefore, a heuristic value of zero from the pattern database could be misleading, because it could very soon lead to non-zero heuristic values.
+
+Since greedy search prefers the smallest heuristic value, it will always prefer nodes with the heuristic value of zero.  In the case of the fringe pattern database, zero means the configuration is actually near the goal, so greedy should perform well.  With the other pattern database, however, zero is often misleading, because future nodes are likely to have non-zero heuristic values.  This will cause greedy to backtrack, making for wasted search time.
+
+\section{Tentative Plan}
+
+I will address this problem by implementing the two methods of pattern abstraction.  Then I will create thousands of different, random start configurations for both A* and greedy search to solve.  Additionally, I will use a 3-by-4 version of the sliding tile puzzle if the normal 4-by-4 puzzle proves to be too computationally intensive to solve.  The two algorithms will solve each problem once with the fringe pattern database and again with the other pattern database. 
+
+A* is being included to illustrate the strength of either pattern database heuristic, while greedy is included to test the proposed problem.  For each search, I will compare the number of nodes generated, the number of nodes expanded, and the execution time.  I hope to see that greedy performs most efficiently - i.e., shorter running time and fewer nodes expanded - with the fringe pattern database, while A* will most likely perform better with the other pattern database.
+
+
+
+\bibliographystyle{aaai}
+
+\bibliography{project-proposal}
+
+\nocite{*} 
+
+\end{document}
