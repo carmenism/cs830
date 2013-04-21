@@ -302,7 +302,7 @@ public class Program5 {
 
     private TrainingSample parseTraining(String line) {
         int firstSpace = line.indexOf(" ");
-        String firstNumber = line.substring(0, firstSpace);
+        String firstNumber = line.substring(0, firstSpace).trim();
         line = line.substring(firstSpace);
         
         int y = Integer.parseInt(firstNumber);
