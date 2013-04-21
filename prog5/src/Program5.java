@@ -27,8 +27,6 @@ public class Program5 {
     private int numberClasses;
 
     private int k = 5;
-
-    private int N = 0;
     
     private List<TrainingSample> trainingSamples = new ArrayList<TrainingSample>();
 
@@ -36,6 +34,8 @@ public class Program5 {
     private double[] averages;
     private double[] standardDeviations;
 
+    private double[][][] p;
+    
     public Program5(String[] args) {
         parseArgs(args);
         parseStandardIn();
@@ -46,7 +46,7 @@ public class Program5 {
         
         /*BufferedReader br = null;
         try { br = new BufferedReader(new
-                InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog5/test.out")));
+                InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog5/tiny.data")));
         } catch (java.io.FileNotFoundException e1) {
             e1.printStackTrace(); System.exit(1);
         }*/
@@ -66,9 +66,7 @@ public class Program5 {
                 } else if (line.equals(INDICATOR_TEST)) {
                     readingTraining = false;
                     normalize();
-                } else if (readingTraining) {
-                    N++;
-                    
+                } else if (readingTraining) {                    
                     TrainingSample sample = parseTraining(line);
 
                     trainingSamples.add(sample);
@@ -140,32 +138,30 @@ public class Program5 {
     private void learn(TrainingSample sample) {
         if (algorithm == Algorithm.LINEAR) {
             offlineLinear(sample);
-        }        
+        } else if (algorithm == Algorithm.NB) {
+            naiveBayesLearn(sample);
+        }
+    }
+    
+    private void naiveBayesLearn(TrainingSample sample) {
+        int ans = sample.yOriginal;
+        
+        for (int attr = 0; attr < sample.x.length; attr++) {
+            int value = sample.x[attr];
+            
+            p[ans][attr][value] += 1;
+        }
     }
     
     private void offlineLinear(TrainingSample sample) {
-        double alpha = 0.0001;//1.0 / N;        
+        double alpha = 0.0001;      
         double[] yHat = regressionPredict(sample);
         
         for (int aClass = 0; aClass < numberClasses; aClass++) {            
             for (int attr = 0; attr < numberAttributes + 1; attr++) {
-                /*System.err.println("alpha: "+ alpha );
-                System.err.println("yHat[aClass]: "+ yHat[aClass] );
-                System.err.println("sample.y[aClass]: "+ sample.y[aClass] );
-                System.err.println("(yHat[aClass] - sample.y[aClass]): "+ (yHat[aClass] - sample.y[aClass]) );
-                System.err.println("sample.x[attr]: "+ sample.x[attr] );*/
-                //System.err.print(thetas[aClass][attr] + " -> ");
                 thetas[aClass][attr] = thetas[aClass][attr] - alpha * (yHat[aClass] - sample.y[aClass]) * sample.x[attr];
-                //System.err.print(thetas[aClass][attr] + "\n");
             }
-
-            System.err.println("*****");
         }
-        
-        
-        //if (N == 3) {
-        //System.exit(1);
-        //}
     }
     
     private void regressionClassify(Sample sample) {
@@ -174,20 +170,15 @@ public class Program5 {
         double sumOfAll = 0.0;
         
         for (int i = 0; i < yHat.length; i++) { 
-            //System.err.print(yHat[i] + " ");
             if (yHat[i] > yHat[maxIndex]) {
                 maxIndex = i;
             }
             
-            if (yHat[i] > 0) {
-                sumOfAll += 1;//Math.abs(yHat[i]);
-           }
+            sumOfAll += Math.abs(yHat[i]);
         }
-        //System.err.println();
         
-        double confidence = 1.0/sumOfAll;//yHat[maxIndex] / sumOfAll;
+        double confidence = yHat[maxIndex] / sumOfAll;
 
-        //System.err.println(maxIndex + " " + confidence);
         System.out.println(maxIndex + " " + confidence);
     }
     
@@ -216,7 +207,44 @@ public class Program5 {
             knn(sample);
         } else if (algorithm == Algorithm.LINEAR) {
             regressionClassify(sample);
+        } else if (algorithm == Algorithm.NB) {
+            naiveBayesClassify(sample);
         }
+    }
+    
+    private void naiveBayesClassify(Sample sample) {
+        double[] prob = new double[numberClasses];
+        
+        for (int aClass = 0; aClass < numberClasses; aClass++) {
+            prob[aClass] = 1.0;
+            
+            for (int attr = 0; attr < numberAttributes + 1; attr++) {
+                int actualValue = sample.x[attr];                
+                double total = 0.0;
+                
+                for (int value = 0; value < numberValues; value++) {
+                    total += p[aClass][attr][value];
+                }
+
+                double probOfValue = p[aClass][attr][actualValue] / total;
+                prob[aClass] = prob[aClass] * probOfValue;
+            }            
+        }
+        
+        int maxIndex = 0;
+        double total = 0.0;
+        
+        for (int aClass = 1; aClass < numberClasses; aClass++) {
+            if (prob[aClass] > prob[maxIndex]) {
+                maxIndex = aClass;
+            }
+            
+            total += prob[aClass];
+        }
+        
+        double confidence = prob[maxIndex] / total;
+        
+        System.out.println(maxIndex + " " + confidence);
     }
     
     private void knn(Sample sample) {
@@ -363,10 +391,14 @@ public class Program5 {
         }
         
         thetas = new double[numberClasses][numberAttributes + 1];
+        p = new double[numberClasses][numberAttributes + 1][numberValues];
         
         for (int i = 0; i < numberClasses; i++) {
             for (int j = 0; j < numberAttributes + 1; j++) {
                 thetas[i][j] = 0;
+                for (int k = 0; k < numberValues; k++) {
+                    p[i][j][k] = 1;
+                }
             }
         }
     }
