@@ -1,0 +1,42 @@
+\documentclass[letterpaper,11pt]{article}
+\usepackage{hyperref}
+\newcommand{\superscript}[1]{\ensuremath{^{\textrm{#1}}}}
+\newcommand{\unit}[1]{\ensuremath{\, \mathrm{#1}}}
+
+\begin{document}
+
+\title{CS 830: Program 3}
+\date{March 27, 2013}
+\author{Carmen St.\ Jean}
+
+\maketitle
+
+\begin{enumerate}
+\item \emph{Describe any implmentation choices you made that you felt were important.  Mention anything else that we should know when evaluation your program.}
+
+I stored most things (Actions, Predicates, Constants, States) in HashSets (where no duplicates are allowed).  I represented States as HashSets of positive Predicates and negative Predicates.  I was able to implement H1 without doing one graph for positive Literals and one for negative Literals; I was able to do this in one H1 graph.
+
+\item \emph{Which of your heuristics are admissible?}
+
+The only admissible heuristic is h1; h0, h1sum, and h-goal-lits are all inadmissible.
+
+%\begin{center}
+%  \begin{tabular}{r | c | c | c | l  }
+%    Problem       & Heuristic      & Weight & Solution Length & Admissibility \\ \hline
+%    \hline
+%    study2        & h1             & 1      & 7               & Yes \\ \hline
+%    study2        & h1sum          & 1      & 9               & No  \\ \hline
+%    \hline
+%  \end{tabular}
+%\end{center}
+
+\item \emph{What can you say about the time and space complexity of your program?}
+
+According to the book, the STRIPS planning problem is in the PSPACE complexity class.  This class refers to problems that can be solved by a deterministic TUring machine with polynomial space.
+
+\item \emph{What suggestions do you have for improving this assignment in the future?}
+
+We needed more time for this one.  We received the assignment itself very late.  In the last six days of my life, I've had to complete submit two programs, do two quizzes, and one write up all for CS 830.  That's five things for one class in six days.  Most of that we could not have done ahead of time because we end up with just a day or two for the videos.  I haven't been procrastinating and this class is still chewing up so much of my time.  I even found a bug in my code that I was unable to fix due to time constraints.
+\end{enumerate}
+
+\end{document}
