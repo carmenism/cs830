@@ -43,6 +43,14 @@ public class Program5 {
 
     private void parseStandardIn() {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        
+        /*BufferedReader br = null;
+        try { br = new BufferedReader(new
+                InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog5/test.out")));
+        } catch (java.io.FileNotFoundException e1) {
+            e1.printStackTrace(); System.exit(1);
+        }*/
+        
         String line = null;
         boolean firstLine = true;
         boolean readingTraining = true;
@@ -136,14 +144,28 @@ public class Program5 {
     }
     
     private void offlineLinear(TrainingSample sample) {
-        double alpha = 1.0 / N;        
+        double alpha = 0.0001;//1.0 / N;        
         double[] yHat = regressionPredict(sample);
         
         for (int aClass = 0; aClass < numberClasses; aClass++) {            
             for (int attr = 0; attr < numberAttributes + 1; attr++) {
+                /*System.err.println("alpha: "+ alpha );
+                System.err.println("yHat[aClass]: "+ yHat[aClass] );
+                System.err.println("sample.y[aClass]: "+ sample.y[aClass] );
+                System.err.println("(yHat[aClass] - sample.y[aClass]): "+ (yHat[aClass] - sample.y[aClass]) );
+                System.err.println("sample.x[attr]: "+ sample.x[attr] );*/
+                //System.err.print(thetas[aClass][attr] + " -> ");
                 thetas[aClass][attr] = thetas[aClass][attr] - alpha * (yHat[aClass] - sample.y[aClass]) * sample.x[attr];
+                //System.err.print(thetas[aClass][attr] + "\n");
             }
+
+            System.err.println("*****");
         }
+        
+        
+        //if (N == 3) {
+        //System.exit(1);
+        //}
     }
     
     private void regressionClassify(Sample sample) {
@@ -151,7 +173,8 @@ public class Program5 {
         int maxIndex = 0;
         double sumOfAll = 0.0;
         
-        for (int i = 0; i < yHat.length; i++) {  
+        for (int i = 0; i < yHat.length; i++) { 
+            //System.err.print(yHat[i] + " ");
             if (yHat[i] > yHat[maxIndex]) {
                 maxIndex = i;
             }
@@ -160,6 +183,7 @@ public class Program5 {
                 sumOfAll += 1;//Math.abs(yHat[i]);
            }
         }
+        //System.err.println();
         
         double confidence = 1.0/sumOfAll;//yHat[maxIndex] / sumOfAll;
 
