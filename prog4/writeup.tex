@@ -1,0 +1,40 @@
+\documentclass[letterpaper,11pt]{article}
+%\documentclass[12pt]{article}
+%\usepackage[margin=0.5in]{geometry}
+%\usepackage{hyperref}
+%\usepackage{tikz}
+%\usepackage{amsmath}
+%\newcommand{\superscript}[1]{\ensuremath{^{\textrm{#1}}}}
+%\newcommand{\unit}[1]{\ensuremath{\, \mathrm{#1}}}
+%\newcommand{\inlinecode}{\texttt}
+
+\begin{document}
+
+\title{CS 830: Program 4}
+\date{April 10, 2013}
+\author{Carmen St.\ Jean}
+
+\maketitle
+
+\begin{enumerate}
+\item \emph{Describe any implementation choices you made that you felt were important. Mention anything else that we should know when evaluating your program.}
+
+I stored most everything in 1D and 2D arrays.  I really didn't make use of much objected oriented design.  I used the exploration function wherever possible with a $k$ of 4.  I used 0.001 as the value to calculate when to stop updating $U$.
+\item \emph{What can you say about the the time and space complexity of your
+program?}
+
+Let $a$ be the number of actions available and $s$ be the number of states available in a reinforcement learning problem.
+
+Random will have a constant time complexity, since actions are selected at random.  Expected value or utility is never calculated.  Space complexity is constant as well since no information is stored and learned.
+
+Greedy will have a space complexity of $O(s^2 * a)$, since the transition function must be kept in memory.  Its time complexity will also be $O(s * a)$ because of the calculation of the expected value.
+
+Value iteration will have a space complexity of $O(s^2 * a)$ because each ($s$, $a$, $s'$) triplet must be represented in memory.  It's time complexity for each iteration will be $O(s^2 * a)$, though this partially depends on the discount factor.  A larger discount factor, near 1, will make decisions be based on results further and further in the future, so the number of iterations could grow exponentially.
+
+Policy iteration will have a time complexity of $O(a)$ for action selection but $O(s^2 * a)$ for the update of PI.  Its space complexity will be $O(s^2 * a)$ because of the storing of the utility.
+\item \emph{What suggestions do you have for improving this assignment in the future?}
+
+Verification for this assignment was impossible because the reference was incomplete.  I felt ill-prepared because the slides were very unclear about variables like $k$, $loss$, $bound$, and $N$ that were not clearly defined.  Otherwise, the equations on the slides seemed incomplete to me and I had to constantly reference the book.  I did not have time to rewatch videos as we really only had a few days for this assignment compared to the others.  I don't know what I gained for this assignment actually because I am not sure if my answers are close to correct at all.
+\end{enumerate}
+
+\end{document}
