@@ -43,14 +43,7 @@ public class Program5 {
 
     private void parseStandardIn() {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        
-        /*BufferedReader br = null;
-        try { br = new BufferedReader(new
-                InputStreamReader(new java.io.FileInputStream("C:/spring2013/cs830/prog5/tiny.data")));
-        } catch (java.io.FileNotFoundException e1) {
-            e1.printStackTrace(); System.exit(1);
-        }*/
-        
+                
         String line = null;
         boolean firstLine = true;
         boolean readingTraining = true;
