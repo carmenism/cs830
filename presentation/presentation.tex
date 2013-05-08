@@ -1,0 +1,275 @@
+\documentclass[style=unh]{powerdot}
+\pdsetup{lf={Carmen St.\ Jean (University of New Hampshire)},
+	 rf={}}
+
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{amsfonts}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{colortbl}
+\usepackage[thinlines]{easytable}
+
+\newcommand{\nvs}{\vspace{-15pt}}
+
+\title{Pattern Database Heuristics for Greedy Search}
+
+\author{Carmen St.\ Jean\vspace{0.2in}
+  \vspace{.2in} \\
+}
+\date{\mbox{}}
+
+\begin{document}
+
+\maketitle
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Proposal}
+
+Greedy search will solve the sliding tile puzzle better with the fringe pattern database than a more specialized pattern database as a heuristic. 
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Algorithm: Greedy Search}
+
+Assume $b$ is branching factor and $m$ is maximum depth.
+
+\begin{itemize}
+    \item Best-first search with queue ordered by heuristic value 
+    \item Complete in finite spaces
+    \item Inadmissible
+    \item $b^m$ time
+    \item $b^m$ space
+\pause{
+    \item \textbf{Tends to yield suboptimal solutions in a reasonable time}}
+
+    
+\end{itemize}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Domain: $N$-Puzzle}
+
+\hspace{1in} \includegraphics[width=1.75in]{puzzle.eps}
+%\vspace{.15in}
+
+\begin{itemize}
+    \item $N$ numbered square tiles, one blank tile
+    \item Objective: rearrange tiles by sliding the blank space to reach goal configuration
+    \item Commonly solved with A* using Manhattan Distance heuristic
+\end{itemize}
+
+\end{slide} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Pattern Databases}
+
+\begin{itemize}
+\item A \textit{pattern} is a partial specification of a state 
+\pause{\begin{itemize}
+    \item Some elements of the state are abstracted
+    \end{itemize}}
+\pause{\item A \textit{target pattern} is a partial specification of the goal state}
+\pause{\item A \textit{pattern database} is set of all patterns obtained by permuting the target pattern}
+\pause{\item Every pattern knows its exact solution cost for the target pattern}
+    \begin{itemize}
+    \pause{\item Admissible heuristic}
+    \end{itemize}
+\end{itemize}
+
+\end{slide} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{slide}{$N$-Puzzle PDBs}
+
+\begin{itemize}
+  \item Abstract away some tiles
+ \pause{\item Can be more accurate than Manhattan distance}
+ \pause{\item Can use multiple disjoint pattern databases at once}
+ \pause{\item Lots of different abstractions possible}
+     \begin{itemize}
+    \pause{\item Fringe abstraction (outer edge)
+    \item Special abstraction (keep tiles furthest from goal position)}
+    \end{itemize}
+  \pause{\item Less tiles abstracted, more powerful pattern database}    
+  \pause{\item More timely to calculate and larger space required when fewer tiles are abstracted}
+ 
+\end{itemize}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Fringe Abstraction}
+
+Independent of start configuration.\\
+
+\pause{
+\begin{TAB}(e,0.65cm,0.65cm){|c|c|c|c|}{|c|c|c|}
+    & 1 & 2 & 3   \\ 
+  4 & 5 & 6 & 7   \\ 
+  8 & 9 & 10 & 11 \\ 
+\end{TAB}
+}%\vspace{.15in}
+\pause{
+\begin{TAB}(e,0.65cm,0.65cm){|c|c|c|c|}{|c|c|c|}
+    & A & \textcolor{red}{2} & \textcolor{red}{3}  \\
+  A & A & \textcolor{red}{6} & \textcolor{red}{7}   \\
+  A & A & A & A \\ 
+\end{TAB} %\vspace{.15in}
+\begin{TAB}(e,0.65cm,0.65cm){|c|c|c|c|}{|c|c|c|}
+    & A & A & A  \\
+  A & A & A & A   \\
+  \textcolor{blue}{8} & \textcolor{blue}{9} & \textcolor{blue}{10} & \textcolor{blue}{11} \\ 
+\end{TAB}
+}\\
+
+\pause{
+ Example: \\
+ \begin{TAB}(e,0.65cm,0.65cm){|c|c|c|c|}{|c|c|c|}
+  2  & 6 & 3 & 4  \\ 
+  10 & 9 & 5 &    \\ 
+  8  & 7 & 1 & 11 \\ 
+\end{TAB} 
+}
+\pause{%\vspace{.15in}
+\begin{TAB}(e,0.65cm,0.65cm){|c|c|c|c|}{|c|c|c|}
+  \textcolor{red}{2}  & \textcolor{red}{6} & \textcolor{red}{3} & A  \\ 
+  A & A & A &    \\ 
+  A & \textcolor{red}{7} & A & A \\ 
+\end{TAB}
+ \begin{TAB}(e,0.65cm,0.65cm){|c|c|c|c|}{|c|c|c|}
+  A  & A & A & A  \\ 
+  \textcolor{blue}{10} & \textcolor{blue}{9} & A &    \\ 
+  \textcolor{blue}{8}  & A & A & \textcolor{blue}{11} \\ 
+\end{TAB}  
+}\\
+
+
+
+
+\vspace{.15in}
+\pause{
+Heuristic value of state:\\
+    $h = \textcolor{red}{cost} + \textcolor{blue}{cost}$
+}
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{slide}{Special Abstraction}
+
+Created for a specific start configuration, using the eight tiles furthest from their goal positions.\\
+\vspace{.05in}
+\pause{
+ \begin{TAB}(e,0.7cm,0.7cm){|c|c|c|c|}{|c|c|c|}
+  2  & 6 & 3 & 4  \\ 
+  10 & 9 & 5 &    \\ 
+  8  & 7 & 1 & 11 \\ 
+\end{TAB} 
+}%\vspace{.05in}
+
+\vspace{.05in}
+
+\pause{
+ \begin{TAB}(e,0.7cm,0.7cm){|c|c|c|c|}{|c|c|c|}
+  $2_2$  & $6_2$ & $3_1$ & $4_4$  \\ 
+  $10_3$ & $9_1$ & $5_1$ &    \\ 
+  $8_0$  & $7_3$ & $1_3$ & $11_0$ \\ 
+\end{TAB} }
+\pause{
+ \begin{TAB}(e,0.7cm,0.7cm){|c|c|c|c|}{|c|c|c|}
+  A  & A & A & \textcolor{red}{4}  \\ 
+  \textcolor{red}{10} & A & A &    \\ 
+  A  & \textcolor{red}{7} & \textcolor{red}{1} & A \\ 
+\end{TAB} %\vspace{.05in}
+ \begin{TAB}(e,0.7cm,0.7cm){|c|c|c|c|}{|c|c|c|}
+  \textcolor{blue}{2}  & \textcolor{blue}{6} & \textcolor{blue}{3} & A  \\ 
+  A & A & \textcolor{blue}{5} &    \\ 
+  A  & A & A & A \\ 
+\end{TAB} 
+}
+
+\vspace{.05in}
+
+\pause{
+ \begin{TAB}(e,0.7cm,0.7cm){|c|c|c|c|}{|c|c|c|}
+     & 1 & 2 & 3  \\ 
+  4 & 5 & 6 & 7  \\ 
+  8  & 9 & 10 & 11 \\ 
+\end{TAB}}
+\pause{
+ \begin{TAB}(e,0.7cm,0.7cm){|c|c|c|c|}{|c|c|c|}
+     & \textcolor{red}{1} & A & A  \\ 
+  \textcolor{red}{4} & A & A & \textcolor{red}{7}  \\ 
+  A  & A & \textcolor{red}{10} & A \\ 
+\end{TAB} 
+ \begin{TAB}(e,0.7cm,0.7cm){|c|c|c|c|}{|c|c|c|}
+     & A & \textcolor{blue}{2} & \textcolor{blue}{3}  \\ 
+  A & \textcolor{blue}{5} & \textcolor{blue}{6} & A  \\ 
+  A  & A & A & A \\ 
+\end{TAB} 
+}
+
+\end{slide}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{slide}{Insight into Proposal}
+
+Greedy search will solve the sliding tile puzzle better with the fringe pattern database than a more specialized pattern database as a heuristic. \newline
+
+\pause{Why?}\\
+
+\begin{itemize}
+   \pause{\item Fringe}
+         \begin{itemize}
+         \pause{\item Solving remaining tiles will not disturb solved tiles}          
+         \pause{\item $h = 0$ means you're actually close to the goal}
+         \end{itemize}
+   \pause{\item Specialized}
+         \begin{itemize}
+         \pause{\item Solving remaining tiles might disturb solved tiles}
+         \pause{\item $h = 0$ does not guarantee you're close to the goal}
+          \end{itemize}
+\end{itemize}
+
+\end{slide}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{slide}{Results}
+
+\begin{table}
+\begin{tabular}{ r | c | c }
+              & Greedy & A* \\ \hline
+  Fringe      & 44,171 &  218,816 \\
+  Specialized & 196,073 &  333,928 \\
+\end{tabular}
+\caption{Number Nodes Expanded}
+\end{table}
+
+\pause{This shows:
+\begin{itemize}
+    \item Fringe is better than specialized for both greedy and A* on puzzles of this size
+    \pause\item Previously, it was shown specialized works better on big puzzles with big pattern databases, this does not generalize to smaller puzzles with disjoint pattern databases \\ \pause{(Which one?)}
+\end{itemize}}
+
+\end{slide}
+
+\end{document}
