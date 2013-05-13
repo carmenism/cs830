@@ -1,0 +1,372 @@
+\documentclass[letterpaper]{article}
+\usepackage{aaai}
+
+\usepackage[thinlines]{easytable}
+\usepackage{color}
+\usepackage[usenames,dvipsnames]{xcolor}
+
+\begin{document}
+
+\title{Pattern Database Heuristics for Greedy Search}
+\date{May 13, 2013}
+\author{Carmen St.\ Jean}
+
+\nocopyright{\gdef\copyright@on{}}
+
+\maketitle
+
+\section{Background}
+
+Greedy search and A* search are search algorithms whose efficiency depends on the quality of their heuristic function, which is the lower bound estimate of the remaining solution cost.  These algorithms can be applied to finding solutions to combinatorial problems, such as the 15-puzzle.  Pattern databases can be used to improve the efficiency of these algorithms by storing precomputed heuristic values \cite{DBLP:journals/ci/CulbersonS98}.
+
+Design of a pattern database requires enumerating all configurations of a partial goal configuration that lead to a partial solution.  That partial solution is built by selecting $n$ elements of the goal permutation to form a pattern, while the other elements are abstracted.  At any point in the search, the minimal number of actions to place those $n$ elements in their goal positions can be looked up in the pattern database.
+
+\section{The Problem}
+
+For the 15-puzzle, there are many possible ways to design a pattern database.  The tiles which form the pattern database -- i.e., kept from abstraction -- are referred to as the refined tiles.  One method for building the pattern database looks at a specific start configuration and refines the tiles with the largest Manhattan distances to their goal positions.  We refer to this abstraction as the ``customized abstraction" \cite{DBLP:conf/sara/HolteGT05}. Another method, called fringe, is to abstract away the tiles that are not part of the bottom-most row or right-most column in the goal configuration.
+
+In most cases, the customized abstraction makes for a stronger heuristic than the fringe abstraction, since it takes the initial configuration into account.  Although A* can efficiently use either form of abstraction, greedy search may actually perform better with the fringe pattern database, even though it is a weaker heuristic.  We will investigate this claim by comparing these two abstractions in their use with A* and greedy search. 
+
+%\section{Motivation}
+
+%This problem is interesting because it may illustrate that a weaker heuristic -- the fringe pattern database -- is more efficient for greedy search.  Greedy search prefers to expand nodes with the smallest heuristic value.  With a pattern database, many states will have a heuristic value of zero even though they are not the goal.  To have a heuristic value of zero, it is only required that the refined tiles of the pattern database are located in their goal positions, with the positions of the abstracted tiles completely ignored.
+
+\section{Approach}
+
+Pattern databases for the standard 4-by-4 sliding tile puzzle proved to be too computationally intensive to produce when seven tiles were refined, which is the number of tiles required for the fringe pattern database.  Therefore, we approached the problem using 3-by-4 versions of the sliding tile puzzle, where the tile labels span from ``1" to ``11," as seen in Figure \ref{fig:puzzle}a.
+
+\begin{figure}[htb]
+    \centering
+    \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
+        & 1 & 2 & 3   \\ 
+      4 & 5 & 6 & 7   \\ 
+      8 & 9 & 10 & 11 \\ 
+    \end{TAB}
+     \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
+          2  & 6 & 3 & 4  \\ 
+          10 & 9 & 5 &    \\ 
+          8  & 7 & 1 & 11 \\ 
+        \end{TAB}  
+    \caption{a 3-by-4 version of the sliding tile puzzle in (a) its goal configuration and (b) an example of a random start configuration.}
+    \label{fig:puzzle}
+\end{figure}
+
+%Additionally, we hoped to investigate pattern databases which included more refined tiles than the customized or fringe abstractions.   Inclusion of more tiles in the pattern database proved to be computationally intensive, so we instead produced smaller, disjoint pattern databases.  These were also used to solve the same 100 start configurations with both greedy and A*.
+
+\section{Pattern Databases}
+
+A pattern found within a pattern database is a partial specification of a search state where some of the elements have been abstracted.  The target pattern is a partial specification of the goal state.  The pattern database is obtained by applying all permutations to the target pattern.  Every pattern knows its exact solution cost for the target pattern.  This solution cost is an admissible heuristic.  The pattern database is produced before search begins.
+
+During search, a state finds its heuristic value by looking up the solution cost for the pattern obtained from abstracting that state.  If multiple, disjoint pattern databases are used, then the state must be abstracted separately according to each pattern database's abstraction.  The heuristic value is then the sum of the solution costs returned from each disjoint pattern database.
+
+\section{Abstractions}
+
+As mentioned, there are numerous abstraction methods that are available when building a pattern database.  For example, there are 462 different abstractions possible for the 3-by-4 puzzle when six tiles are refined and the others are abstracted.  We looked at the aforementioned fringe and customized abstractions, described in further detail below, as well as a small sampling of other abstractions for comparison.
+
+With greedy and A* being different algorithms, we suspected that abstractions which work well for one may not work well for another.  In fact, we anticipated very few abstractions to work either well for both or badly for both.  Since greedy sorts its queue only on heuristic value, it will always prefer nodes with the heuristic value of zero.  A*, on the other hand, sorts its queue on cost and heuristic value, so it may not always jump for any node with heuristic value of zero.  
+
+Some abstractions may return a heuristic value of zero only when they are close to the actual goal, while others may return zero when the actual goal is quite far away.  In the latter case, zero will be misleading, since future nodes are likely to have non-zero heuristic values.  A* may handle this well because it might not explore such nodes in the first place, while it will cause greedy to backtrack, making for wasted search time.  Thus, it would make sense for each algorithm to perform differently on the various abstractions.
+
+\subsection{Fringe}
+
+Creation of the fringe pattern database is independent of the start configuration of a problem since all sliding tile puzzles have the same goal configuration.  The puzzle is placed into its goal configuration and the right-most column and bottom-most row are refined, while all other tiles are abstracted, as in Figure \ref{fig:fringe}a.  This is the target pattern used to produce the pattern database.
+
+Figure \ref{fig:fringe}b shows the fringe abstraction applied to the state shown in \ref{fig:puzzle}b, as would be done during search.  The cost associated with the resulting pattern would be the heuristic value of the original state.
+
+\begin{figure}[htb]
+    \centering
+        \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
+            & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{red}{3}   \\ 
+          \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{red}{7}   \\ 
+          \textcolor{red}{8} & \textcolor{red}{9} & \textcolor{red}{10} & \textcolor{red}{11} \\ 
+        \end{TAB}
+        \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
+          \textcolor{black!30}{A}  & \textcolor{black!30}{A} & \textcolor{red}{3} & \textcolor{black!30}{A}  \\ 
+          \textcolor{red}{10} & \textcolor{red}{9} & \textcolor{black!30}{A} &    \\ 
+          \textcolor{red}{8}  & \textcolor{red}{7} & \textcolor{black!30}{A} & \textcolor{red}{11} \\ 
+        \end{TAB}
+\caption{(a) the fringe abstraction and (b) the pattern resulting from applying the fringe abstraction to the state in Figure \ref{fig:puzzle}b.}
+    \label{fig:fringe}
+\end{figure}
+
+We hypothesized that greedy would do well with the fringe pattern database heuristic.  The reasoning behind this is that a smaller 2-by-3 puzzle remains when the tiles of the fringe are in their goal location.  This smaller puzzle is trivial to solve and, more importantly, can be solved without disturbing the tiles on the fringe.  Since the subsequent actions will not move the fringe tiles, the pattern database will return a heuristic value of zero for those actions.  Therefore, a heuristic value of zero from the pattern database will be followed by more heuristic values of zero, indicating that the overall goal is indeed close.
+
+
+\subsection{Customized}
+
+Customized pattern databases are created specially for each individual start configuration.  First, the Manhattan distance for each tile to its goal position must be computed.  The six tiles which are furthest from their goals are selected to be the refined tiles of the pattern.  Since the fringe pattern database keeps six tiles refined, an equivalent number of tiles should be chosen for the customized pattern database.  Next, the goal configuration is abstracted according to those six tiles.  This gives us the target pattern from which the whole pattern database is built.  This process can be seen in Figure \ref{fig:customized}.
+
+\begin{figure}[htb]
+    \centering
+ \begin{TAB}(e,0.64cm,0.64cm){|c|c|c|c|}{|c|c|c|}
+  $2_2$  & $6_2$ & $3_1$ & $4_4$  \\ 
+  $10_3$ & $9_1$ & $5_1$ &    \\ 
+  $8_0$  & $7_3$ & $1_3$ & $11_0$ \\ 
+\end{TAB}
+\begin{TAB}(e,0.64cm,0.64cm){|c|c|c|c|}{|c|c|c|}
+  \textcolor{blue}{2}  & \textcolor{blue}{6} & \textcolor{black!30}{A} & \textcolor{blue}{4}  \\ 
+  \textcolor{blue}{10} & \textcolor{black!30}{A} & \textcolor{black!30}{A} &    \\ 
+  \textcolor{black!30}{A}  & \textcolor{blue}{7} & \textcolor{blue}{1} & \textcolor{black!30}{A} \\
+\end{TAB} 
+    \begin{TAB}(e,0.64cm,0.64cm){|c|c|c|c|}{|c|c|c|}
+        & \textcolor{blue}{1} &  \textcolor{blue}{2} & \textcolor{black!30}{A}   \\ 
+      \textcolor{blue}{4} & \textcolor{black!30}{A} & \textcolor{blue}{6} & \textcolor{blue}{7}   \\ 
+      \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{blue}{10} & \textcolor{black!30}{A} \\ 
+    \end{TAB} 
+\caption{(a) the state shown in Figure \ref{fig:puzzle}b with subscripts denoting the Manhattan distance for each tile, (b) the closest tiles of that state abstracted, and (c) the same abstraction applied to the goal configuration.}   
+\label{fig:customized}
+\end{figure}
+
+We hypothesized that greedy will not do well with the customized abstraction because it cannot always guarantee that a heuristic value of zero will soon lead to the goal.  The refined tiles may have their goal positions scattered around the board; they could even be isolated from each other or the blank tile.  Placing these tiles in their goal positions could be placing the abstracted tiles far from their goal positions, requiring further actions.  Worse, actions taken to move the abstracted tiles into their goal position could move the refined tiles away from their goal position.  When that occurs, a heuristic value greater than zero will be returned from the pattern database.  Therefore, a heuristic value of zero from the pattern database could be misleading, because it could very soon lead to non-zero heuristic values.
+
+\subsection{Disjoint Fringe}
+
+\begin{figure}[htb]
+    \centering
+\begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
+    & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A}  \\
+  \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A}   \\
+  \textcolor{Tan}{8} & \textcolor{Tan}{9} & \textcolor{Tan}{10} & \textcolor{Tan}{11} \\ 
+\end{TAB}
+\begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
+    & \textcolor{black!30}{A} & \textcolor{cyan}{2} & \textcolor{cyan}{3}  \\
+  \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{cyan}{6} & \textcolor{cyan}{7}   \\
+  \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} \\ 
+\end{TAB} 
+\caption{the two abstractions that together form the disjoint fringe abstraction.}   
+\label{fig:fringeDisjoint}
+\end{figure}
+
+As with regular fringe, the creation of the disjoint fringe pattern databases is independent of individual start configurations.  The disjoint fringe abstraction is made of two abstractions: (1) the bottom-most row and (2) a 2-by-2 square in the top-right corner of the puzzle.  These are shown in Figure \ref{fig:fringeDisjoint} in tan and cyan, respectively.  Figure \ref{fig:fringeDisjointApplied} represents the abstractions applied to the random start configuration shown in Figure \ref{fig:puzzle}b.
+
+\begin{figure}[htb]
+    \centering
+ \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
+  \textcolor{black!30}{A}  & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A}  \\ 
+  \textcolor{Tan}{10} & \textcolor{Tan}{9} & \textcolor{black!30}{A} &    \\ 
+  \textcolor{Tan}{8}  & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{Tan}{11} \\ 
+\end{TAB} 
+\begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
+  \textcolor{cyan}{2}  & \textcolor{cyan}{6} & \textcolor{cyan}{3} & \textcolor{black!30}{A}  \\ 
+  \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} &    \\ 
+  \textcolor{black!30}{A} & \textcolor{cyan}{7} & \textcolor{black!30}{A} & \textcolor{black!30}{A} \\ 
+\end{TAB}
+\caption{the disjoint fringe abstractions applied to the state in Figure \ref{fig:puzzle}b.  The heuristic value for this state would be $h = \textcolor{Tan}{cost} + \textcolor{cyan}{cost}$.}   
+\label{fig:fringeDisjointApplied}
+\end{figure}
+
+\subsection{Disjoint Customized}
+
+The disjoint customized pattern database is formed of two pattern databases of size four each, so that it will have the same number and sizes of pattern databases as the disjoint fringe.  As with the regular customized pattern database, this pattern database is constructed for a specific start configuration from refining the tiles which are furthest from their goal positions, with distances measured in Manhattan distance. 
+
+\begin{figure}[htb]
+    \centering
+ \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
+  \textcolor{black!30}{A}  & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{magenta}{4}  \\ 
+  \textcolor{magenta}{10} & \textcolor{black!30}{A} & \textcolor{black!30}{A} &    \\ 
+  \textcolor{black!30}{A}  & \textcolor{magenta}{7} & \textcolor{magenta}{1} & \textcolor{black!30}{A} \\ 
+\end{TAB} 
+ \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
+  \textcolor{orange}{2}  & \textcolor{orange}{6} & \textcolor{orange}{3} & \textcolor{black!30}{A}  \\ 
+  \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{orange}{5} &    \\ 
+  \textcolor{black!30}{A}  & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} \\ 
+\end{TAB}
+\caption{the disjoint customized abstractions applied to the state in Figure \ref{fig:puzzle}b, \textit{before} applying the abstractions to the goal configuration to produce the pattern database.}   
+\label{fig:disjointCustomized}
+\end{figure}
+
+The two abstractions which form the disjoint customized pattern database are (1) the four tiles which are furthest from their goals and (2) the next four tiles which are furthest from their goals.  Figure \ref{fig:disjointCustomized} shows these abstractions in magenta and orange, respectively, for the start configuration shown in \ref{fig:puzzle}b.  These abstractions must be applied to the goal state, as in Figure \ref{fig:disjointCustomizedGoal}, to produce the pattern databases.
+
+
+\begin{figure}[htb]
+    \centering
+ \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
+     & \textcolor{magenta}{1} & \textcolor{black!30}{A} & \textcolor{black!30}{A}  \\ 
+  \textcolor{magenta}{4} & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{magenta}{7}  \\ 
+  \textcolor{black!30}{A}  & \textcolor{black!30}{A} & \textcolor{magenta}{10} & \textcolor{black!30}{A} \\ 
+\end{TAB} 
+ \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
+     & \textcolor{black!30}{A} & \textcolor{Orange}{2} & \textcolor{Orange}{3}  \\ 
+  \textcolor{black!30}{A} & \textcolor{Orange}{5} & \textcolor{Orange}{6} & \textcolor{black!30}{A}  \\ 
+  \textcolor{black!30}{A}  & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} \\ 
+\end{TAB} 
+\caption{the abstractions obtained in Figure \ref{fig:disjointCustomized} applied to the goal to obtain the target patterns for building the pattern databases.  The heuristic value for the original state in Figure \ref{fig:puzzle}b would be $h = \textcolor{magenta}{cost} + \textcolor{orange}{cost}$.}   
+\label{fig:disjointCustomizedGoal}
+\end{figure}
+
+\subsection{Assorted}
+
+We produced some additional abstractions that we anticipated greedy search having some difficulty with.  The idea was to produce abstractions which did not have key characteristics of the fringe abstraction.
+
+As mentioned earlier, an advantage to the fringe pattern is that solving the fringe tiles leaves behind a smaller puzzle that is easy to solve.  Thus, we strove designed patterns that do not have smaller 2-by-2 or 2-by-3 abstracted regions, seen in Figures \ref{fig:assorted}a and \ref{fig:assorted}b.
+
+The fringe also features a contiguous pattern -- i.e, the refined tiles are connected in one group.  Figure \ref{fig:assorted}b features a non-contiguous pattern and Figure \ref{fig:assorted}c is an even more extreme version of that feature -- a checkerboard pattern with every tile isolated from other tiles of its type. 
+
+\begin{figure}[htb]
+    \centering
+    \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
+        & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A}   \\ 
+      \textcolor{Purple}{4} & \textcolor{Purple}{5} & \textcolor{Purple}{6} & \textcolor{black!30}{A}  \\ 
+      \textcolor{Purple}{8} & \textcolor{Purple}{9} & \textcolor{Purple}{10} & \textcolor{black!30}{A} \\ 
+    \end{TAB}
+    \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
+        & \textcolor{green}{1} & \textcolor{green}{2} & \textcolor{black!30}{A}   \\ 
+      \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A}   \\ 
+      \textcolor{green}{8} & \textcolor{green}{9} & \textcolor{green}{10} & \textcolor{green}{11} \\ 
+    \end{TAB}
+    \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
+        & \textcolor{RawSienna}{1} & \textcolor{black!30}{A} & \textcolor{RawSienna}{3}   \\ 
+      \textcolor{RawSienna}{4} & \textcolor{black!30}{A} & \textcolor{RawSienna}{6} & \textcolor{black!30}{A}   \\ 
+      \textcolor{black!30}{A} & \textcolor{RawSienna}{9} & \textcolor{black!30}{A} & \textcolor{RawSienna}{11} \\ 
+    \end{TAB}
+    \caption{additional abstractions, referred to as A, B, and C (from left to right).}
+    \label{fig:assorted}
+\end{figure}
+
+\section{Evaluation}
+
+We used each pattern database as the heuristic for solving 100 different, random start configurations for the 3-by-4 sliding tile puzzle with both A* and greedy search.  The fringe pattern database needed to be created only once for all problems, while the customized pattern database had to be generated according to each start configuration. We included A* in our investigation to illustrate the strength of either pattern database heuristic, while greedy was included to explore the proposed problem. 
+
+For each search conducted, we recorded the number of nodes that were expanded in order to solve the puzzle.  The average number of nodes expanded was then calculated for each combination of algorithm (i.e., greedy or A*) and heuristic (i.e., fringe or customized pattern database) across all 100 problems.  We imposed a time limit of ten minutes and recorded the number of times each algorithm failed to find a solution within that limit.  Each search was also able to use up to 7500 megabytes of memory.
+
+\section{Results}
+
+\begin{table*}
+\centering
+\begin{tabular}{ r | r | r | r | r }
+      Abstraction  & Greedy Nodes Exp.     & A* Nodes Exp. & Num. A* Failures & Greedy Ranking\\ \hline 
+\textcolor{green}{B}                                         &  1,086,512  & 3,757,149 &  1 & 4\\ 
+\textcolor{red}{Fringe}                                      &  2,403,225  & \underline{3,450,926} &  4 & 6\\ 
+\textcolor{blue}{Customized}                                 &  2,778,947  & 5,593,762 & 10 & 7\\ 
+\textcolor{Purple}{A}                                        &    \underline{755,125}  & 5,528,595 & 22 & 3\\ 
+\textcolor{RawSienna}{C}                                     &  2,021,907  & 6,259,867 & 26 & 5\\ 
+\textcolor{Tan}{Disjoint} \textcolor{cyan}{Fringe}           &     \textit{44,171}  &   \textit{218,816} & 67 & 1\\ 
+\textcolor{magenta}{Disjoint} \textcolor{orange}{Customized} &    196,073  &   333,928 & 67 & 2\\ 
+\end{tabular}
+\caption{average number of nodes expanded, sorted by the number of times A* failed to find a solution.}
+\label{table:results}
+\end{table*}
+
+The results of our evaluations are summarized in Table \ref{table:results}.  This table has been sorted by the number of times (out of 100 total tests) A* failed to find a solution within ten minutes, which describes the strength of the pattern database heuristic for A*.  The more often a pattern database leads to a solution, the stronger that heuristic is.  It is useful to next look the average number of nodes expanded when A* did manage to find a solution because stronger heuristics will lead to less expansion of nodes.
+
+Greedy search always found a solution - albeit a suboptimal one - with, in general, fewer expansions than A* required.  Sorting by A*'s number of failures seemingly jumbles the average number of nodes expanded for greedy.  To help illustrate this, the right-most column of Table \ref{table:results} shows the ranking for average number of nodes expanded for greedy search.  From this column, it is easy to see that the order for greedy search does not correspond to A*'s rankings at all.  This verifies that these two search algorithms really are quite different in this domain and do not share many preferences for abstractions, as we expected.
+
+In italics are the abstractions which had the lowest average number of expansions for each algorithm.  Both performed best with the disjoint fringe pattern databases.  Perhaps this is because the disjoint pattern databases included eight refined tiles in total, while the regular pattern databases included only six refined tiles in total.  Larger pattern databases, though more difficult to compute and store, make for more powerful heuristics.  Still, the disjoint pattern databases are not a total success story for A*.  They may have led to the fewest expansions of nodes on average, but they also had extraordinarily high failure rates for A*.
+
+What is worth mentioning more is that both algorithms preferred the disjoint fringe.  We had expected this for greedy, but we expected A* to prefer the disjoint customized abstraction.  Still, the ratio of average number of nodes expanded for disjoint fringe to average number of nodes expanded for disjoint special is much smaller for greedy (0.225) than for A* (0.655).  This may mean that greedy search benefited from the disjoint fringe abstractions more than A*.
+
+We have underlined the regular pattern databases that did next best after both of the disjoint pattern databases.  As somewhat of a shock, the fringe pattern database was next best for A*, while next best for greedy was the A abstraction.  The overwhelming success of the A abstraction was a shock since we had designed it so that it would cause greedy to do poorly.  We had hoped to show that the fringe abstraction was a better choice for greedy search, which we definitely did not find.  Overall, fringe came in sixth place out of seven and customized came in dead last for greedy search.  From these results, it would seem that other abstractions are better choices than either of these when selecting a heuristic for greedy search.  However, the fringe abstraction was better than the customized for greedy, which confirmed at least part of what we hoped to show.  
+
+\section{Comprehensive Analysis}
+
+Seeing these unexpected results led us to wonder exactly what distinguishes good abstractions from bad ones either search algorithm.  With an eleven tile puzzle and a pattern database where six tiles are left refined, there are exactly 462 possible abstraction choices.  We took a sample of 120 random patterns from these 462 possibilities -- approximately a fourth -- and used these pattern databases to solve the 100 random start configurations.  The same 7500 megabyte memory limit and ten minute time limit were applied as before.  We recorded the average number of nodes expanded for greedy and A* search.  
+
+\begin{figure}[htb]
+    \centering
+\begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|} 
+   & \textcolor{black!30}{A} &  2  &  3  \\ 
+ 4  &  5  &  6  &  7  \\ 
+\textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} \\ 
+\end{TAB}
+\begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|} 
+   & 1  &  2  & \textcolor{black!30}{A} \\ 
+ 4  &  5  & \textcolor{black!30}{A} & \textcolor{black!30}{A} \\ 
+ 8  &  9  & \textcolor{black!30}{A} & \textcolor{black!30}{A} \\ 
+\end{TAB}
+\begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|} 
+   & 1  & \textcolor{black!30}{A} &  3  \\ 
+ 4  &  5  &  6  & \textcolor{black!30}{A} \\ 
+ 8  & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} \\ 
+\end{TAB}
+    \caption{abstractions which did not work well for greedy.}
+    \label{fig:greedyBad}
+\end{figure}
+
+\begin{figure}[htb]
+    \centering
+\begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|} 
+   & 1  &  2  & \textcolor{black!30}{A} \\ 
+ \textcolor{black!30}{A} &  5  &  6  & \textcolor{black!30}{A} \\ 
+ \textcolor{black!30}{A} &  9  &  10  & \textcolor{black!30}{A} \\ 
+\end{TAB}
+\begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|} 
+   & \textcolor{black!30}{A} &  2  &  3  \\ 
+ \textcolor{black!30}{A}  & \textcolor{black!30}{A}  & \textcolor{black!30}{A}  &  7  \\ 
+ 8  &  9  &  10  & \textcolor{black!30}{A}  \\ 
+\end{TAB}
+\begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|} 
+   & \textcolor{black!30}{A} &  2  &  3  \\ 
+ 4  & \textcolor{black!30}{A} & \textcolor{black!30}{A}  & \textcolor{black!30}{A} \\ 
+ 8  &  9  & \textcolor{black!30}{A} &  11  \\ 
+\end{TAB}
+    \caption{abstractions which worked well for greedy.}
+    \label{fig:greedyGood}
+\end{figure}
+
+We then ranked the different abstractions twice, one for A* and once for greedy search.  First, we ranked by number of failures, preferring smaller failure counts.  Next, we ranked by average number of nodes expanded, preferring smaller averages.  We then looked at the best and worst abstractions from these lists to attempt to describe distinguishing properties.
+
+Figure \ref{fig:greedyBad} shows a few of abstractions which greedy did poorly with.  These abstractions and other badly ranked abstractions tended to feature a single isolated abstracted tile.  Another common trend among these was complete abstraction of either (a) the tiles of the bottom-most row, (b) the tiles of the right-most column, or (c) several contiguous tiles in the bottom right corner.
+
+Therefore, it would lead one to conclude that greedy does not like an abstraction where the blank tile is disconnected from a large contiguous group of abstracted tiles.  However, Figure \ref{fig:greedyGood} seems to contradict these conclusions.  These abstractions were good for greedy, but some of them featured the blank separated from the pattern and multiple groupings of refined tiles.  They did at least spare some tiles of the bottom row or right column from abstraction, but not all tiles in these regions.  Therefore, it is difficult to draw conclusions from these abstractions which worked well for greedy search.
+
+\begin{figure}[htb]
+    \centering
+\begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|} 
+   & \textcolor{black!30}{A} &  2  &  3  \\ 
+ 4  &  5  &  6  &  7  \\ 
+ \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A}  & \textcolor{black!30}{A}  \\ 
+   \end{TAB}
+\begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|} 
+   & 1  & \textcolor{black!30}{A} &  3  \\ 
+ 4  &  5  &  6  & \textcolor{black!30}{A} \\ 
+ 8  & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} \\ 
+   \end{TAB}
+\begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|} 
+   & \textcolor{black!30}{A} &  \textcolor{black!30}{A} &  3 \\ 
+ 4  &  5  &  6  &  7  \\ 
+ 8  & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} \\ 
+   \end{TAB}
+    \caption{abstractions which worked badly for A*.}
+    \label{fig:astarBad}
+\end{figure}
+
+The abstractions which worked badly for A*, some of which are shown in Figure \ref{fig:astarBad}, are a bit easier to analyze.  When some or all of the bottom row's tiles are abstracted, A* does poorly.  A* also did not like when single tiles or pairs of tiles were abstracted by themselves, separated from the other abstracted tiles.  This agrees with our results, which showed that A* does well horribly with the C abstraction, where every abstracted tile is isolated from the other abstracted tiles. 
+
+\begin{figure}[htb]
+    \centering
+\begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|} 
+   & 1  & \textcolor{black!30}{A} &  \textcolor{black!30}{A}\\ 
+ \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} &  7  \\ 
+ 8  &  9  &  10  &  11  \\ 
+   \end{TAB}
+\begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|} 
+   & 1  &  2  & \textcolor{black!30}{A} \\ 
+ \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} &  \textcolor{black!30}{A}\\ 
+ 8  &  9  &  10  &  11  \\ 
+   \end{TAB}
+\begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|} 
+   & \textcolor{black!30}{A} &  2  & \textcolor{black!30}{A} \\ 
+ \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} &  7  \\ 
+ 8  &  9  &  10  &  11  \\ 
+   \end{TAB}
+    \caption{abstractions which worked well for A*.}
+    \label{fig:astarGood}
+\end{figure}
+
+Abstractions which worked well for A*, shown in Figure \ref{fig:astarGood}, agree with these conclusions.  All of them spared the bottom row from abstraction.  Furthermore, these abstractions feature at least four connected refined tiles.  The abstracted tiles in these patterns are contiguous, or nearly contiguous.  Also, the blank tile was connected to the abstract region for all of these patterns.  Thus, A* seems to prefer pattern database abstractions which include the bottom row and abstract large, contiguous regions.
+
+\section{Conclusion}
+
+We had hoped to show that, for the 3-by-4 sliding tile domain, greedy search would perform best with a fringe pattern database, while A* would perform best with a customized pattern database.  Greedy search does indeed perform better with fringe pattern database abstractions than customized pattern database abstractions.  However, A* also performs better with fringe abstractions, which was unexpected.
+
+Both of these algorithms worked best with the disjoint fringe and disjoint customized pattern databases.  Disjoint pattern databases aside, the fringe pattern database is definitely not the best of available options for greedy search.  It is still difficult to characterize what greedy likes in an abstraction.  A* does best when the bottom-most row is included in the pattern and the abstracted tiles form one large, contiguous region.
+
+It is unclear whether or not these conclusions apply to pattern databases of different sizes, such as the standard 4-by-4.  More investigation is necessary to understand the outcome of different pattern database abstractions for greedy search.  Future work might involve solving the 3-by-4 sliding tile puzzle with all 462 abstractions or working with the 4-by-4 domain.
+
+\bibliographystyle{aaai}
+
+\bibliography{project-paper}
+
+%\nocite{*} 
+
+\end{document}
