@@ -1,3 +1,8 @@
+% margins got screwed up in this document.  had to do:
+% texconfig
+% paper: a4
+% then rebuild to fix it
+
 \documentclass[letterpaper]{article}
 \usepackage{aaai}
 
@@ -19,7 +24,7 @@
 
 Greedy search and A* search are search algorithms whose efficiency depends on the quality of their heuristic function, which is the lower bound estimate of the remaining solution cost.  These algorithms can be applied to finding solutions to combinatorial problems, such as the 15-puzzle.  Pattern databases can be used to improve the efficiency of these algorithms by storing precomputed heuristic values \cite{DBLP:journals/ci/CulbersonS98}.
 
-Design of a pattern database requires enumerating all configurations of a partial goal configuration that lead to a partial solution.  That partial solution is built by selecting $n$ elements of the goal permutation to form a pattern, while the other elements are abstracted.  At any point in the search, the minimal number of actions to place those $n$ elements in their goal positions can be looked up in the pattern database.
+A pattern database is built by enumerating all configurations of a partial solution.  That partial solution is made by selecting $n$ elements of the goal permutation to form a pattern, while the other elements are abstracted.  At any point in the search, the minimal number of actions to place those $n$ elements in their goal positions can be looked up in the pattern database.
 
 \section{The Problem}
 
@@ -90,7 +95,6 @@ Figure \ref{fig:fringe}b shows the fringe abstraction applied to the state shown
 \end{figure}
 
 We hypothesized that greedy would do well with the fringe pattern database heuristic.  The reasoning behind this is that a smaller 2-by-3 puzzle remains when the tiles of the fringe are in their goal location.  This smaller puzzle is trivial to solve and, more importantly, can be solved without disturbing the tiles on the fringe.  Since the subsequent actions will not move the fringe tiles, the pattern database will return a heuristic value of zero for those actions.  Therefore, a heuristic value of zero from the pattern database will be followed by more heuristic values of zero, indicating that the overall goal is indeed close.
-
 
 \subsection{Customized}
 
@@ -249,7 +253,7 @@ For each search conducted, we recorded the number of nodes that were expanded in
 
 The results of our evaluations are summarized in Table \ref{table:results}.  This table has been sorted by the number of times (out of 100 total tests) A* failed to find a solution within ten minutes, which describes the strength of the pattern database heuristic for A*.  The more often a pattern database leads to a solution, the stronger that heuristic is.  It is useful to next look the average number of nodes expanded when A* did manage to find a solution because stronger heuristics will lead to less expansion of nodes.
 
-Greedy search always found a solution - albeit a suboptimal one - with, in general, fewer expansions than A* required.  Sorting by A*'s number of failures seemingly jumbles the average number of nodes expanded for greedy.  To help illustrate this, the right-most column of Table \ref{table:results} shows the ranking for average number of nodes expanded for greedy search.  From this column, it is easy to see that the order for greedy search does not correspond to A*'s rankings at all.  This verifies that these two search algorithms really are quite different in this domain and do not share many preferences for abstractions, as we expected.
+Greedy search always found a solution - albeit a suboptimal one. It required, in general, fewer expansions than A* did.  Sorting by A*'s number of failures seemingly jumbles the average number of nodes expanded for greedy.  To help illustrate this, the right-most column of Table \ref{table:results} shows the ranking for average number of nodes expanded for greedy search.  From this column, it is easy to see that the order for greedy search does not correspond to A*'s rankings at all.  This verifies that these two search algorithms really are quite different in this domain and do not share many preferences for abstractions, as we expected.
 
 In italics are the abstractions which had the lowest average number of expansions for each algorithm.  Both performed best with the disjoint fringe pattern databases.  Perhaps this is because the disjoint pattern databases included eight refined tiles in total, while the regular pattern databases included only six refined tiles in total.  Larger pattern databases, though more difficult to compute and store, make for more powerful heuristics.  Still, the disjoint pattern databases are not a total success story for A*.  They may have led to the fewest expansions of nodes on average, but they also had extraordinarily high failure rates for A*.
 
@@ -370,3 +374,5 @@ It is unclear whether or not these conclusions apply to pattern databases of dif
 %\nocite{*} 
 
 \end{document}
+
+
