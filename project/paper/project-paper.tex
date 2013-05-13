@@ -1,3 +1,8 @@
+% margins got screwed up in this document.  had to do:
+% texconfig
+% paper: a4
+% then rebuild to fix it
+
 \documentclass[letterpaper]{article}
 \usepackage{aaai}
 
@@ -19,7 +24,7 @@
 
 Greedy search and A* search are search algorithms whose efficiency depends on the quality of their heuristic function, which is the lower bound estimate of the remaining solution cost.  These algorithms can be applied to finding solutions to combinatorial problems, such as the 15-puzzle.  Pattern databases can be used to improve the efficiency of these algorithms by storing precomputed heuristic values \cite{DBLP:journals/ci/CulbersonS98}.
 
-Design of a pattern database requires enumerating all configurations of a partial goal configuration that lead to a partial solution.  That partial solution is built by selecting $n$ elements of the goal permutation to form a pattern, while the other elements are abstracted.  At any point in the search, the minimal number of actions to place those $n$ elements in their goal positions can be looked up in the pattern database.
+A pattern database is built by enumerating all configurations of a partial solution.  That partial solution is made by selecting $n$ elements of the goal permutation to form a pattern, while the other elements are abstracted.  At any point in the search, the minimal number of actions to place those $n$ elements in their goal positions can be looked up in the pattern database.
 
 \section{The Problem}
 
@@ -76,21 +81,20 @@ Figure \ref{fig:fringe}b shows the fringe abstraction applied to the state shown
 \begin{figure}[htb]
     \centering
         \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
-            & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{red}{3}   \\ 
-          \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{red}{7}   \\ 
+            & A & A & \textcolor{red}{3}   \\ 
+          A & A & A & \textcolor{red}{7}   \\ 
           \textcolor{red}{8} & \textcolor{red}{9} & \textcolor{red}{10} & \textcolor{red}{11} \\ 
         \end{TAB}
         \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
-          \textcolor{black!30}{A}  & \textcolor{black!30}{A} & \textcolor{red}{3} & \textcolor{black!30}{A}  \\ 
-          \textcolor{red}{10} & \textcolor{red}{9} & \textcolor{black!30}{A} &    \\ 
-          \textcolor{red}{8}  & \textcolor{red}{7} & \textcolor{black!30}{A} & \textcolor{red}{11} \\ 
+          A  & A & \textcolor{red}{3} & A  \\ 
+          \textcolor{red}{10} & \textcolor{red}{9} & A &    \\ 
+          \textcolor{red}{8}  & \textcolor{red}{7} & A & \textcolor{red}{11} \\ 
         \end{TAB}
 \caption{(a) the fringe abstraction and (b) the pattern resulting from applying the fringe abstraction to the state in Figure \ref{fig:puzzle}b.}
     \label{fig:fringe}
 \end{figure}
 
 We hypothesized that greedy would do well with the fringe pattern database heuristic.  The reasoning behind this is that a smaller 2-by-3 puzzle remains when the tiles of the fringe are in their goal location.  This smaller puzzle is trivial to solve and, more importantly, can be solved without disturbing the tiles on the fringe.  Since the subsequent actions will not move the fringe tiles, the pattern database will return a heuristic value of zero for those actions.  Therefore, a heuristic value of zero from the pattern database will be followed by more heuristic values of zero, indicating that the overall goal is indeed close.
-
 
 \subsection{Customized}
 
@@ -104,14 +108,14 @@ Customized pattern databases are created specially for each individual start con
   $8_0$  & $7_3$ & $1_3$ & $11_0$ \\ 
 \end{TAB}
 \begin{TAB}(e,0.64cm,0.64cm){|c|c|c|c|}{|c|c|c|}
-  \textcolor{blue}{2}  & \textcolor{blue}{6} & \textcolor{black!30}{A} & \textcolor{blue}{4}  \\ 
-  \textcolor{blue}{10} & \textcolor{black!30}{A} & \textcolor{black!30}{A} &    \\ 
-  \textcolor{black!30}{A}  & \textcolor{blue}{7} & \textcolor{blue}{1} & \textcolor{black!30}{A} \\
+  \textcolor{blue}{2}  & \textcolor{blue}{6} & A & \textcolor{blue}{4}  \\ 
+  \textcolor{blue}{10} & A & A &    \\ 
+  A  & \textcolor{blue}{7} & \textcolor{blue}{1} & A \\
 \end{TAB} 
     \begin{TAB}(e,0.64cm,0.64cm){|c|c|c|c|}{|c|c|c|}
-        & \textcolor{blue}{1} &  \textcolor{blue}{2} & \textcolor{black!30}{A}   \\ 
-      \textcolor{blue}{4} & \textcolor{black!30}{A} & \textcolor{blue}{6} & \textcolor{blue}{7}   \\ 
-      \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{blue}{10} & \textcolor{black!30}{A} \\ 
+        & \textcolor{blue}{1} &  \textcolor{blue}{2} & A   \\ 
+      \textcolor{blue}{4} & A & \textcolor{blue}{6} & \textcolor{blue}{7}   \\ 
+      A & A & \textcolor{blue}{10} & A \\ 
     \end{TAB} 
 \caption{(a) the state shown in Figure \ref{fig:puzzle}b with subscripts denoting the Manhattan distance for each tile, (b) the closest tiles of that state abstracted, and (c) the same abstraction applied to the goal configuration.}   
 \label{fig:customized}
@@ -124,34 +128,34 @@ We hypothesized that greedy will not do well with the customized abstraction bec
 \begin{figure}[htb]
     \centering
 \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
-    & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A}  \\
-  \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A}   \\
-  \textcolor{Tan}{8} & \textcolor{Tan}{9} & \textcolor{Tan}{10} & \textcolor{Tan}{11} \\ 
+    & A & A & A  \\
+  A & A & A & A   \\
+  \textcolor{CadetBlue}{8} & \textcolor{CadetBlue}{9} & \textcolor{CadetBlue}{10} & \textcolor{CadetBlue}{11} \\ 
 \end{TAB}
 \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
-    & \textcolor{black!30}{A} & \textcolor{cyan}{2} & \textcolor{cyan}{3}  \\
-  \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{cyan}{6} & \textcolor{cyan}{7}   \\
-  \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} \\ 
+    & A & \textcolor{cyan}{2} & \textcolor{cyan}{3}  \\
+  A & A & \textcolor{cyan}{6} & \textcolor{cyan}{7}   \\
+  A & A & A & A \\ 
 \end{TAB} 
 \caption{the two abstractions that together form the disjoint fringe abstraction.}   
 \label{fig:fringeDisjoint}
 \end{figure}
 
-As with regular fringe, the creation of the disjoint fringe pattern databases is independent of individual start configurations.  The disjoint fringe abstraction is made of two abstractions: (1) the bottom-most row and (2) a 2-by-2 square in the top-right corner of the puzzle.  These are shown in Figure \ref{fig:fringeDisjoint} in tan and cyan, respectively.  Figure \ref{fig:fringeDisjointApplied} represents the abstractions applied to the random start configuration shown in Figure \ref{fig:puzzle}b.
+As with regular fringe, the creation of the disjoint fringe pattern databases is independent of individual start configurations.  The disjoint fringe abstraction is made of two abstractions: (1) the bottom-most row and (2) a 2-by-2 square in the top-right corner of the puzzle.  These are shown in Figure \ref{fig:fringeDisjoint} in dull blue and cyan, respectively.  Figure \ref{fig:fringeDisjointApplied} represents the abstractions applied to the random start configuration shown in Figure \ref{fig:puzzle}b.
 
 \begin{figure}[htb]
     \centering
  \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
-  \textcolor{black!30}{A}  & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A}  \\ 
-  \textcolor{Tan}{10} & \textcolor{Tan}{9} & \textcolor{black!30}{A} &    \\ 
-  \textcolor{Tan}{8}  & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{Tan}{11} \\ 
+  A  & A & A & A  \\ 
+  \textcolor{CadetBlue}{10} & \textcolor{CadetBlue}{9} & A &    \\ 
+  \textcolor{CadetBlue}{8}  & A & A & \textcolor{CadetBlue}{11} \\ 
 \end{TAB} 
 \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
-  \textcolor{cyan}{2}  & \textcolor{cyan}{6} & \textcolor{cyan}{3} & \textcolor{black!30}{A}  \\ 
-  \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} &    \\ 
-  \textcolor{black!30}{A} & \textcolor{cyan}{7} & \textcolor{black!30}{A} & \textcolor{black!30}{A} \\ 
+  \textcolor{cyan}{2}  & \textcolor{cyan}{6} & \textcolor{cyan}{3} & A  \\ 
+  A & A & A &    \\ 
+  A & \textcolor{cyan}{7} & A & A \\ 
 \end{TAB}
-\caption{the disjoint fringe abstractions applied to the state in Figure \ref{fig:puzzle}b.  The heuristic value for this state would be $h = \textcolor{Tan}{cost} + \textcolor{cyan}{cost}$.}   
+\caption{the disjoint fringe abstractions applied to the state in Figure \ref{fig:puzzle}b.  The heuristic value for this state would be $h = \textcolor{CadetBlue}{cost} + \textcolor{cyan}{cost}$.}   
 \label{fig:fringeDisjointApplied}
 \end{figure}
 
@@ -162,14 +166,14 @@ The disjoint customized pattern database is formed of two pattern databases of s
 \begin{figure}[htb]
     \centering
  \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
-  \textcolor{black!30}{A}  & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{magenta}{4}  \\ 
-  \textcolor{magenta}{10} & \textcolor{black!30}{A} & \textcolor{black!30}{A} &    \\ 
-  \textcolor{black!30}{A}  & \textcolor{magenta}{7} & \textcolor{magenta}{1} & \textcolor{black!30}{A} \\ 
+  A  & A & A & \textcolor{magenta}{4}  \\ 
+  \textcolor{magenta}{10} & A & A &    \\ 
+  A  & \textcolor{magenta}{7} & \textcolor{magenta}{1} & A \\ 
 \end{TAB} 
  \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
-  \textcolor{orange}{2}  & \textcolor{orange}{6} & \textcolor{orange}{3} & \textcolor{black!30}{A}  \\ 
-  \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{orange}{5} &    \\ 
-  \textcolor{black!30}{A}  & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} \\ 
+  \textcolor{orange}{2}  & \textcolor{orange}{6} & \textcolor{orange}{3} & A  \\ 
+  A & A & \textcolor{orange}{5} &    \\ 
+  A  & A & A & A \\ 
 \end{TAB}
 \caption{the disjoint customized abstractions applied to the state in Figure \ref{fig:puzzle}b, \textit{before} applying the abstractions to the goal configuration to produce the pattern database.}   
 \label{fig:disjointCustomized}
@@ -181,14 +185,14 @@ The two abstractions which form the disjoint customized pattern database are (1)
 \begin{figure}[htb]
     \centering
  \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
-     & \textcolor{magenta}{1} & \textcolor{black!30}{A} & \textcolor{black!30}{A}  \\ 
-  \textcolor{magenta}{4} & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{magenta}{7}  \\ 
-  \textcolor{black!30}{A}  & \textcolor{black!30}{A} & \textcolor{magenta}{10} & \textcolor{black!30}{A} \\ 
+     & \textcolor{magenta}{1} & A & A  \\ 
+  \textcolor{magenta}{4} & A & A & \textcolor{magenta}{7}  \\ 
+  A  & A & \textcolor{magenta}{10} & A \\ 
 \end{TAB} 
  \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
-     & \textcolor{black!30}{A} & \textcolor{Orange}{2} & \textcolor{Orange}{3}  \\ 
-  \textcolor{black!30}{A} & \textcolor{Orange}{5} & \textcolor{Orange}{6} & \textcolor{black!30}{A}  \\ 
-  \textcolor{black!30}{A}  & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} \\ 
+     & A & \textcolor{Orange}{2} & \textcolor{Orange}{3}  \\ 
+  A & \textcolor{Orange}{5} & \textcolor{Orange}{6} & A  \\ 
+  A  & A & A & A \\ 
 \end{TAB} 
 \caption{the abstractions obtained in Figure \ref{fig:disjointCustomized} applied to the goal to obtain the target patterns for building the pattern databases.  The heuristic value for the original state in Figure \ref{fig:puzzle}b would be $h = \textcolor{magenta}{cost} + \textcolor{orange}{cost}$.}   
 \label{fig:disjointCustomizedGoal}
@@ -205,19 +209,19 @@ The fringe also features a contiguous pattern -- i.e, the refined tiles are conn
 \begin{figure}[htb]
     \centering
     \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
-        & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A}   \\ 
-      \textcolor{Purple}{4} & \textcolor{Purple}{5} & \textcolor{Purple}{6} & \textcolor{black!30}{A}  \\ 
-      \textcolor{Purple}{8} & \textcolor{Purple}{9} & \textcolor{Purple}{10} & \textcolor{black!30}{A} \\ 
+        & A & A & A   \\ 
+      \textcolor{Purple}{4} & \textcolor{Purple}{5} & \textcolor{Purple}{6} & A  \\ 
+      \textcolor{Purple}{8} & \textcolor{Purple}{9} & \textcolor{Purple}{10} & A \\ 
     \end{TAB}
     \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
-        & \textcolor{green}{1} & \textcolor{green}{2} & \textcolor{black!30}{A}   \\ 
-      \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A} & \textcolor{black!30}{A}   \\ 
+        & \textcolor{green}{1} & \textcolor{green}{2} & A   \\ 
+      A & A & A & A   \\ 
       \textcolor{green}{8} & \textcolor{green}{9} & \textcolor{green}{10} & \textcolor{green}{11} \\ 
     \end{TAB}
     \begin{TAB}(e,0.6cm,0.6cm){|c|c|c|c|}{|c|c|c|}
-        & \textcolor{RawSienna}{1} & \textcolor{black!30}{A} & \textcolor{RawSienna}{3}   \\ 
-      \textcolor{RawSienna}{4} & \textcolor{black!30}{A} & \textcolor{RawSienna}{6} & \textcolor{black!30}{A}   \\ 
-      \textcolor{black!30}{A} & \textcolor{RawSienna}{9} & \textcolor{black!30}{A} & \textcolor{RawSienna}{11} \\ 
+        & \textcolor{RawSienna}{1} & A & \textcolor{RawSienna}{3}   \\ 
+      \textcolor{RawSienna}{4} & A & \textcolor{RawSienna}{6} & A   \\ 
+      A & \textcolor{RawSienna}{9} & A & \textcolor{RawSienna}{11} \\ 
     \end{TAB}
     \caption{additional abstractions, referred to as A, B, and C (from left to right).}
     \label{fig:assorted}
@@ -240,7 +244,7 @@ For each search conducted, we recorded the number of nodes that were expanded in
 \textcolor{blue}{Customized}                                 &  2,778,947  & 5,593,762 & 10 & 7\\ 
 \textcolor{Purple}{A}                                        &    \underline{755,125}  & 5,528,595 & 22 & 3\\ 
 \textcolor{RawSienna}{C}                                     &  2,021,907  & 6,259,867 & 26 & 5\\ 
-\textcolor{Tan}{Disjoint} \textcolor{cyan}{Fringe}           &     \textit{44,171}  &   \textit{218,816} & 67 & 1\\ 
+\textcolor{CadetBlue}{Disjoint} \textcolor{cyan}{Fringe}           &     \textit{44,171}  &   \textit{218,816} & 67 & 1\\ 
 \textcolor{magenta}{Disjoint} \textcolor{orange}{Customized} &    196,073  &   333,928 & 67 & 2\\ 
 \end{tabular}
 \caption{average number of nodes expanded, sorted by the number of times A* failed to find a solution.}
@@ -249,7 +253,7 @@ For each search conducted, we recorded the number of nodes that were expanded in
 
 The results of our evaluations are summarized in Table \ref{table:results}.  This table has been sorted by the number of times (out of 100 total tests) A* failed to find a solution within ten minutes, which describes the strength of the pattern database heuristic for A*.  The more often a pattern database leads to a solution, the stronger that heuristic is.  It is useful to next look the average number of nodes expanded when A* did manage to find a solution because stronger heuristics will lead to less expansion of nodes.
 
-Greedy search always found a solution - albeit a suboptimal one - with, in general, fewer expansions than A* required.  Sorting by A*'s number of failures seemingly jumbles the average number of nodes expanded for greedy.  To help illustrate this, the right-most column of Table \ref{table:results} shows the ranking for average number of nodes expanded for greedy search.  From this column, it is easy to see that the order for greedy search does not correspond to A*'s rankings at all.  This verifies that these two search algorithms really are quite different in this domain and do not share many preferences for abstractions, as we expected.
+Greedy search always found a solution - albeit a suboptimal one. It required, in general, fewer expansions than A* did.  Sorting by A*'s number of failures seemingly jumbles the average number of nodes expanded for greedy.  To help illustrate this, the right-most column of Table \ref{table:results} shows the ranking for average number of nodes expanded for greedy search.  From this column, it is easy to see that the order for greedy search does not correspond to A*'s rankings at all.  This verifies that these two search algorithms really are quite different in this domain and do not share many preferences for abstractions, as we expected.
 
 In italics are the abstractions which had the lowest average number of expansions for each algorithm.  Both performed best with the disjoint fringe pattern databases.  Perhaps this is because the disjoint pattern databases included eight refined tiles in total, while the regular pattern databases included only six refined tiles in total.  Larger pattern databases, though more difficult to compute and store, make for more powerful heuristics.  Still, the disjoint pattern databases are not a total success story for A*.  They may have led to the fewest expansions of nodes on average, but they also had extraordinarily high failure rates for A*.
 
@@ -370,3 +374,5 @@ It is unclear whether or not these conclusions apply to pattern databases of dif
 %\nocite{*} 
 
 \end{document}
+
+
