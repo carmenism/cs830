@@ -70,7 +70,7 @@ As mentioned, there are numerous abstraction methods that are available when bui
 
 With greedy and A* being different algorithms, we suspected that abstractions which work well for one may not work well for another.  In fact, we anticipated very few abstractions to work either well for both or badly for both.  Since greedy sorts its queue only on heuristic value, it will always prefer nodes with the heuristic value of zero.  A*, on the other hand, sorts its queue on cost and heuristic value, so it may not always jump for any node with heuristic value of zero.  
 
-Some abstractions may return a heuristic value of zero only when they are close to the actual goal, while others may return zero when the actual goal is quite far away.  In the latter case, zero will be misleading, since future nodes are likely to have non-zero heuristic values.  A* may handle this well because it might not explore such nodes in the first place, while it will cause greedy to expand more nodes before reaching the goal and to produce a longer solution.  Thus, it would make sense for each algorithm to perform differently on the various abstractions.
+Some abstractions may return a heuristic value of zero only when they are close to the actual goal, while others may return zero when the actual goal is quite far away.  In the latter case, zero will be misleading, since future nodes are likely to have non-zero heuristic values.  A* may handle this well because it might not explore such nodes in the first place, while it will cause greedy to expand more nodes before reaching the goal, thereby producing a longer solution.  Thus, it would make sense for each algorithm to perform differently on the various abstractions.
 
 \subsection{Fringe}
 
@@ -258,7 +258,7 @@ In italics are the abstractions which had the lowest average number of expansion
 
 What is worth mentioning more is that both algorithms preferred the disjoint fringe.  We had expected this for greedy, but we had expected A* to prefer the disjoint customized abstraction.  Still, the ratio of average number of nodes expanded for disjoint fringe to average number of nodes expanded for disjoint special is much smaller for greedy (0.225) than for A* (0.655).  This may mean that greedy search benefited from the disjoint fringe abstractions more than A*.
 
-We have underlined the averages for the regular (i.e., non-disjoint) pattern databases that did best after both of the disjoint pattern databases.  As somewhat of a shock, the fringe pattern database gave the best non-disjoint result for A* in terms of nodes expanded, while best for greedy was the A abstraction.  The overwhelming success of the A abstraction was surprising since we had designed it in the hope that it would cause greedy to do poorly.
+We have underlined the averages for the regular (i.e., non-disjoint) pattern databases that did best after both of the disjoint pattern databases.  As somewhat of a shock, the fringe pattern database gave the best non-disjoint result for A* in terms of nodes expanded, while the A abstraction was best for greedy.  The overwhelming success of the A abstraction was surprising since we had designed it in the hope that it would cause greedy to do poorly.
 
 We had hoped to show that the fringe abstraction was a best overall choice for greedy search, which we did not find as far as non-disjoint options are concerned.  Fringe came in sixth place out of seven and customized came in dead last for greedy search.  From these results, it would seem that other abstractions are better choices than either of these when selecting a heuristic for greedy search.  However, the fringe abstraction was better than the customized for greedy, which confirmed at least part of what we hoped to show.  
 
@@ -335,7 +335,7 @@ Therefore, it would lead one to conclude that greedy does not like an abstractio
     \label{fig:astarBad}
 \end{figure}
 
-The abstractions which worked badly for A*, some of which are shown in Figure \ref{fig:astarBad}, are a bit easier to analyze.  When some or all of the bottom row's tiles are abstracted, A* does poorly.  A* also did not like when single tiles or pairs of tiles were abstracted by themselves, separated from the other abstracted tiles.  This agrees with our results, which showed that A* does well horribly with the C abstraction, where every abstracted tile is isolated from the other abstracted tiles in a checkerboard pattern. 
+The abstractions which worked badly for A*, some of which are shown in Figure \ref{fig:astarBad}, are a bit easier to analyze.  When some or all of the bottom row's tiles are abstracted, A* does poorly.  A* also did not like when single tiles or pairs of tiles were abstracted by themselves, separated from the other abstracted tiles.  This agrees with our results, which showed that A* does horribly with the C abstraction, where every abstracted tile is isolated from the other abstracted tiles in a checkerboard pattern. 
 
 \begin{figure}[htb]
     \centering
